@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case de Sucesso — TM Sempre Tecnologia</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="css/style.css" rel="stylesheet">
+<style>
+  .work-hero {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 100px 20px 40px;
+  }
+  .work-meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .meta-tag {
+    border: 1px solid rgba(200,84,28,0.3);
+    color: #C8541C;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .work-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px 100px;
+    color: rgba(255,255,255,0.6);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+  .work-content h2 {
+    color: #fff;
+    margin: 40px 0 20px;
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+  .work-image {
+    width: 100%;
+    height: 400px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    margin: 40px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  .btn-back {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    color: #888;
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 2px;
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 8px 16px;
+    background: rgba(1,1,2,0.7);
+    backdrop-filter: blur(8px);
+    border-radius: 6px;
+    transition: all 0.3s;
+    z-index: 1000;
+  }
+  .btn-back:hover {
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+  }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="btn-back">← VOLTAR</a>
+<nav>TM<span>.</span></nav>
+
+<div class="work-hero section">
+  <div class="ph-title" style="font-size:clamp(24px, 4vw, 48px); max-width:800px;">
+    Automação de Processos para o <strong>Banco do Brasil</strong>
+  </div>
+  <div class="ph-text" style="margin-top:20px;">Como eliminamos horas de retrabalho manual em processos complexos.</div>
+  
+  <div class="work-meta">
+    <span class="meta-tag">Automação de Processos</span>
+    <span class="meta-tag">Inteligência de Dados</span>
+    <span class="meta-tag">Dashboard em Tempo Real</span>
+  </div>
+</div>
+
+<div class="work-content section">
+  <h2>O Desafio</h2>
+  <p>A equipe perdia dezenas de horas semanais coletando dados espalhados em planilhas, transferindo informações manualmente e gerando relatórios de forma arcaica. O processo era exaustivo e altamente sujeito a erros humanos.</p>
+
+  <div class="work-image">
+    [ ESPAÇO PARA PRINT DO SISTEMA ANTIGO VS NOVO ]
+  </div>
+
+  <h2>A Solução TM</h2>
+  <p>Implementamos uma esteira 100% digital e escalável. Criamos uma aplicação centralizada que substituiu as antigas planilhas. Agora, ao finalizar um fluxo de trabalho, o sistema compila os dados, aplica regras de negócio e gera os relatórios finais instantaneamente, atualizando o painel gerencial da diretoria em tempo real.</p>
+
+  <div class="work-image">
+    [ ESPAÇO PARA PRINT DO DASHBOARD / APP ]
+  </div>
+
+  <h2>Resultados Obtidos</h2>
+  <ul>
+    <li>Redução de 95% no tempo gasto com tarefas repetitivas.</li>
+    <li>Fim do retrabalho com perda de informações manuais.</li>
+    <li>Acesso em tempo real aos indicadores de negócio.</li>
+  </ul>
+
+  <div style="text-align:center; margin-top:80px;">
+    <div class="ph-title" style="font-size:20px; margin-bottom:20px;">Sua empresa também tem esse gargalo?</div>
+    <button class="btn-launch" onclick="alert('Abre modal de contato ou redireciona')">🚀 SOLICITAR CONSULTORIA</button>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<section class="footer" style="min-height: 20vh;">
+  <div class="footer-tagline">"TM Sempre Tecnologia — Orbiting the Future"</div>
+</section>
+
+<script src="https://unpkg.com/@studio-freight/lenis@1.0.29/dist/lenis.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script>
+  // Simple Lenis Init for work page
+  const lenis = new Lenis({ duration: 1.2, smooth: true });
+  function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+  requestAnimationFrame(raf);
+  
+  // Fade in elements
+  gsap.utils.toArray('.section').forEach(section => {
+    gsap.fromTo(section, 
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: section, start: "top 85%" } }
+    );
+  });
+</script>
+
+</body>
+</html>
