@@ -7,11 +7,12 @@
 <title>Portfólio Editorial — TM Sempre Tecnologia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --orange: #d96526;
   --orange-glow: rgba(217, 101, 38, 0.65);
+  --orange-faint: rgba(217, 101, 38, 0.15);
   --ink: #05070b;
   --surface: #0a0d14;
   --line: rgba(255, 255, 255, 0.12);
@@ -88,7 +89,7 @@ body {
 
 /* ── CABEÇALHO EDITORIAL ── */
 .portfolio-header {
-  padding: 160px clamp(24px, 8vw, 120px) 80px;
+  padding: 160px clamp(24px, 8vw, 120px) 70px;
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -129,23 +130,31 @@ h1 strong {
   line-height: 1.7;
 }
 
-/* ── ESTUDOS DE CASO EDITORIAIS (SEM CARDS OU GRIDS COMERCIAIS) ── */
+/* ── ESTUDOS DE CASO COM FOCO EDITORIAL ── */
 .cases-container {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 clamp(24px, 8vw, 120px) 140px;
   display: flex;
   flex-direction: column;
-  gap: 140px;
+  gap: 120px;
 }
 
 .case-study {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 36px;
   border-top: 1px solid var(--line);
   padding-top: 50px;
   position: relative;
+  opacity: 0.38;
+  transform: translateY(20px);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.case-study.active {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .case-meta {
@@ -166,61 +175,72 @@ h1 strong {
 }
 
 .case-title {
-  font-size: clamp(28px, 4vw, 46px);
+  font-size: clamp(28px, 4vw, 44px);
   font-weight: 400;
   letter-spacing: -0.03em;
-  line-height: 1.15;
+  line-height: 1.18;
 }
 .case-title strong {
   color: #fff;
   font-weight: 700;
 }
 
-.case-media {
+/* ── ESQUEMA TÉCNICO VIVO (SVG BLUEPRINT) ── */
+.case-blueprint {
   width: 100%;
-  min-height: 380px;
+  min-height: 320px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
   overflow: hidden;
-}
-.case-media-art {
-  width: 100%;
-  height: 100%;
-  min-height: 380px;
-  background: radial-gradient(circle at 70% 30%, rgba(217, 101, 38, 0.12) 0%, transparent 60%), linear-gradient(180deg, rgba(10, 13, 20, 0.6), rgba(5, 7, 11, 0.95));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 40px;
+  padding: 30px;
 }
-.media-tag {
+.blueprint-glow {
+  position: absolute;
+  top: 0; right: 0; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(217,101,38,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.blueprint-svg {
+  width: 100%;
+  height: 200px;
+  display: block;
+}
+.blueprint-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 16px;
   font-family: 'JetBrains Mono', monospace;
+}
+.tech-tag {
   font-size: 10px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--orange);
-  border: 1px solid rgba(217, 101, 38, 0.3);
+  border: 1px solid rgba(217, 101, 38, 0.35);
+  background: rgba(217, 101, 38, 0.05);
   padding: 4px 10px;
-  display: inline-block;
-  align-self: flex-start;
   border-radius: 2px;
 }
-.media-caption {
-  font-size: 12px;
-  letter-spacing: 1.5px;
+.blueprint-caption {
+  font-size: 11px;
+  letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--faint);
 }
 
+/* ── NARRATIVA EM 4 BLOCOS ── */
 .case-narrative {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 36px;
+  gap: 32px;
   margin-top: 10px;
 }
 .narrative-block h3 {
@@ -230,7 +250,7 @@ h1 strong {
   text-transform: uppercase;
   color: var(--orange);
   margin-bottom: 12px;
-  font-weight: 500;
+  font-weight: 600;
 }
 .narrative-block p {
   color: var(--muted);
@@ -244,6 +264,25 @@ h1 strong {
 .narrative-block.highlight p {
   color: #fff;
   font-size: 15px;
+  font-weight: 500;
+}
+
+/* ── ANIMAÇÕES SVG NATIVAS ── */
+@keyframes dataPulse {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+@keyframes nodeBlink {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+.flow-line {
+  stroke-dasharray: 6 6;
+  animation: dataPulse 12s linear infinite;
+}
+.pulse-node {
+  animation: nodeBlink 3s ease-in-out infinite;
+  transform-origin: center;
 }
 
 /* ── FOOTER ── */
@@ -269,8 +308,9 @@ h1 strong {
 .footer-copy { color: var(--faint); }
 
 @media (max-width: 768px) {
-  .cases-container { gap: 90px; }
-  .case-media-art { padding: 24px; min-height: 280px; }
+  .cases-container { gap: 80px; }
+  .case-blueprint { padding: 20px; min-height: 260px; }
+  .blueprint-svg { height: 160px; }
   .case-narrative { grid-template-columns: 1fr; gap: 24px; }
 }
 </style>
@@ -291,14 +331,14 @@ h1 strong {
 <section class="portfolio-header">
   <div class="eyebrow">Estudos de Caso & Arquiteturas</div>
   <h1>Engenharia de soluções<br>e <strong>sistemas aplicados.</strong></h1>
-  <p class="header-lead">Casos editoriais que demonstram a evolução técnica: do ganho de 85% em documentação técnica à concepção de agentes autônomos e sistemas web completos.</p>
+  <p class="header-lead">Casos editoriais que demonstram a evolução técnica: do ganho comprovado de 85% em esteiras de relatórios à concepção de agentes autônomos e sistemas web completos.</p>
 </section>
 
-<!-- Conteúdo Editorial Vertical -->
+<!-- Conteúdo Editorial Vertical com Foco por Scroll -->
 <main class="cases-container">
 
-  <!-- CASO 01 -->
-  <article class="case-study">
+  <!-- CASO 01: ESTEIRA DE DOCUMENTAÇÃO 85% -->
+  <article class="case-study active">
     <div class="case-meta">
       <span class="case-index">01 · Esteira de Documentação</span>
       <span>Automação & Processamento</span>
@@ -306,34 +346,61 @@ h1 strong {
 
     <h2 class="case-title">Aceleração de <strong>Relatórios Técnicos e Laudos</strong> em 85%</h2>
 
-    <div class="case-media">
-      <div class="case-media-art">
-        <span class="media-tag">Python · FastAPI · Compilação Assíncrona</span>
-        <div class="media-caption">Fluxo de extração, estruturação de dados e geração automatizada de relatórios.</div>
+    <div class="case-blueprint">
+      <div class="blueprint-glow"></div>
+      <svg class="blueprint-svg" viewBox="0 0 800 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Linha Guia -->
+        <path d="M60 80 H740" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+        <path class="flow-line" d="M60 80 H740" stroke="var(--orange)" stroke-width="2"/>
+
+        <!-- Nó 1: Entrada -->
+        <circle cx="80" cy="80" r="16" fill="#0a0d14" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+        <circle class="pulse-node" cx="80" cy="80" r="6" fill="var(--orange)"/>
+        <text x="80" y="125" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="10" text-anchor="middle" letter-spacing="1">DADOS DE CAMPO</text>
+
+        <!-- Nó 2: Processamento -->
+        <circle cx="300" cy="80" r="18" fill="#0a0d14" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+        <circle cx="300" cy="80" r="8" fill="rgba(255,255,255,0.8)"/>
+        <text x="300" y="125" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="10" text-anchor="middle" letter-spacing="1">PYTHON / FASTAPI</text>
+
+        <!-- Nó 3: Validação -->
+        <circle cx="520" cy="80" r="18" fill="#0a0d14" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+        <circle cx="520" cy="80" r="8" fill="rgba(255,255,255,0.8)"/>
+        <text x="520" y="125" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="10" text-anchor="middle" letter-spacing="1">VALIDAÇÃO DE REGRAS</text>
+
+        <!-- Nó 4: Entrega +85% -->
+        <circle cx="720" cy="80" r="22" fill="#0a0d14" stroke="var(--orange)" stroke-width="2"/>
+        <circle class="pulse-node" cx="720" cy="80" r="10" fill="var(--orange)"/>
+        <text x="720" y="125" fill="var(--orange)" font-family="JetBrains Mono" font-size="10" font-weight="700" text-anchor="middle" letter-spacing="1">+85% ENTREGA</text>
+      </svg>
+
+      <div class="blueprint-footer">
+        <span class="tech-tag">Python · FastAPI · Compilação Assíncrona</span>
+        <span class="blueprint-caption">Pipeline de estruturação e emissão automatizada</span>
       </div>
     </div>
 
     <div class="case-narrative">
       <div class="narrative-block">
         <h3>Contexto</h3>
-        <p>Operações de múltiplos contratos institucionais com geração contínua de relatórios técnicos complexos e dados de campo dispersos.</p>
+        <p>Múltiplos contratos institucionais exigindo dezenas de laudos e vistorias técnicas entregues semanalmente sob rigorosos prazos contratuais.</p>
       </div>
       <div class="narrative-block">
         <h3>Problema</h3>
-        <p>Centenas de horas consumidas por semana na coleta manual, formatação de laudos e alto risco de inconsistência nas entregas.</p>
+        <p>Coleta de dados descentralizada, montagem manual em editores de texto e dezenas de horas desperdiçadas em retrabalho operacional.</p>
       </div>
       <div class="narrative-block">
         <h3>Intervenção</h3>
-        <p>Arquitetura de sistema próprio que recebe os dados de campo, valida as variáveis de negócio e gera automaticamente os documentos oficiais.</p>
+        <p>Concepção de uma esteira digital com validação automática de variáveis técnicas, formatação instantânea e compilação direta do documento final.</p>
       </div>
       <div class="narrative-block highlight">
         <h3>Resultado</h3>
-        <p>Redução comprovada de 85% no tempo de entrega, padronização rigorosa e atendimento estrito a SLAs contratuais.</p>
+        <p>85% de ganho de velocidade no ciclo de entrega, erro humano reduzido a zero e padronização visual homologada pelos clientes.</p>
       </div>
     </div>
   </article>
 
-  <!-- CASO 02 -->
+  <!-- CASO 02: INTELIGÊNCIA GERENCIAL E DASHBOARDS -->
   <article class="case-study">
     <div class="case-meta">
       <span class="case-index">02 · Inteligência e Decisão</span>
@@ -342,34 +409,56 @@ h1 strong {
 
     <h2 class="case-title">Centralização Operacional e <strong>Visão Gerencial em Tempo Real</strong></h2>
 
-    <div class="case-media">
-      <div class="case-media-art">
-        <span class="media-tag">Pipelines de Dados · Next.js · Visualização</span>
-        <div class="media-caption">Transformação de registros operacionais brutos em inteligência visual e acionável.</div>
+    <div class="case-blueprint">
+      <div class="blueprint-glow"></div>
+      <svg class="blueprint-svg" viewBox="0 0 800 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grade de Fundo -->
+        <path d="M40 30 H760 M40 70 H760 M40 110 H760" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+        <!-- Gráfico Vetorial de Telemetria -->
+        <path d="M60 110 L180 85 L300 95 L420 55 L540 65 L660 35 L740 45" stroke="var(--orange)" stroke-width="2.5" fill="none"/>
+        <path d="M60 110 L180 85 L300 95 L420 55 L540 65 L660 35 L740 45 V130 H60 Z" fill="url(#gradTelemetry)" opacity="0.15"/>
+
+        <defs>
+          <linearGradient id="gradTelemetry" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--orange)"/>
+            <stop offset="100%" stop-color="transparent"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Indicadores Vivos -->
+        <circle cx="420" cy="55" r="5" fill="#fff"/>
+        <circle class="pulse-node" cx="660" cy="35" r="7" fill="var(--orange)"/>
+        <text x="660" y="20" fill="var(--orange)" font-family="JetBrains Mono" font-size="9" text-anchor="middle">SLA MONITOR</text>
+      </svg>
+
+      <div class="blueprint-footer">
+        <span class="tech-tag">Pipelines de Dados · Next.js · Visualização Reativa</span>
+        <span class="blueprint-caption">Telemetria de indicadores operacionais em tempo real</span>
       </div>
     </div>
 
     <div class="case-narrative">
       <div class="narrative-block">
         <h3>Contexto</h3>
-        <p>Diretoria e equipes técnicas necessitavam de visibilidade clara sobre o andamento das demandas e gargalos de produtividade.</p>
+        <p>Diretoria e equipes de engenharia necessitavam de acompanhamento ágil de cronogramas, preventivas e volume de solicitações em andamento.</p>
       </div>
       <div class="narrative-block">
         <h3>Problema</h3>
-        <p>Informações fragmentadas em planilhas isoladas, impedindo tomadas de decisão rápidas e análises preventivas.</p>
+        <p>Dados dispersos em planilhas sem versão única da verdade, gerando atrasos em decisões corretivas e reuniões improdutivas.</p>
       </div>
       <div class="narrative-block">
         <h3>Intervenção</h3>
-        <p>Estruturação de pipelines automatizados que consolidam indicadores, status e projeções em interfaces dedicadas e limpas.</p>
+        <p>Criação de pipelines que unificam dados brutos e os projetam em painéis gerenciais focados em tomada de ação imediata.</p>
       </div>
       <div class="narrative-block highlight">
         <h3>Resultado</h3>
-        <p>Eliminação de horas de reuniões de alinhamento e autonomia total para auditoria e acompanhamento estratégico.</p>
+        <p>Autonomia analítica para a liderança, visibilidade total de gargalos e redução drástica do tempo gasto consolidando informações.</p>
       </div>
     </div>
   </article>
 
-  <!-- CASO 03 -->
+  <!-- CASO 03: AGENTES AUTÔNOMOS -->
   <article class="case-study">
     <div class="case-meta">
       <span class="case-index">03 · Agentes & Autonomia</span>
@@ -378,29 +467,57 @@ h1 strong {
 
     <h2 class="case-title">Ecossistema de <strong>Agentes Autônomos de IA</strong></h2>
 
-    <div class="case-media">
-      <div class="case-media-art">
-        <span class="media-tag">IA Autônoma · Integração API · Processamento</span>
-        <div class="media-caption">Agentes especializados coordenados para execução de rotinas, orçamentos e triagem.</div>
+    <div class="case-blueprint">
+      <div class="blueprint-glow"></div>
+      <svg class="blueprint-svg" viewBox="0 0 800 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Conexões de Rede -->
+        <line x1="400" y1="80" x2="160" y2="50" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+        <line x1="400" y1="80" x2="160" y2="110" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+        <line x1="400" y1="80" x2="640" y2="50" stroke="var(--orange-faint)" stroke-width="1.5"/>
+        <line x1="400" y1="80" x2="640" y2="110" stroke="var(--orange)" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+        <!-- Nó Central (Orquestrador) -->
+        <circle cx="400" cy="80" r="24" fill="#0a0d14" stroke="var(--orange)" stroke-width="2"/>
+        <circle class="pulse-node" cx="400" cy="80" r="10" fill="var(--orange)"/>
+        <text x="400" y="125" fill="#fff" font-family="JetBrains Mono" font-size="10" text-anchor="middle" letter-spacing="1">ORQUESTRADOR CORE</text>
+
+        <!-- Agentes Satélites -->
+        <circle cx="160" cy="50" r="12" fill="#0a0d14" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <text x="160" y="30" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="9" text-anchor="middle">AGENTE DE TRIAGEM</text>
+
+        <circle cx="160" cy="110" r="12" fill="#0a0d14" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <text x="160" y="140" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="9" text-anchor="middle">AGENTE DE ORÇAMENTOS</text>
+
+        <circle cx="640" cy="50" r="12" fill="#0a0d14" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+        <text x="640" y="30" fill="rgba(255,255,255,0.5)" font-family="JetBrains Mono" font-size="9" text-anchor="middle">AGENTE DE AUDITORIA</text>
+
+        <circle cx="640" cy="110" r="14" fill="#0a0d14" stroke="var(--orange)" stroke-width="2"/>
+        <circle class="pulse-node" cx="640" cy="110" r="6" fill="var(--orange)"/>
+        <text x="640" y="142" fill="var(--orange)" font-family="JetBrains Mono" font-size="9" font-weight="700" text-anchor="middle">PIPELINE ATIVO</text>
+      </svg>
+
+      <div class="blueprint-footer">
+        <span class="tech-tag">IA Autônoma · Integração API · Cron Jobs & Webhooks</span>
+        <span class="blueprint-caption">Orquestração de tarefas e automação de backoffice</span>
       </div>
     </div>
 
     <div class="case-narrative">
       <div class="narrative-block">
         <h3>Contexto</h3>
-        <p>Volume crescente de demandas operacionais, atendimento inicial e monitoramento contínuo de tarefas diárias.</p>
+        <p>Crescimento do fluxo de consultas operacionais e processos rotineiros de triagem documental que demandavam constante intervenção humana.</p>
       </div>
       <div class="narrative-block">
         <h3>Problema</h3>
-        <p>Sobrecarga do operador com triagem repetitiva, consultas frequentes e validação preliminar de solicitações.</p>
+        <p>Gargalo de tempo com atendimentos preliminares e checagem de dados recorrentes antes do encaminhamento especializado.</p>
       </div>
       <div class="narrative-block">
         <h3>Intervenção</h3>
-        <p>Desenvolvimento e orquestração de perfis especializados de IA configurados com regras de negócio para execução em segundo plano.</p>
+        <p>Arquitetura de agentes autônomos com perfis específicos, capazes de executar fluxos de validação, responder requisições e acionar pipelines.</p>
       </div>
       <div class="narrative-block highlight">
         <h3>Resultado</h3>
-        <p>Operação contínua 24/7 com resposta instantânea e encaminhamento preciso para resolução de alto nível.</p>
+        <p>Operação ininterrupta 24/7 com resolução ágil de tarefas operacionais e liberação integral do foco humano para decisões críticas.</p>
       </div>
     </div>
   </article>
@@ -413,5 +530,23 @@ h1 strong {
   <a href="contato.html">Prosseguir para Contato →</a>
 </footer>
 
+<script>
+// Observer para foco editorial no scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+    } else {
+      // Se tiver rolado bem para longe, atenua suavemente
+      const rect = entry.target.getBoundingClientRect();
+      if (rect.top > window.innerHeight || rect.bottom < 0) {
+        entry.target.classList.remove('active');
+      }
+    }
+  });
+}, { threshold: 0.25, rootMargin: "-40px 0px -40px 0px" });
+
+document.querySelectorAll('.case-study').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>

@@ -7,7 +7,7 @@
 <title>Contato — TM Sempre Tecnologia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --orange: #d96526;
@@ -29,6 +29,22 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+/* ── AMBIENT BREATHING SPOTLIGHT ── */
+#ambient-glow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(217, 101, 38, 0.08) 0%, transparent 65%);
+  transition: background 0.4s ease-out;
+  animation: breathPulse 8s ease-in-out infinite alternate;
+}
+@keyframes breathPulse {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 
 /* ── NAVEGAÇÃO ── */
@@ -93,11 +109,13 @@ body {
   flex: 1;
   max-width: 900px;
   margin: 0 auto;
-  padding: 180px clamp(24px, 8vw, 120px) 100px;
+  padding: 170px clamp(24px, 8vw, 120px) 100px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+  z-index: 1;
 }
 
 .eyebrow {
@@ -124,7 +142,7 @@ h1 {
   font-weight: 300;
   letter-spacing: -0.04em;
   line-height: 1.05;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 h1 strong {
   color: var(--orange);
@@ -133,19 +151,19 @@ h1 strong {
 
 .statement {
   color: var(--muted);
-  font-size: clamp(15px, 1.4vw, 19px);
+  font-size: clamp(15px, 1.4vw, 18px);
   line-height: 1.7;
-  max-width: 620px;
-  margin-bottom: 60px;
+  max-width: 640px;
+  margin-bottom: 54px;
 }
 
-/* ── CANAIS DIRETOS (SEM FORMULÁRIOS COMERCIAIS) ── */
+/* ── LISTAGEM DE CANAIS COM MICRO-INTERAÇÕES ── */
 .channels-list {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
   border-top: 1px solid var(--line);
-  padding-top: 50px;
+  padding-top: 44px;
 }
 
 .channel-item {
@@ -153,9 +171,31 @@ h1 strong {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 14px;
-  padding-bottom: 24px;
+  gap: 16px;
+  padding-bottom: 22px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.25s, border-color 0.25s;
+}
+.channel-item:hover {
+  border-color: rgba(217, 101, 38, 0.35);
+}
+
+.channel-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.status-beacon {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange);
+  animation: beaconPulse 2.5s infinite;
+}
+@keyframes beaconPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
 }
 
 .channel-label {
@@ -166,19 +206,47 @@ h1 strong {
   color: var(--faint);
 }
 
+.channel-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
 .channel-link {
   font-size: clamp(14px, 1.3vw, 17px);
   color: #fff;
   text-decoration: none;
   letter-spacing: 0.5px;
-  transition: color 0.2s, transform 0.2s;
+  transition: color 0.2s;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 .channel-link:hover {
   color: var(--orange);
-  transform: translateX(4px);
+}
+
+.copy-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.copy-btn:hover {
+  color: #fff;
+  border-color: var(--orange);
+  background: rgba(217, 101, 38, 0.15);
+}
+.copy-btn.copied {
+  color: var(--orange);
+  border-color: var(--orange);
 }
 
 .channel-meta {
@@ -201,6 +269,8 @@ h1 strong {
   font-size: 11px;
   letter-spacing: 1.5px;
   color: var(--faint);
+  position: relative;
+  z-index: 1;
 }
 .footer a {
   color: var(--muted);
@@ -211,10 +281,13 @@ h1 strong {
 
 @media (max-width: 600px) {
   .channel-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .channel-actions { width: 100%; justify-content: space-between; margin-top: 4px; }
 }
 </style>
 </head>
 <body>
+
+<div id="ambient-glow"></div>
 
 <!-- Topbar -->
 <header class="topbar">
@@ -228,43 +301,75 @@ h1 strong {
 
 <!-- Conteúdo Direto -->
 <main class="contact-container">
-  <div class="eyebrow">Diálogo & Conexão</div>
+  <div class="eyebrow">Diálogo & Conexão Direta</div>
   <h1>Vamos transformar o<br><strong>próximo processo.</strong></h1>
-  <p class="statement">Se você possui uma operação complexa, fluxos com retrabalho ou deseja construir sistemas e produtos digitais que operam com precisão, estes são meus canais diretos.</p>
+  <p class="statement">Para operações com gargalos manuais, fluxos de alta complexidade ou concepção de sistemas sob medida e agentes autônomos, estes são meus canais diretos de comunicação.</p>
 
   <div class="channels-list">
+
+    <!-- E-MAIL -->
     <div class="channel-item">
-      <span class="channel-label">E-mail Direto</span>
-      <a href="mailto:thiagonascimento.barbosapro@gmail.com" class="channel-link">
-        thiagonascimento.barbosapro@gmail.com <span>↗</span>
-      </a>
+      <div class="channel-left">
+        <span class="status-beacon"></span>
+        <span class="channel-label">E-mail Direto</span>
+      </div>
+      <div class="channel-actions">
+        <a href="mailto:thiagonascimento.barbosapro@gmail.com" class="channel-link">
+          thiagonascimento.barbosapro@gmail.com <span>↗</span>
+        </a>
+        <button class="copy-btn" onclick="copyData('thiagonascimento.barbosapro@gmail.com', this)">Copiar</button>
+      </div>
     </div>
 
+    <!-- WHATSAPP -->
     <div class="channel-item">
-      <span class="channel-label">WhatsApp Corporativo</span>
-      <a href="https://wa.me/5562996046458" target="_blank" rel="noopener noreferrer" class="channel-link">
-        +55 (62) 99604-6458 <span>↗</span>
-      </a>
+      <div class="channel-left">
+        <span class="status-beacon"></span>
+        <span class="channel-label">WhatsApp Corporativo</span>
+      </div>
+      <div class="channel-actions">
+        <a href="https://wa.me/5562996046458" target="_blank" rel="noopener noreferrer" class="channel-link">
+          +55 (62) 99604-6458 <span>↗</span>
+        </a>
+        <button class="copy-btn" onclick="copyData('+5562996046458', this)">Copiar</button>
+      </div>
     </div>
 
+    <!-- GITHUB -->
     <div class="channel-item">
-      <span class="channel-label">Repositórios & Código</span>
-      <a href="https://github.com/TM-SEMPRE-TECNOLOGIA" target="_blank" rel="noopener noreferrer" class="channel-link">
-        github.com/TM-SEMPRE-TECNOLOGIA <span>↗</span>
-      </a>
+      <div class="channel-left">
+        <span class="status-beacon"></span>
+        <span class="channel-label">Repositórios & Código</span>
+      </div>
+      <div class="channel-actions">
+        <a href="https://github.com/TM-SEMPRE-TECNOLOGIA" target="_blank" rel="noopener noreferrer" class="channel-link">
+          github.com/TM-SEMPRE-TECNOLOGIA <span>↗</span>
+        </a>
+      </div>
     </div>
 
+    <!-- PLATAFORMA PESSOAL -->
     <div class="channel-item">
-      <span class="channel-label">Plataforma Pessoal</span>
-      <a href="https://thiagonascimentobarbosapro.com" target="_blank" rel="noopener noreferrer" class="channel-link">
-        thiagonascimentobarbosapro.com <span>↗</span>
-      </a>
+      <div class="channel-left">
+        <span class="status-beacon"></span>
+        <span class="channel-label">Plataforma Pessoal</span>
+      </div>
+      <div class="channel-actions">
+        <a href="https://thiagonascimentobarbosapro.com" target="_blank" rel="noopener noreferrer" class="channel-link">
+          thiagonascimentobarbosapro.com <span>↗</span>
+        </a>
+      </div>
     </div>
 
+    <!-- LOCALIZAÇÃO -->
     <div class="channel-item">
-      <span class="channel-label">Localização</span>
+      <div class="channel-left">
+        <span class="status-beacon" style="opacity: 0.3;"></span>
+        <span class="channel-label">Base de Operações</span>
+      </div>
       <span class="channel-meta">Goiânia, GO · Brasil</span>
     </div>
+
   </div>
 </main>
 
@@ -274,5 +379,27 @@ h1 strong {
   <a href="index.html">← Retornar à Origem</a>
 </footer>
 
+<script>
+// Ambient Glow interativo com o mouse
+const glow = document.getElementById('ambient-glow');
+window.addEventListener('pointermove', (e) => {
+  const x = (e.clientX / window.innerWidth) * 100;
+  const y = (e.clientY / window.innerHeight) * 100;
+  glow.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(217, 101, 38, 0.10) 0%, transparent 65%)`;
+}, { passive: true });
+
+// Função silenciosa de cópia
+function copyData(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.textContent;
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 2000);
+  }).catch(() => {});
+}
+</script>
 </body>
 </html>
