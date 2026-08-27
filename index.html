@@ -1,583 +1,154 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070b">
 <title>TM — Sempre Tecnologia</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; background: #010102; }
-body {
-  background: #010102; color: #888;
-  font-family: 'Inter', 'Courier New', ui-monospace, monospace;
-  overflow-x: hidden;
+:root { --orange:#d96526; --ink:#05070b; --line:rgba(255,255,255,.16); --muted:rgba(255,255,255,.56); }
+*,*::before,*::after { box-sizing:border-box; margin:0; }
+html { background:var(--ink); scroll-behavior:smooth; }
+body { background:var(--ink); color:#fff; font-family:Inter,system-ui,sans-serif; overflow-x:hidden; }
+#bg-video { position:fixed; inset:0; z-index:0; width:100vw; height:100vh; object-fit:cover; object-position:center; background:var(--ink) url('hero-poster.jpg') center/cover no-repeat; filter:saturate(.92) contrast(1.04); }
+#tone { position:fixed; inset:0; z-index:1; pointer-events:none; background:linear-gradient(90deg,rgba(3,5,9,.86) 0%,rgba(3,5,9,.32) 34%,rgba(3,5,9,.12) 62%,rgba(3,5,9,.5) 100%),linear-gradient(180deg,rgba(2,4,8,.46),transparent 34%,rgba(2,4,8,.8)); }
+#tone::after { content:""; position:absolute; inset:0; background:radial-gradient(circle at 50% 45%,transparent 0 25%,rgba(2,4,8,.22) 78%,rgba(2,4,8,.72) 100%); }
+#progress { position:fixed; z-index:10; top:0; left:0; height:2px; width:0; background:var(--orange); box-shadow:0 0 18px rgba(217,101,38,.8); }
+.topbar { position:fixed; z-index:5; top:24px; left:clamp(24px,6vw,88px); right:clamp(24px,6vw,88px); display:flex; align-items:center; justify-content:space-between; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,.6); }
+.brand { color:#fff; font-weight:700; letter-spacing:4px; }
+.brand i { color:var(--orange); font-style:normal; }
+.status { display:flex; align-items:center; gap:10px; }
+.status::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--orange); box-shadow:0 0 12px var(--orange); }
+.story { position:relative; z-index:2; }
+.chapter { min-height:155vh; position:relative; display:flex; align-items:center; padding:9vh clamp(28px,10vw,150px); }
+.chapter:first-child { min-height:100vh; align-items:flex-end; padding-bottom:13vh; }
+.chapter-inner { width:min(540px,100%); opacity:0; transform:translateY(30px); transition:opacity 900ms cubic-bezier(.22,1,.36,1),transform 900ms cubic-bezier(.22,1,.36,1); }
+.chapter.active .chapter-inner { opacity:1; transform:none; }
+.chapter.right { justify-content:flex-end; text-align:right; }
+.chapter.center { justify-content:center; text-align:center; }
+.eyebrow { display:flex; align-items:center; gap:12px; color:var(--orange); font-size:10px; font-weight:700; letter-spacing:4px; text-transform:uppercase; margin-bottom:24px; }
+.right .eyebrow,.center .eyebrow { justify-content:flex-end; }
+.center .eyebrow { justify-content:center; }
+.eyebrow::before { content:""; width:42px; height:1px; background:var(--orange); box-shadow:0 0 12px rgba(217,101,38,.65); }
+.center .eyebrow::after { content:""; width:42px; height:1px; background:var(--orange); box-shadow:0 0 12px rgba(217,101,38,.65); }
+h1,h2 { font-weight:300; letter-spacing:-.06em; line-height:.95; }
+h1 { font-size:clamp(46px,8vw,112px); text-transform:uppercase; }
+h2 { font-size:clamp(36px,6vw,78px); }
+h1 strong,h2 strong { color:var(--orange); font-weight:800; }
+.lead { margin-top:26px; max-width:430px; color:var(--muted); font-size:clamp(14px,1.5vw,18px); line-height:1.6; }
+.right .lead { margin-left:auto; }
+.center .lead { margin-left:auto; margin-right:auto; }
+.micro { margin-top:30px; color:rgba(255,255,255,.3); font-size:10px; letter-spacing:3px; text-transform:uppercase; }
+.chapter-note { margin-top:28px; padding-top:15px; border-top:1px solid var(--line); color:rgba(255,255,255,.4); font-size:11px; line-height:1.6; letter-spacing:.4px; }
+.scroll-cue { position:absolute; left:clamp(28px,10vw,150px); bottom:34px; display:flex; align-items:center; gap:12px; color:rgba(255,255,255,.36); font-size:10px; letter-spacing:3px; text-transform:uppercase; }
+.scroll-cue span { display:block; width:34px; height:1px; background:rgba(255,255,255,.36); }
+.footer { min-height:80vh; display:flex; align-items:flex-end; padding:9vh clamp(28px,10vw,150px) 10vh; }
+.footer .chapter-inner { width:100%; display:flex; align-items:flex-end; justify-content:space-between; gap:30px; }
+.footer-signature { color:rgba(255,255,255,.42); font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+.footer-signature strong { display:block; color:var(--orange); font-size:18px; letter-spacing:4px; margin-bottom:8px; }
+.footer-copy { color:rgba(255,255,255,.32); font-size:11px; letter-spacing:1px; }
+@media (max-width:700px) {
+  #tone { background:linear-gradient(180deg,rgba(3,5,9,.34),rgba(3,5,9,.16) 34%,rgba(3,5,9,.82) 100%),linear-gradient(90deg,rgba(3,5,9,.42),transparent 70%); }
+  .topbar { top:18px; left:22px; right:22px; }
+  .status { font-size:9px; letter-spacing:2px; }
+  .chapter,.chapter:first-child { min-height:125vh; padding:80px 28px 14vh; align-items:flex-end; }
+  .chapter.right,.chapter.center { justify-content:flex-start; text-align:left; }
+  .right .eyebrow,.center .eyebrow { justify-content:flex-start; }
+  .center .eyebrow::after { display:none; }
+  .right .lead,.center .lead { margin-left:0; margin-right:0; }
+  h1 { font-size:clamp(44px,14vw,76px); }
+  .scroll-cue { left:28px; bottom:28px; }
+  .footer { min-height:60vh; padding:80px 28px; }
+  .footer .chapter-inner { display:block; }
+  .footer-copy { margin-top:26px; }
 }
-
-/* ── CANVAS BACKGROUND (TELA INTEIRA) ── */
-#bg-video {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-  object-fit: cover;
-  object-position: center;
-  background: #010205 url('hero-poster.jpg') center / cover no-repeat;
-  filter: saturate(0.9) contrast(1.04);
-}
-
-/* ── OVERLAY ESCURO PRA LEGIBILIDADE ── */
-#overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(1,2,5,0.90) 0%, rgba(1,2,5,0.58) 34%, rgba(1,2,5,0.18) 68%, rgba(1,2,5,0.48) 100%),
-    linear-gradient(180deg, rgba(1,2,5,0.30) 0%, transparent 38%, rgba(1,2,5,0.72) 100%);
-}
-#overlay::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 52% 46%, transparent 0 24%, rgba(1,2,5,0.28) 78%, rgba(1,2,5,0.72) 100%);
-  mix-blend-mode: multiply;
-}
-
-/* ── PROGRESS BAR ── */
-#progress-bar {
-  position: fixed; top: 0; left: 0; height: 2px;
-  width: 0%; background: #C8541C; z-index: 1000;
-  transition: width 0.15s ease-out;
-}
-
-/* ── NAV ── */
-nav {
-  position: fixed; top: 22px; right: 28px;
-  font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.72);
-  border: 1px solid rgba(255,255,255,0.16);
-  padding: 9px 15px; background: rgba(1,1,2,0.38);
-  backdrop-filter: blur(14px);
-  z-index: 999;
-  font-weight: 600;
-}
-nav span { color: #C8541C; }
-
-/* ── SECTION LABEL ── */
-.section-label {
-  position: absolute; top: 16px; left: 24px;
-  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-  color: rgba(255,255,255,0.15); z-index: 10;
-  background: rgba(1,1,2,0.5); padding: 4px 10px;
-  border: 1px solid rgba(255,255,255,0.04);
-  backdrop-filter: blur(4px);
-}
-
-/* ── SCROLL INDICATOR ── */
-.scroll-indicator {
-  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-  color: rgba(255,255,255,0.15); z-index: 20; cursor: pointer;
-  font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-  animation: pulse-y 2s ease-in-out infinite;
-  background: rgba(1,1,2,0.3); padding: 4px 12px;
-  border: 1px solid rgba(255,255,255,0.03);
-  border-radius: 4px;
-}
-@keyframes pulse-y { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
-
-/* ── SECTION BASE ── */
-.section, .footer {
-  position: relative; z-index: 2;
-  width: 100vw; min-height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 32px; padding: 60px 40px;
-  opacity: 0; transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1);
-}
-#sec-1 {
-  align-items: flex-start;
-  padding-left: clamp(32px, 10vw, 150px);
-  padding-right: 42vw;
-  text-align: left;
-}
-.hero-kicker {
-  color: #e26c2b;
-  font-size: 11px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-.hero-title {
-  color: rgba(255,255,255,0.92);
-  font-size: clamp(42px, 7vw, 92px);
-  line-height: 0.94;
-  letter-spacing: -4px;
-  text-transform: uppercase;
-  font-weight: 300;
-  max-width: 680px;
-}
-.hero-title strong { color: #e26c2b; font-weight: 800; }
-.hero-lead {
-  color: rgba(255,255,255,0.64);
-  font-size: clamp(14px, 1.5vw, 18px);
-  line-height: 1.55;
-  max-width: 430px;
-}
-.hero-rule { width: 72px; height: 2px; background: #e26c2b; box-shadow: 0 0 18px rgba(226,108,43,0.55); }
-.hero-meta { color: rgba(255,255,255,0.28); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
-
-.section.visible, .footer.visible { opacity: 1; transform: translateY(0); }
-.section-tall { min-height: 200vh; }
-.subsection {
-  position: relative; width: 100%; min-height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 32px; padding: 60px 40px;
-  opacity: 0; transform: translateY(30px);
-  transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1);
-}
-.subsection.visible { opacity: 1; transform: translateY(0); }
-
-/* ── STICKY HORIZONTAL ── */
-.sticky-container { position: relative; height: 400vh; z-index: 2; }
-.sticky-inner { position: sticky; top: 0; height: 100vh; overflow: hidden; }
-
-.horizontal-section {
-  position: relative; height: 100vh; display: flex; overflow: hidden;
-  opacity: 0; transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1);
-}
-.horizontal-section.v-initial { opacity: 1; }
-.horizontal-track { display: flex; height: 100vh; will-change: transform; }
-.horizontal-slide {
-  min-width: 100vw; height: 100vh;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 32px; padding: 60px 40px; position: relative;
-}
-.h-dots {
-  position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
-  display: flex; gap: 10px; z-index: 20;
-}
-.h-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: transparent; transition: all 0.3s;
-}
-.h-dot.active { background: #C8541C; border-color: #C8541C; transform: scale(1.3); }
-
-/* ── COMPONENTES ── */
-.ph-title {
-  color: rgba(255,255,255,0.7);
-  font-size: clamp(16px,2.5vw,28px);
-  letter-spacing: 2px; text-transform: uppercase;
-  text-align: center; max-width: 700px;
-  font-weight: 300;
-}
-.ph-title strong { color: #C8541C; font-weight: 700; }
-.ph-text {
-  color: rgba(255,255,255,0.25);
-  font-size: clamp(12px,1.2vw,15px);
-  letter-spacing: 1px; text-align: center;
-  max-width: 500px; line-height: 1.6;
-}
-
-.foto-thiago {
-  width: 200px; height: 200px;
-  border-radius: 50%;
-  border: 2px solid rgba(200,84,28,0.2);
-  object-fit: cover;
-  box-shadow: 0 0 40px rgba(200,84,28,0.08);
-}
-
-.card-row {
-  display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;
-}
-.ph-card {
-  border: 1px solid rgba(255,255,255,0.06);
-  background: rgba(1,1,2,0.5);
-  backdrop-filter: blur(8px);
-  width: 220px; min-height: 180px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 12px; padding: 28px 20px;
-  text-align: center; font-size: 11px;
-  color: rgba(255,255,255,0.3);
-  border-radius: 12px;
-  transition: all 0.3s;
-}
-.ph-card:hover {
-  border-color: rgba(200,84,28,0.2);
-  background: rgba(200,84,28,0.03);
-}
-.ph-card .icon-ph {
-  width: 36px; height: 36px;
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 8px;
-  background: rgba(200,84,28,0.05);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-}
-
-.case-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px; max-width: 700px; width: 100%;
-}
-.case-card {
-  border: 1px solid rgba(255,255,255,0.06);
-  background: rgba(1,1,2,0.5);
-  backdrop-filter: blur(8px);
-  padding: 32px 20px; border-radius: 12px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 8px; text-align: center;
-  font-size: 11px; color: rgba(255,255,255,0.3);
-  min-height: 120px;
-  transition: all 0.3s;
-}
-.case-card:hover { border-color: rgba(200,84,28,0.2); }
-.case-card strong { color: rgba(255,255,255,0.5); font-weight: 600; }
-
-.btn-launch {
-  padding: 16px 40px;
-  font-family: inherit; font-size: 14px;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: #C8541C; background: transparent;
-  border: 1px solid rgba(200,84,28,0.3);
-  cursor: pointer; transition: all 0.3s;
-  position: relative; border-radius: 8px;
-}
-.btn-launch:hover {
-  background: rgba(200,84,28,0.1);
-  border-color: #C8541C;
-  box-shadow: 0 0 30px rgba(200,84,28,0.1);
-}
-
-/* ── MODAL ── */
-.modal-overlay {
-  position: fixed; top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.8);
-  z-index: 2000; display: none;
-  align-items: center; justify-content: center;
-  backdrop-filter: blur(4px);
-}
-.modal-overlay.open { display: flex; }
-.modal-box {
-  background: rgba(1,1,2,0.95);
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 48px 40px; max-width: 400px; width: 90%;
-  display: flex; flex-direction: column;
-  align-items: center; gap: 20px; position: relative;
-  border-radius: 16px;
-}
-.modal-close {
-  position: absolute; top: 12px; right: 16px;
-  background: none; border: none;
-  color: rgba(255,255,255,0.2); font-size: 20px; cursor: pointer;
-}
-.form-field {
-  width: 100%;
-  border: 1px solid rgba(255,255,255,0.06);
-  background: rgba(255,255,255,0.02);
-  padding: 14px 16px; border-radius: 8px;
-  color: rgba(255,255,255,0.5);
-  font-family: inherit; font-size: 13px;
-  outline: none; transition: border 0.3s;
-}
-.form-field:focus { border-color: rgba(200,84,28,0.3); }
-.form-field::placeholder { color: rgba(255,255,255,0.1); }
-.form-btn {
-  width: 100%; padding: 16px; border-radius: 8px;
-  font-family: inherit; font-size: 13px;
-  letter-spacing: 2px; text-transform: uppercase;
-  color: #C8541C; background: transparent;
-  border: 1px solid rgba(200,84,28,0.3);
-  cursor: pointer; transition: all 0.3s;
-}
-.form-btn:hover { background: rgba(200,84,28,0.1); border-color: #C8541C; }
-
-/* ── FOOTER ── */
-.footer {
-  min-height: 40vh; gap: 24px;
-}
-.footer-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
-.footer-link {
-  border: 1px solid rgba(255,255,255,0.04);
-  padding: 8px 16px; border-radius: 6px;
-  color: rgba(255,255,255,0.15);
-  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
-  text-decoration: none; transition: all 0.3s;
-}
-.footer-link:hover { color: #C8541C; border-color: rgba(200,84,28,0.2); }
-.footer-tagline { font-size: 10px; letter-spacing: 2px; color: rgba(255,255,255,0.06); }
-
-@media (max-width: 768px) {
-  .section, .subsection, .horizontal-slide { padding: 60px 20px; }
-  #sec-1 { align-items: flex-start; padding: 92px 28px 60px; justify-content: flex-end; min-height: 100svh; }
-  .hero-title { letter-spacing: -2px; font-size: clamp(42px, 14vw, 72px); }
-  .hero-lead { max-width: 340px; }
-  nav { top: 16px; right: 18px; }
-  .case-grid { grid-template-columns: 1fr; }
-  .card-row { gap: 16px; }
-  .ph-card { width: 100%; max-width: 280px; }
-}
+@media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } .chapter-inner { transition:none; } }
 </style>
 </head>
 <body>
-
 <video id="bg-video" muted playsinline preload="auto" poster="hero-poster.jpg" aria-hidden="true">
   <source src="assets-video-cover.mp4" type="video/mp4">
 </video>
-<div id="overlay"></div>
-<div id="progress-bar"></div>
-<nav>TM<span>.</span></nav>
-
-<!-- ── SEÇÃO 1 — HERO ── -->
-<section class="section" id="sec-1">
-  <span class="section-label">[HERO / 001]</span>
-  <div class="hero-kicker">TM · Sempre tecnologia</div>
-  <div class="hero-rule"></div>
-  <h1 class="hero-title">Seu processo.<br><strong>Em órbita.</strong></h1>
-  <p class="hero-lead">Automação predial inteligente para transformar trabalho repetitivo em operação que simplesmente funciona.</p>
-  <div class="hero-meta">Sistemas · Dados · Resultado</div>
-  <div class="scroll-indicator" onclick="scrollToSection('sec-2')">↓ explorar a transformação</div>
-</section>
-
-<!-- ── SEÇÃO 2 — CRISE + METAMORFOSE ── -->
-<section class="section section-tall" id="sec-2">
-  <div class="subsection" id="crise">
-    <span class="section-label">[O GIRO]</span>
-    <div style="width:200px;height:200px;border-radius:50%;border:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(255,255,255,0.1);">360°</div>
-    <div class="ph-text" style="max-width:500px;">"O mercado me virou de cabeça pra baixo. Foi aí que entendi o que realmente importa."</div>
-    <div class="scroll-indicator" onclick="document.getElementById('metamorfose').scrollIntoView({behavior:'smooth'})">⬇ CONTINUE</div>
-  </div>
-  <div class="subsection" id="metamorfose">
-    <span class="section-label">[TERNO → ARMADURA]</span>
-    <div style="display:flex;gap:40px;align-items:center;flex-wrap:wrap;justify-content:center;">
-      <div style="width:120px;height:120px;border-radius:50%;border:1px solid rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;font-size:32px;">🧑</div>
-      <span style="color:rgba(255,255,255,0.05);font-size:20px;">→</span>
-      <div style="width:120px;height:120px;border-radius:50%;border:2px solid rgba(200,84,28,0.2);display:flex;align-items:center;justify-content:center;font-size:32px;">🛡️</div>
+<div id="tone"></div>
+<div id="progress"></div>
+<header class="topbar"><div class="brand">TM<i>.</i></div><div class="status">Sempre tecnologia</div></header>
+<main class="story">
+  <section class="chapter active" data-time-start="0" data-time-end="1.2">
+    <div class="chapter-inner">
+      <div class="eyebrow">Sistema operacional humano</div>
+      <h1>Seu processo.<br><strong>Em órbita.</strong></h1>
+      <p class="lead">Automação predial inteligente para transformar trabalho repetitivo em operação que simplesmente funciona.</p>
+      <p class="micro">TM · Dados · Operação · Resultado</p>
     </div>
-    <div class="ph-text" style="max-width:500px;">"Da crise surgiu a TM. O que era fraqueza virou armadura."</div>
-    <div class="scroll-indicator" onclick="scrollToSection('h-container-3')">➡ HORIZONTAL</div>
-  </div>
-</section>
-
-<!-- ── SEÇÃO 3 — PILARES ── -->
-<div class="sticky-container" id="h-container-3">
-<div class="sticky-inner">
-<section class="horizontal-section v-initial" id="sec-3">
-  <div class="horizontal-track" id="h-track">
-    <div class="horizontal-slide">
-      <span class="section-label">[PILAR 1]</span>
-      <div class="ph-title" style="max-width:500px;">O que eu <strong>faço</strong></div>
-      <div class="ph-card">
-        <div class="icon-ph">⚡</div>
-        <span>Automação de Vistorias<br>Relatório que levava 2h<br>vira 2 minutos</span>
-      </div>
+    <div class="scroll-cue"><span></span> role para iniciar</div>
+  </section>
+  <section class="chapter right" data-time-start="1.2" data-time-end="3">
+    <div class="chapter-inner">
+      <div class="eyebrow">01 · O ponto de ruptura</div>
+      <h2>Quando tudo<br><strong>vira fluxo.</strong></h2>
+      <p class="lead">Processos espalhados, informações soltas e tempo consumido pelo que deveria ser automático.</p>
+      <p class="chapter-note">A transformação começa quando o caos deixa de ser rotina.</p>
     </div>
-    <div class="horizontal-slide">
-      <span class="section-label">[PILAR 2]</span>
-      <div class="ph-card">
-        <div class="icon-ph">📋</div>
-        <span>Gestão de OS<br>Gerenciador de preventivas<br>nunca mais vence</span>
-      </div>
+  </section>
+  <section class="chapter" data-time-start="3" data-time-end="6.8">
+    <div class="chapter-inner">
+      <div class="eyebrow">02 · A transformação</div>
+      <h2>Do manual<br>ao <strong>inteligente.</strong></h2>
+      <p class="lead">Tecnologia aplicada ao trabalho real: vistoria, manutenção, comunicação e gestão em uma única lógica.</p>
+      <p class="chapter-note">Menos repetição. Mais visão. Uma operação preparada para agir.</p>
     </div>
-    <div class="horizontal-slide">
-      <span class="section-label">[PILAR 3]</span>
-      <div class="ph-card">
-        <div class="icon-ph">📱</div>
-        <span>Comunicação em Campo<br>Zap Inspeção — cliente manda<br>foto, bot gera documento</span>
-      </div>
+  </section>
+  <section class="chapter right" data-time-start="6.8" data-time-end="8.4">
+    <div class="chapter-inner">
+      <div class="eyebrow">03 · O novo operador</div>
+      <h2>Dados que<br><strong>se movem.</strong></h2>
+      <p class="lead">A informação chega no lugar certo, no momento certo, para que sua equipe faça o que realmente importa.</p>
     </div>
-    <div class="horizontal-slide">
-      <span class="section-label">[PILAR 4]</span>
-      <div class="ph-card">
-        <div class="icon-ph">📊</div>
-        <span>Inteligência Gerencial<br>Dashboard automático<br>dados sem trabalho manual</span>
-      </div>
-      <div class="scroll-indicator" onclick="scrollToSection('sec-4')">⬇ CASES</div>
+  </section>
+  <section class="chapter center" data-time-start="8.4" data-time-end="10">
+    <div class="chapter-inner">
+      <div class="eyebrow">04 · Sempre tecnologia</div>
+      <h2>O futuro<br><strong>já opera.</strong></h2>
+      <p class="lead">A TM transforma processos em sistemas vivos — claros, conectados e prontos para decolar.</p>
+      <p class="micro">TM Sempre Tecnologia</p>
     </div>
+  </section>
+</main>
+<footer class="footer">
+  <div class="chapter-inner">
+    <div class="footer-signature"><strong>TM.</strong>Sempre tecnologia</div>
+    <div class="footer-copy">Uma nova forma de operar.</div>
   </div>
-  <div class="h-dots" id="h-dots">
-    <span class="h-dot active"></span>
-    <span class="h-dot"></span>
-    <span class="h-dot"></span>
-    <span class="h-dot"></span>
-  </div>
-</section>
-</div>
-</div>
-
-<!-- ── SEÇÃO 4 — CASES ── -->
-<section class="section" id="sec-4">
-  <span class="section-label">[CASES]</span>
-  <div class="ph-title" style="max-width:500px;">Quem já <strong>decolou</strong></div>
-  <div class="case-grid">
-    <div class="case-card"><strong>🏛️ Banco do Brasil</strong>Manutenção predial</div>
-    <div class="case-card"><strong>🏦 Caixa Econômica</strong>Automação de vistorias</div>
-    <div class="case-card"><strong>🔧 MAFFENG</strong>Site institucional + serviços</div>
-  </div>
-  <div class="scroll-indicator" onclick="scrollToSection('sec-5')">⬇ DESÇA</div>
-</section>
-
-<!-- ── SEÇÃO 5 — CTA ── -->
-<section class="section" id="sec-5">
-  <span class="section-label">[PRÉ-LANÇAMENTO]</span>
-  <div class="ph-title" style="max-width:500px;">O futuro <strong>te espera</strong></div>
-  <div class="ph-text" style="max-width:400px;">Falta só um passo. Sua empresa também pode voar.</div>
-  <div class="scroll-indicator" onclick="scrollToSection('h-container-6')">➡ FINAL</div>
-</section>
-
-<!-- ── SEÇÃO 6 — LANÇAMENTO ── -->
-<div class="sticky-container" id="h-container-6">
-<div class="sticky-inner">
-<section class="horizontal-section v-initial" id="sec-6">
-  <div class="horizontal-track" id="h-track-6">
-    <div class="horizontal-slide">
-      <span class="section-label">[PREPARAÇÃO]</span>
-      <div style="width:250px;height:250px;border-radius:50%;border:2px solid rgba(200,84,28,0.15);display:flex;align-items:center;justify-content:center;font-size:48px;">🛡️</div>
-      <div class="ph-text" style="max-width:500px;">"Pronto para decolar seu negócio com a TM?"</div>
-    </div>
-    <div class="horizontal-slide">
-      <span class="section-label">[LANÇAMENTO]</span>
-      <div class="ph-title" style="max-width:300px;"><strong>É AGORA.</strong></div>
-      <div class="ph-text" style="max-width:400px;">Sua empresa também pode voar alto.</div>
-      <button class="btn-launch" id="btn-decolar">🚀 QUERO DECOLAR</button>
-    </div>
-  </div>
-  <div class="h-dots" id="h-dots-6">
-    <span class="h-dot active"></span>
-    <span class="h-dot"></span>
-  </div>
-</section>
-</div>
-</div>
-
-<!-- ── FOOTER ── -->
-<section class="footer">
-  <span class="section-label">[ÓRBITA]</span>
-  <div class="footer-links">
-    <a href="#" class="footer-link">INSTAGRAM</a>
-    <a href="#" class="footer-link">LINKEDIN</a>
-    <a href="#" class="footer-link">GITHUB</a>
-    <a href="#" class="footer-link">WHATS</a>
-  </div>
-  <div class="footer-tagline">"TM Sempre Tecnologia — Orbiting the Future"</div>
-</section>
-
-<!-- ── MODAL ── -->
-<div class="modal-overlay" id="modal-captura">
-  <div class="modal-box">
-    <button class="modal-close" id="modal-close-btn">✕</button>
-    <div class="ph-title" style="border:none;padding:0;font-size:18px;">🚀 BORA DECOLAR?</div>
-    <div class="ph-text" style="border:none;padding:0;">"Deixa seu contato que eu te mostro como."</div>
-    <input class="form-field" type="text" placeholder="👤 Seu nome">
-    <input class="form-field" type="email" placeholder="📧 Seu melhor email">
-    <input class="form-field" type="tel" placeholder="📱 Seu WhatsApp">
-    <button class="form-btn">🚀 QUERO DECOLAR</button>
-  </div>
-</div>
-
+</footer>
 <script>
-// ── VÍDEO DE FUNDO CONTROLADO PELO SCROLL ──
-const bgVideo = document.getElementById('bg-video');
+const video = document.getElementById('bg-video');
+const progressBar = document.getElementById('progress');
+const chapters = [...document.querySelectorAll('.chapter')];
+let duration = 10;
+let raf = 0;
 let videoReady = false;
-let targetTime = 0;
-let rafPending = false;
 
-function markVideoReady() {
-  videoReady = Number.isFinite(bgVideo.duration) && bgVideo.duration > 0;
-  updateVideoFromScroll();
+function syncVideo() {
+  const maxScroll = document.documentElement.scrollHeight - innerHeight;
+  const progress = maxScroll > 0 ? Math.max(0, Math.min(1, scrollY / maxScroll)) : 0;
+  progressBar.style.width = `${progress * 100}%`;
+  const nextTime = progress * duration;
+  if (videoReady && Math.abs(video.currentTime - nextTime) > 0.018) video.currentTime = nextTime;
+  raf = 0;
 }
-bgVideo.addEventListener('loadedmetadata', markVideoReady, { once: true });
-if (bgVideo.readyState >= 1) markVideoReady();
+function requestSync() { if (!raf) raf = requestAnimationFrame(syncVideo); }
+function markReady() { duration = Number.isFinite(video.duration) && video.duration > 0 ? video.duration : 10; videoReady = true; requestSync(); }
+video.addEventListener('loadedmetadata', markReady, { once:true });
+if (video.readyState >= 1) markReady();
+addEventListener('scroll', requestSync, { passive:true });
+addEventListener('resize', requestSync, { passive:true });
 
-function updateVideoFromScroll() {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? Math.max(0, Math.min(1, scrollTop / docHeight)) : 0;
-  const duration = Number.isFinite(bgVideo.duration) ? bgVideo.duration : 0;
-  targetTime = duration > 0 ? progress * duration : 0;
-  if (!rafPending) {
-    rafPending = true;
-    requestAnimationFrame(() => {
-      if (videoReady && Math.abs(bgVideo.currentTime - targetTime) > 0.015) bgVideo.currentTime = targetTime;
-      rafPending = false;
-    });
-  }
-}
-
-window.addEventListener('scroll', updateVideoFromScroll, { passive: true });
-window.addEventListener('resize', updateVideoFromScroll, { passive: true });
-setTimeout(updateVideoFromScroll, 250);
-
-// ── PROGRESS BAR ──
-const progressBar = document.getElementById('progress-bar');
-function updateProgress() {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const pct = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
-  progressBar.style.width = pct + '%';
-}
-window.addEventListener('scroll', updateProgress);
-updateProgress();
-
-// ── INTERSECTION OBSERVER ──
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-document.querySelectorAll('.section, .subsection, .footer').forEach(el => observer.observe(el));
-
-// ── STICKY HORIZONTAL ──
-function setupHorizontal(containerId, trackId, dotsId) {
-  const container = document.getElementById(containerId);
-  const track = document.getElementById(trackId);
-  const dots = document.querySelectorAll(`#${dotsId} .h-dot`);
-  const slides = track.querySelectorAll('.horizontal-slide');
-  const total = slides.length;
-
-  function update() {
-    const rect = container.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const progress = (rect.top * -1) / (container.offsetHeight - window.innerHeight);
-    const clamped = Math.max(0, Math.min(1, progress));
-    const maxOffset = (total - 1) * vw;
-    track.style.transform = `translateX(-${clamped * maxOffset}px)`;
-    const activeIdx = Math.round(clamped * (total - 1));
-    dots.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
-  }
-  window.addEventListener('scroll', update);
-  update();
-}
-
-setupHorizontal('h-container-3', 'h-track', 'h-dots');
-setupHorizontal('h-container-6', 'h-track-6', 'h-dots-6');
-
-// ── SCROLL TO ──
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) { const top = window.scrollY + el.getBoundingClientRect().top; window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' }); }
-}
-
-// ── MODAL ──
-const btnDecolar = document.getElementById('btn-decolar');
-const modal = document.getElementById('modal-captura');
-
-btnDecolar.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  setTimeout(() => { modal.classList.add('open'); document.body.style.overflow = 'hidden'; }, 700);
-});
-
-document.getElementById('modal-close-btn').addEventListener('click', () => {
-  modal.classList.remove('open'); document.body.style.overflow = '';
-});
-modal.addEventListener('click', (e) => { if (e.target === modal) { modal.classList.remove('open'); document.body.style.overflow = ''; } });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { modal.classList.remove('open'); document.body.style.overflow = ''; } });
+const observer = new IntersectionObserver(entries => entries.forEach(entry => entry.target.classList.toggle('active', entry.isIntersecting)), { threshold:.42 });
+chapters.forEach(chapter => observer.observe(chapter));
+requestSync();
 </script>
 </body>
 </html>
