@@ -15,14 +15,17 @@ body {
 }
 
 /* ── CANVAS BACKGROUND (TELA INTEIRA) ── */
-#bg-canvas {
+#bg-video {
   position: fixed;
-  top: 0; left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   z-index: 0;
   pointer-events: none;
   object-fit: cover;
+  object-position: center;
+  background: #010205 url('hero-poster.jpg') center / cover no-repeat;
+  filter: saturate(0.9) contrast(1.04);
 }
 
 /* ── OVERLAY ESCURO PRA LEGIBILIDADE ── */
@@ -326,7 +329,9 @@ nav span { color: #C8541C; }
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<video id="bg-video" muted playsinline preload="auto" poster="hero-poster.jpg" aria-hidden="true">
+  <source src="assets-video-cover.mp4" type="video/mp4">
+</video>
 <div id="overlay"></div>
 <div id="progress-bar"></div>
 <nav>TM<span>.</span></nav>
@@ -479,80 +484,37 @@ nav span { color: #C8541C; }
 </div>
 
 <script>
-// ── CANVAS BACKGROUND ANIMATION (181 FRAMES) ──
-const canvas = document.getElementById('bg-canvas');
-const ctx = canvas.getContext('2d');
-let W, H;
+// ── VÍDEO DE FUNDO CONTROLADO PELO SCROLL ──
+const bgVideo = document.getElementById('bg-video');
+let videoReady = false;
+let targetTime = 0;
+let rafPending = false;
 
-let currentFrame = 0;
-const FRAME_COUNT = 181;
-const FRAMES_PATH = 'frames/';
-const images = new Array(FRAME_COUNT);
-let loadedCount = 0;
-let ready = false;
-
-function resizeCanvas() {
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  W = window.innerWidth;
-  H = window.innerHeight;
-  canvas.width = Math.round(W * dpr);
-  canvas.height = Math.round(H * dpr);
-  canvas.style.width = W + 'px';
-  canvas.style.height = H + 'px';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  render(currentFrame);
+function markVideoReady() {
+  videoReady = Number.isFinite(bgVideo.duration) && bgVideo.duration > 0;
+  updateVideoFromScroll();
 }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas, { passive: true });
+bgVideo.addEventListener('loadedmetadata', markVideoReady, { once: true });
+if (bgVideo.readyState >= 1) markVideoReady();
 
-function render(frameIdx) {
-  const img = images[frameIdx];
-  if (!img || !img.complete || !img.naturalWidth) return;
-  const hRatio = W / img.naturalWidth;
-  const vRatio = H / img.naturalHeight;
-  const ratio = Math.max(hRatio, vRatio);
-  const cx = (W - img.naturalWidth * ratio) / 2;
-  const cy = (H - img.naturalHeight * ratio) / 2;
-  ctx.clearRect(0, 0, W, H);
-  ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, cx, cy, img.naturalWidth * ratio, img.naturalHeight * ratio);
-}
-
-function loadFrame(index) {
-  if (index >= FRAME_COUNT || images[index]) return;
-  const img = new Image();
-  img.decoding = 'async';
-  img.src = FRAMES_PATH + 'ezgif-frame-' + String(index + 1).padStart(3, '0') + '.jpg';
-  img.onload = () => {
-    loadedCount++;
-    if (!ready) { currentFrame = 0; render(0); ready = true; }
-    if (index === currentFrame) render(currentFrame);
-  };
-  images[index] = img;
-}
-
-// O primeiro frame entra imediatamente; os demais são carregados em pequenos lotes.
-loadFrame(0);
-let nextFrameToLoad = 1;
-const preloadBatch = () => {
-  for (let i = 0; i < 12 && nextFrameToLoad < FRAME_COUNT; i++, nextFrameToLoad++) loadFrame(nextFrameToLoad);
-  if (nextFrameToLoad < FRAME_COUNT) setTimeout(preloadBatch, 80);
-};
-preloadBatch();
-
-// Mapeia o scroll do documento inteiro para os frames
-function updateFrame() {
+function updateVideoFromScroll() {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = docHeight > 0 ? scrollTop / docHeight : 0;
-  const frame = Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(progress * (FRAME_COUNT - 1))));
-  if (frame !== currentFrame) {
-    currentFrame = frame;
-    loadFrame(frame);
-    render(currentFrame);
+  const progress = docHeight > 0 ? Math.max(0, Math.min(1, scrollTop / docHeight)) : 0;
+  const duration = Number.isFinite(bgVideo.duration) ? bgVideo.duration : 0;
+  targetTime = duration > 0 ? progress * duration : 0;
+  if (!rafPending) {
+    rafPending = true;
+    requestAnimationFrame(() => {
+      if (videoReady && Math.abs(bgVideo.currentTime - targetTime) > 0.015) bgVideo.currentTime = targetTime;
+      rafPending = false;
+    });
   }
 }
 
-window.addEventListener('scroll', updateFrame);
+window.addEventListener('scroll', updateVideoFromScroll, { passive: true });
+window.addEventListener('resize', updateVideoFromScroll, { passive: true });
+setTimeout(updateVideoFromScroll, 250);
 
 // ── PROGRESS BAR ──
 const progressBar = document.getElementById('progress-bar');
