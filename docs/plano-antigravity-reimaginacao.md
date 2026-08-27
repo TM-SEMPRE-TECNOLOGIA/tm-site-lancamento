@@ -1,0 +1,46 @@
+# Plano de execução — Reimaginação do iframe TM
+
+## Estado atual
+
+A implementação está isolada na branch `feature/reimaginar-iframe-hero`, baseada na `master`. O commit local de referência é `5f809c4` (`feat: reimagina hero cinematografico do iframe`). A master não foi modificada.
+
+## O que foi implementado
+
+O hero foi reorganizado para usar uma composição editorial lateral. O texto agora ocupa o terço esquerdo, enquanto o personagem permanece visualmente preservado no centro-direita. O título foi substituído por “Seu processo. Em órbita.”, acompanhado da proposta de valor, metadados de serviço e indicador de exploração.
+
+O overlay uniforme foi substituído por uma composição de gradientes horizontal, vertical e radial. Isso aumenta o contraste onde o texto aparece sem apagar a fotografia cinematográfica. A navegação superior também recebeu tratamento de vidro mais discreto.
+
+A animação foi corrigida para contemplar os 181 frames, em vez de parar no frame 180. O canvas agora considera device pixel ratio, redesenha o frame durante o resize e carrega as imagens em lotes progressivos. O frame solicitado pelo scroll é carregado sob demanda quando necessário.
+
+## Arquivos
+
+| Arquivo | Função |
+| --- | --- |
+| `index.html` | Hero, overlay, responsividade e lógica do canvas revisados. |
+| `.github/workflows/deploy-pages.yml` | Workflow de publicação no GitHub Pages. |
+| `.github/issue-reimaginacao-iframe.md` | Checklist do escopo. |
+
+## Critérios de aceite
+
+A revisão deve confirmar que o texto não cobre o rosto do personagem em desktop, que o título permanece legível em mobile, que o scroll percorre do primeiro ao último frame, que o resize não deixa o canvas vazio e que a página continua funcionando como documento estático sem dependências de build.
+
+Também é importante verificar a política de autoplay/carregamento em dispositivos móveis e confirmar que o volume total dos assets é aceitável para o ambiente de publicação.
+
+## Como visualizar
+
+Para uma prévia local, execute `python3 -m http.server 4173` na raiz do projeto e abra `http://localhost:4173`. No ambiente desta execução, a prévia temporária foi disponibilizada em `https://4173-iffa5gmbeu06ucu9o4loz-f42a892c.us4.manus.computer`.
+
+## Como publicar
+
+O workflow está preparado para publicar a branch `master` no GitHub Pages. Depois de enviar a branch de feature ao GitHub, abra um Pull Request para `master`. Após o merge, a Action `Deploy static site to GitHub Pages` fará o upload do conteúdo estático.
+
+No repositório, habilite **Settings → Pages → Source: GitHub Actions**. O endereço final será exibido no ambiente `github-pages` da Action. Como esta sessão não possui autenticação de escrita no GitHub, o push da branch não foi executado; é necessário autenticar o GitHub CLI ou fazer o push manualmente.
+
+## Comandos de continuação
+
+```bash
+git switch feature/reimaginar-iframe-hero
+git push -u origin feature/reimaginar-iframe-hero
+```
+
+Depois, crie o Pull Request e faça o merge somente após a revisão visual. Para delegar ao Antigravity 2.0, forneça este arquivo junto com o commit `5f809c4` e peça que preserve a branch `master`, valide o hero em desktop/mobile e não substitua os 181 frames sem aprovação.
