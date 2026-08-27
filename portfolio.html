@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070b">
+<title>Portfólio Editorial — TM Sempre Tecnologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #d96526;
+  --orange-glow: rgba(217, 101, 38, 0.65);
+  --ink: #05070b;
+  --surface: #0a0d14;
+  --line: rgba(255, 255, 255, 0.12);
+  --muted: rgba(255, 255, 255, 0.60);
+  --faint: rgba(255, 255, 255, 0.35);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--ink); scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+/* ── NAVEGAÇÃO ── */
+.topbar {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px clamp(24px, 6vw, 88px);
+  background: rgba(5, 7, 11, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+.brand {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+.brand:hover { opacity: 0.85; }
+.brand i { color: var(--orange); font-style: normal; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 32px);
+}
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+  padding: 4px 0;
+}
+.nav-link:hover, .nav-link.active {
+  color: #fff;
+}
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
+}
+
+/* ── CABEÇALHO EDITORIAL ── */
+.portfolio-header {
+  padding: 160px clamp(24px, 8vw, 120px) 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.eyebrow::before {
+  content: "";
+  width: 36px;
+  height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange-glow);
+}
+h1 {
+  font-size: clamp(38px, 6vw, 76px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+h1 strong {
+  color: var(--orange);
+  font-weight: 800;
+}
+.header-lead {
+  color: var(--muted);
+  font-size: clamp(15px, 1.4vw, 18px);
+  max-width: 640px;
+  line-height: 1.7;
+}
+
+/* ── ESTUDOS DE CASO EDITORIAIS (SEM CARDS OU GRIDS COMERCIAIS) ── */
+.cases-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 8vw, 120px) 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 140px;
+}
+
+.case-study {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  border-top: 1px solid var(--line);
+  padding-top: 50px;
+  position: relative;
+}
+
+.case-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.case-index {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.case-title {
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+.case-title strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.case-media {
+  width: 100%;
+  min-height: 380px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.case-media-art {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  background: radial-gradient(circle at 70% 30%, rgba(217, 101, 38, 0.12) 0%, transparent 60%), linear-gradient(180deg, rgba(10, 13, 20, 0.6), rgba(5, 7, 11, 0.95));
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+}
+.media-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(217, 101, 38, 0.3);
+  padding: 4px 10px;
+  display: inline-block;
+  align-self: flex-start;
+  border-radius: 2px;
+}
+.media-caption {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.case-narrative {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 36px;
+  margin-top: 10px;
+}
+.narrative-block h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+.narrative-block p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.narrative-block.highlight {
+  border-left: 2px solid var(--orange);
+  padding-left: 20px;
+}
+.narrative-block.highlight p {
+  color: #fff;
+  font-size: 15px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 60px clamp(24px, 8vw, 120px);
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+.footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer a:hover { color: #fff; }
+.footer-copy { color: var(--faint); }
+
+@media (max-width: 768px) {
+  .cases-container { gap: 90px; }
+  .case-media-art { padding: 24px; min-height: 280px; }
+  .case-narrative { grid-template-columns: 1fr; gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<header class="topbar">
+  <a href="index.html" class="brand">TM<i>.</i></a>
+  <nav class="nav-links" aria-label="Navegação Principal">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="portfolio.html" class="nav-link active">Portfólio</a>
+    <a href="contato.html" class="nav-link">Contato</a>
+  </nav>
+</header>
+
+<!-- Header Editorial -->
+<section class="portfolio-header">
+  <div class="eyebrow">Estudos de Caso & Arquiteturas</div>
+  <h1>Engenharia de soluções<br>e <strong>sistemas aplicados.</strong></h1>
+  <p class="header-lead">Casos editoriais que demonstram a evolução técnica: do ganho de 85% em documentação técnica à concepção de agentes autônomos e sistemas web completos.</p>
+</section>
+
+<!-- Conteúdo Editorial Vertical -->
+<main class="cases-container">
+
+  <!-- CASO 01 -->
+  <article class="case-study">
+    <div class="case-meta">
+      <span class="case-index">01 · Esteira de Documentação</span>
+      <span>Automação & Processamento</span>
+    </div>
+
+    <h2 class="case-title">Aceleração de <strong>Relatórios Técnicos e Laudos</strong> em 85%</h2>
+
+    <div class="case-media">
+      <div class="case-media-art">
+        <span class="media-tag">Python · FastAPI · Compilação Assíncrona</span>
+        <div class="media-caption">Fluxo de extração, estruturação de dados e geração automatizada de relatórios.</div>
+      </div>
+    </div>
+
+    <div class="case-narrative">
+      <div class="narrative-block">
+        <h3>Contexto</h3>
+        <p>Operações de múltiplos contratos institucionais com geração contínua de relatórios técnicos complexos e dados de campo dispersos.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Problema</h3>
+        <p>Centenas de horas consumidas por semana na coleta manual, formatação de laudos e alto risco de inconsistência nas entregas.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Intervenção</h3>
+        <p>Arquitetura de sistema próprio que recebe os dados de campo, valida as variáveis de negócio e gera automaticamente os documentos oficiais.</p>
+      </div>
+      <div class="narrative-block highlight">
+        <h3>Resultado</h3>
+        <p>Redução comprovada de 85% no tempo de entrega, padronização rigorosa e atendimento estrito a SLAs contratuais.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- CASO 02 -->
+  <article class="case-study">
+    <div class="case-meta">
+      <span class="case-index">02 · Inteligência e Decisão</span>
+      <span>Engenharia de Dados & Dashboards</span>
+    </div>
+
+    <h2 class="case-title">Centralização Operacional e <strong>Visão Gerencial em Tempo Real</strong></h2>
+
+    <div class="case-media">
+      <div class="case-media-art">
+        <span class="media-tag">Pipelines de Dados · Next.js · Visualização</span>
+        <div class="media-caption">Transformação de registros operacionais brutos em inteligência visual e acionável.</div>
+      </div>
+    </div>
+
+    <div class="case-narrative">
+      <div class="narrative-block">
+        <h3>Contexto</h3>
+        <p>Diretoria e equipes técnicas necessitavam de visibilidade clara sobre o andamento das demandas e gargalos de produtividade.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Problema</h3>
+        <p>Informações fragmentadas em planilhas isoladas, impedindo tomadas de decisão rápidas e análises preventivas.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Intervenção</h3>
+        <p>Estruturação de pipelines automatizados que consolidam indicadores, status e projeções em interfaces dedicadas e limpas.</p>
+      </div>
+      <div class="narrative-block highlight">
+        <h3>Resultado</h3>
+        <p>Eliminação de horas de reuniões de alinhamento e autonomia total para auditoria e acompanhamento estratégico.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- CASO 03 -->
+  <article class="case-study">
+    <div class="case-meta">
+      <span class="case-index">03 · Agentes & Autonomia</span>
+      <span>Automação Multiagente & Backoffice</span>
+    </div>
+
+    <h2 class="case-title">Ecossistema de <strong>Agentes Autônomos de IA</strong></h2>
+
+    <div class="case-media">
+      <div class="case-media-art">
+        <span class="media-tag">IA Autônoma · Integração API · Processamento</span>
+        <div class="media-caption">Agentes especializados coordenados para execução de rotinas, orçamentos e triagem.</div>
+      </div>
+    </div>
+
+    <div class="case-narrative">
+      <div class="narrative-block">
+        <h3>Contexto</h3>
+        <p>Volume crescente de demandas operacionais, atendimento inicial e monitoramento contínuo de tarefas diárias.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Problema</h3>
+        <p>Sobrecarga do operador com triagem repetitiva, consultas frequentes e validação preliminar de solicitações.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Intervenção</h3>
+        <p>Desenvolvimento e orquestração de perfis especializados de IA configurados com regras de negócio para execução em segundo plano.</p>
+      </div>
+      <div class="narrative-block highlight">
+        <h3>Resultado</h3>
+        <p>Operação contínua 24/7 com resposta instantânea e encaminhamento preciso para resolução de alto nível.</p>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-copy">TM Sempre Tecnologia · Thiago Nascimento Barbosa</div>
+  <a href="contato.html">Prosseguir para Contato →</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070b">
+<title>Contato — TM Sempre Tecnologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #d96526;
+  --orange-glow: rgba(217, 101, 38, 0.65);
+  --ink: #05070b;
+  --surface: #0a0d14;
+  --line: rgba(255, 255, 255, 0.12);
+  --muted: rgba(255, 255, 255, 0.58);
+  --faint: rgba(255, 255, 255, 0.32);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--ink); scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── NAVEGAÇÃO ── */
+.topbar {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px clamp(24px, 6vw, 88px);
+  background: rgba(5, 7, 11, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+.brand {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+.brand:hover { opacity: 0.85; }
+.brand i { color: var(--orange); font-style: normal; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 32px);
+}
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+  padding: 4px 0;
+}
+.nav-link:hover, .nav-link.active {
+  color: #fff;
+}
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
+}
+
+/* ── CONTEÚDO EDITORIAL SILENCIOSO ── */
+.contact-container {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 180px clamp(24px, 8vw, 120px) 100px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.eyebrow::before {
+  content: "";
+  width: 36px;
+  height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange-glow);
+}
+
+h1 {
+  font-size: clamp(38px, 6vw, 72px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 30px;
+}
+h1 strong {
+  color: var(--orange);
+  font-weight: 800;
+}
+
+.statement {
+  color: var(--muted);
+  font-size: clamp(15px, 1.4vw, 19px);
+  line-height: 1.7;
+  max-width: 620px;
+  margin-bottom: 60px;
+}
+
+/* ── CANAIS DIRETOS (SEM FORMULÁRIOS COMERCIAIS) ── */
+.channels-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 50px;
+}
+
+.channel-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.channel-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.channel-link {
+  font-size: clamp(14px, 1.3vw, 17px);
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s, transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.channel-link:hover {
+  color: var(--orange);
+  transform: translateX(4px);
+}
+
+.channel-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--faint);
+}
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 40px clamp(24px, 8vw, 120px);
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--faint);
+}
+.footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer a:hover { color: #fff; }
+
+@media (max-width: 600px) {
+  .channel-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<header class="topbar">
+  <a href="index.html" class="brand">TM<i>.</i></a>
+  <nav class="nav-links" aria-label="Navegação Principal">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="portfolio.html" class="nav-link">Portfólio</a>
+    <a href="contato.html" class="nav-link active">Contato</a>
+  </nav>
+</header>
+
+<!-- Conteúdo Direto -->
+<main class="contact-container">
+  <div class="eyebrow">Diálogo & Conexão</div>
+  <h1>Vamos transformar o<br><strong>próximo processo.</strong></h1>
+  <p class="statement">Se você possui uma operação complexa, fluxos com retrabalho ou deseja construir sistemas e produtos digitais que operam com precisão, estes são meus canais diretos.</p>
+
+  <div class="channels-list">
+    <div class="channel-item">
+      <span class="channel-label">E-mail Direto</span>
+      <a href="mailto:thiagonascimento.barbosapro@gmail.com" class="channel-link">
+        thiagonascimento.barbosapro@gmail.com <span>↗</span>
+      </a>
+    </div>
+
+    <div class="channel-item">
+      <span class="channel-label">WhatsApp Corporativo</span>
+      <a href="https://wa.me/5562996046458" target="_blank" rel="noopener noreferrer" class="channel-link">
+        +55 (62) 99604-6458 <span>↗</span>
+      </a>
+    </div>
+
+    <div class="channel-item">
+      <span class="channel-label">Repositórios & Código</span>
+      <a href="https://github.com/TM-SEMPRE-TECNOLOGIA" target="_blank" rel="noopener noreferrer" class="channel-link">
+        github.com/TM-SEMPRE-TECNOLOGIA <span>↗</span>
+      </a>
+    </div>
+
+    <div class="channel-item">
+      <span class="channel-label">Plataforma Pessoal</span>
+      <a href="https://thiagonascimentobarbosapro.com" target="_blank" rel="noopener noreferrer" class="channel-link">
+        thiagonascimentobarbosapro.com <span>↗</span>
+      </a>
+    </div>
+
+    <div class="channel-item">
+      <span class="channel-label">Localização</span>
+      <span class="channel-meta">Goiânia, GO · Brasil</span>
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div>TM Sempre Tecnologia · Thiago Nascimento Barbosa</div>
+  <a href="index.html">← Retornar à Origem</a>
+</footer>
+
+</body>
+</html>
