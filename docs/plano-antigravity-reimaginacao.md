@@ -46,3 +46,9 @@ git push -u origin feature/reimaginar-iframe-hero
 ```
 
 Depois, crie o Pull Request e faça o merge somente após a revisão visual. Para delegar ao Antigravity 2.0, forneça este arquivo junto com o commit `5f809c4` e peça que preserve a branch `master`, valide o hero em desktop/mobile e não substitua os 181 frames sem aprovação.
+
+## Validação da migração para vídeo
+
+A prévia foi validada com o vídeo original carregado diretamente pelo navegador. O arquivo reporta 1.920 × 1.080 px, 24 fps e 10 segundos. No ponto intermediário do documento, o personagem e a montagem da armadura aparecem nítidos, sem a suavidade observada na sequência JPEG reduzida.
+
+O teste de scrubbing confirmou `readyState` 1, duração de 10 segundos e `currentTime` de aproximadamente 1,28 segundo para progresso de scroll de 12,8%, demonstrando que o tempo do vídeo está acompanhando o scroll. O primeiro teste revelou uma condição de corrida da metadata; ela foi corrigida com verificação de `readyState` e novo teste aprovado.
