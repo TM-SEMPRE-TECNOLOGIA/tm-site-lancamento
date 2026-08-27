@@ -28,11 +28,19 @@ body {
 /* ── OVERLAY ESCURO PRA LEGIBILIDADE ── */
 #overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: rgba(1,1,2,0.55);
+  background:
+    linear-gradient(90deg, rgba(1,2,5,0.90) 0%, rgba(1,2,5,0.58) 34%, rgba(1,2,5,0.18) 68%, rgba(1,2,5,0.48) 100%),
+    linear-gradient(180deg, rgba(1,2,5,0.30) 0%, transparent 38%, rgba(1,2,5,0.72) 100%);
+}
+#overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 52% 46%, transparent 0 24%, rgba(1,2,5,0.28) 78%, rgba(1,2,5,0.72) 100%);
+  mix-blend-mode: multiply;
 }
 
 /* ── PROGRESS BAR ── */
@@ -44,13 +52,13 @@ body {
 
 /* ── NAV ── */
 nav {
-  position: fixed; top: 16px; right: 24px;
-  font-size: 11px; letter-spacing: 2px; color: #888;
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 6px 14px; background: rgba(1,1,2,0.7);
-  backdrop-filter: blur(8px);
+  position: fixed; top: 22px; right: 28px;
+  font-size: 11px; letter-spacing: 3px; color: rgba(255,255,255,0.72);
+  border: 1px solid rgba(255,255,255,0.16);
+  padding: 9px 15px; background: rgba(1,1,2,0.38);
+  backdrop-filter: blur(14px);
   z-index: 999;
-  font-weight: 500;
+  font-weight: 600;
 }
 nav span { color: #C8541C; }
 
@@ -86,6 +94,38 @@ nav span { color: #C8541C; }
   opacity: 0; transform: translateY(30px);
   transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1);
 }
+#sec-1 {
+  align-items: flex-start;
+  padding-left: clamp(32px, 10vw, 150px);
+  padding-right: 42vw;
+  text-align: left;
+}
+.hero-kicker {
+  color: #e26c2b;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.hero-title {
+  color: rgba(255,255,255,0.92);
+  font-size: clamp(42px, 7vw, 92px);
+  line-height: 0.94;
+  letter-spacing: -4px;
+  text-transform: uppercase;
+  font-weight: 300;
+  max-width: 680px;
+}
+.hero-title strong { color: #e26c2b; font-weight: 800; }
+.hero-lead {
+  color: rgba(255,255,255,0.64);
+  font-size: clamp(14px, 1.5vw, 18px);
+  line-height: 1.55;
+  max-width: 430px;
+}
+.hero-rule { width: 72px; height: 2px; background: #e26c2b; box-shadow: 0 0 18px rgba(226,108,43,0.55); }
+.hero-meta { color: rgba(255,255,255,0.28); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; }
+
 .section.visible, .footer.visible { opacity: 1; transform: translateY(0); }
 .section-tall { min-height: 200vh; }
 .subsection {
@@ -274,6 +314,10 @@ nav span { color: #C8541C; }
 
 @media (max-width: 768px) {
   .section, .subsection, .horizontal-slide { padding: 60px 20px; }
+  #sec-1 { align-items: flex-start; padding: 92px 28px 60px; justify-content: flex-end; min-height: 100svh; }
+  .hero-title { letter-spacing: -2px; font-size: clamp(42px, 14vw, 72px); }
+  .hero-lead { max-width: 340px; }
+  nav { top: 16px; right: 18px; }
   .case-grid { grid-template-columns: 1fr; }
   .card-row { gap: 16px; }
   .ph-card { width: 100%; max-width: 280px; }
@@ -289,11 +333,13 @@ nav span { color: #C8541C; }
 
 <!-- ── SEÇÃO 1 — HERO ── -->
 <section class="section" id="sec-1">
-  <span class="section-label">[HERO]</span>
-  <div class="foto-thiago" style="background:rgba(200,84,28,0.05);display:flex;align-items:center;justify-content:center;font-size:32px;">🧑</div>
-  <div class="ph-title"><strong>TM</strong> Sempre Tecnologia</div>
-  <div class="ph-text" style="max-width:500px;">Automação predial inteligente. Seu processo repetitivo vira zero.</div>
-  <div class="scroll-indicator" onclick="scrollToSection('sec-2')">⬇ SCROLL</div>
+  <span class="section-label">[HERO / 001]</span>
+  <div class="hero-kicker">TM · Sempre tecnologia</div>
+  <div class="hero-rule"></div>
+  <h1 class="hero-title">Seu processo.<br><strong>Em órbita.</strong></h1>
+  <p class="hero-lead">Automação predial inteligente para transformar trabalho repetitivo em operação que simplesmente funciona.</p>
+  <div class="hero-meta">Sistemas · Dados · Resultado</div>
+  <div class="scroll-indicator" onclick="scrollToSection('sec-2')">↓ explorar a transformação</div>
 </section>
 
 <!-- ── SEÇÃO 2 — CRISE + METAMORFOSE ── -->
@@ -438,50 +484,70 @@ const canvas = document.getElementById('bg-canvas');
 const ctx = canvas.getContext('2d');
 let W, H;
 
-function resizeCanvas() {
-  W = canvas.width = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
+let currentFrame = 0;
 const FRAME_COUNT = 181;
 const FRAMES_PATH = 'frames/';
-const images = [];
+const images = new Array(FRAME_COUNT);
 let loadedCount = 0;
 let ready = false;
 
-// Pré-carrega frames
-for (let i = 1; i <= FRAME_COUNT; i++) {
-  const img = new Image();
-  const num = String(i).padStart(3, '0');
-  img.src = FRAMES_PATH + 'ezgif-frame-' + num + '.jpg';
-  img.onload = () => { loadedCount++; if (loadedCount === 1) { render(1); ready = true; } };
-  images.push(img);
+function resizeCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  render(currentFrame);
 }
-
-let currentFrame = 1;
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas, { passive: true });
 
 function render(frameIdx) {
   const img = images[frameIdx];
-  if (!img || !img.complete) return;
-  const hRatio = W / img.width;
-  const vRatio = H / img.height;
+  if (!img || !img.complete || !img.naturalWidth) return;
+  const hRatio = W / img.naturalWidth;
+  const vRatio = H / img.naturalHeight;
   const ratio = Math.max(hRatio, vRatio);
-  const cx = (W - img.width * ratio) / 2;
-  const cy = (H - img.height * ratio) / 2;
+  const cx = (W - img.naturalWidth * ratio) / 2;
+  const cy = (H - img.naturalHeight * ratio) / 2;
   ctx.clearRect(0, 0, W, H);
-  ctx.drawImage(img, 0, 0, img.width, img.height, cx, cy, img.width * ratio, img.height * ratio);
+  ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, cx, cy, img.naturalWidth * ratio, img.naturalHeight * ratio);
 }
+
+function loadFrame(index) {
+  if (index >= FRAME_COUNT || images[index]) return;
+  const img = new Image();
+  img.decoding = 'async';
+  img.src = FRAMES_PATH + 'ezgif-frame-' + String(index + 1).padStart(3, '0') + '.jpg';
+  img.onload = () => {
+    loadedCount++;
+    if (!ready) { currentFrame = 0; render(0); ready = true; }
+    if (index === currentFrame) render(currentFrame);
+  };
+  images[index] = img;
+}
+
+// O primeiro frame entra imediatamente; os demais são carregados em pequenos lotes.
+loadFrame(0);
+let nextFrameToLoad = 1;
+const preloadBatch = () => {
+  for (let i = 0; i < 12 && nextFrameToLoad < FRAME_COUNT; i++, nextFrameToLoad++) loadFrame(nextFrameToLoad);
+  if (nextFrameToLoad < FRAME_COUNT) setTimeout(preloadBatch, 80);
+};
+preloadBatch();
 
 // Mapeia o scroll do documento inteiro para os frames
 function updateFrame() {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
   const progress = docHeight > 0 ? scrollTop / docHeight : 0;
-  const frame = Math.max(1, Math.min(FRAME_COUNT - 1, Math.round(progress * (FRAME_COUNT - 1))));
+  const frame = Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(progress * (FRAME_COUNT - 1))));
   if (frame !== currentFrame) {
     currentFrame = frame;
+    loadFrame(frame);
     render(currentFrame);
   }
 }
