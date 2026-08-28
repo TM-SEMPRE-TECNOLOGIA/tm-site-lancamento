@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05070b">
+<title>Portfólio de Aplicações — TM Sempre Tecnologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --orange: #d96526;
+  --orange-bright: #ff7733;
+  --orange-glow: rgba(217, 101, 38, 0.65);
+  --orange-faint: rgba(217, 101, 38, 0.12);
+  --ink: #05070b;
+  --surface: #0a0d14;
+  --surface-panel: rgba(12, 16, 26, 0.85);
+  --line: rgba(255, 255, 255, 0.12);
+  --line-orange: rgba(217, 101, 38, 0.35);
+  --muted: rgba(255, 255, 255, 0.62);
+  --faint: rgba(255, 255, 255, 0.35);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--ink); scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.6;
+}
+
+/* ── NAVEGAÇÃO ── */
+.topbar {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px clamp(24px, 6vw, 88px);
+  background: rgba(5, 7, 11, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+.brand {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-decoration: none;
+  transition: opacity 0.3s;
+}
+.brand:hover { opacity: 0.85; }
+.brand i { color: var(--orange); font-style: normal; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 3vw, 32px);
+}
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  font-weight: 500;
+  transition: color 0.3s;
+  position: relative;
+  padding: 4px 0;
+}
+.nav-link:hover, .nav-link.active {
+  color: #fff;
+}
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
+}
+
+/* ── CABEÇALHO EDITORIAL ── */
+.portfolio-header {
+  padding: 160px clamp(24px, 8vw, 120px) 70px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.eyebrow::before {
+  content: "";
+  width: 36px;
+  height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange-glow);
+}
+h1 {
+  font-size: clamp(38px, 6vw, 76px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+h1 strong {
+  color: var(--orange);
+  font-weight: 800;
+}
+.header-lead {
+  color: var(--muted);
+  font-size: clamp(15px, 1.4vw, 18px);
+  max-width: 640px;
+  line-height: 1.7;
+}
+
+/* ── ESTUDOS DE CASO E APLICAÇÕES ── */
+.cases-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 8vw, 120px) 140px;
+  display: flex;
+  flex-direction: column;
+  gap: 130px;
+}
+
+.case-study {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  border-top: 1px solid var(--line);
+  padding-top: 50px;
+  position: relative;
+  opacity: 0.42;
+  transform: translateY(20px);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.case-study.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.case-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.case-index {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.case-title {
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.18;
+}
+.case-title strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ── SLOT DE VÍDEO DEDICADO ── */
+.video-slot-container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-slot-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 60% 40%, rgba(217, 101, 38, 0.12) 0%, transparent 70%), linear-gradient(180deg, rgba(10, 13, 20, 0.4), rgba(5, 7, 11, 0.95));
+}
+.video-slot-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(217, 101, 38, 0.35);
+  background: rgba(10, 13, 20, 0.8);
+  padding: 4px 10px;
+  border-radius: 2px;
+  backdrop-filter: blur(8px);
+}
+.video-placeholder-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.play-indicator {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--orange);
+  background: rgba(217, 101, 38, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--orange-bright);
+  font-size: 18px;
+  box-shadow: 0 0 20px rgba(217, 101, 38, 0.25);
+  transition: transform 0.3s, background 0.3s;
+}
+.video-slot-container:hover .play-indicator {
+  transform: scale(1.1);
+  background: rgba(217, 101, 38, 0.3);
+}
+.video-placeholder-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+/* ── BARRA DE AÇÕES EDITORIAL DO CASO ── */
+.case-actions-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: -10px;
+}
+.spec-trigger-btn {
+  background: transparent;
+  border: 1px solid var(--line-orange);
+  color: var(--orange);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s;
+}
+.spec-trigger-btn:hover {
+  background: rgba(217, 101, 38, 0.12);
+  color: #fff;
+  border-color: var(--orange);
+  box-shadow: 0 0 16px rgba(217, 101, 38, 0.2);
+}
+
+/* ── NARRATIVA EM 4 BLOCOS ── */
+.case-narrative {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 32px;
+  margin-top: 10px;
+}
+.narrative-block h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+.narrative-block p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.narrative-block.highlight {
+  border-left: 2px solid var(--orange);
+  padding-left: 20px;
+}
+.narrative-block.highlight p {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* ── DRAWER LATERAL DE ESPECIFICAÇÕES TÉCNICAS (BLUEPRINT DRAWER) ── */
+#spec-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 5, 9, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#spec-drawer-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#spec-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(720px, 100vw);
+  background: #070a10;
+  border-left: 1px solid var(--line);
+  z-index: 210;
+  transform: translateX(100%);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 40px clamp(24px, 5vw, 60px);
+}
+#spec-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 24px;
+  margin-bottom: 36px;
+}
+.drawer-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.drawer-title span {
+  color: var(--orange);
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.drawer-close {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+.drawer-close:hover {
+  color: #fff;
+  border-color: var(--orange);
+  background: rgba(217, 101, 38, 0.15);
+}
+
+.drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+.drawer-section-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.drawer-section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.drawer-text {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.stack-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.stack-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: 3px;
+  color: #fff;
+}
+
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+.metric-box {
+  background: rgba(217, 101, 38, 0.06);
+  border: 1px solid var(--line-orange);
+  padding: 16px;
+  border-radius: 4px;
+}
+.metric-val {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: -0.03em;
+}
+.metric-lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 60px clamp(24px, 8vw, 120px);
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+.footer a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer a:hover { color: #fff; }
+.footer-copy { color: var(--faint); }
+
+@media (max-width: 768px) {
+  .cases-container { gap: 80px; }
+  .case-narrative { grid-template-columns: 1fr; gap: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<header class="topbar">
+  <a href="index.html" class="brand">TM<i>.</i></a>
+  <nav class="nav-links" aria-label="Navegação Principal">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="portfolio.html" class="nav-link active">Portfólio</a>
+    <a href="contato.html" class="nav-link">Contato</a>
+  </nav>
+</header>
+
+<!-- Header Editorial -->
+<section class="portfolio-header">
+  <div class="eyebrow">Aplicações & Sistemas em Produção</div>
+  <h1>Engenharia de soluções<br>e <strong>sistemas aplicados.</strong></h1>
+  <p class="header-lead">Visão completa das aplicações desenvolvidas: esteiras automatizadas de laudos com +85% de eficiência, painéis de inteligência em tempo real e ecossistemas multiagente de IA.</p>
+</section>
+
+<!-- Conteúdo Editorial Vertical -->
+<main class="cases-container">
+
+  <!-- APLICAÇÃO 01: AUTORELATÓRIO V2 -->
+  <article class="case-study active" id="case-1">
+    <div class="case-meta">
+      <span class="case-index">01 · Sistema de Produção</span>
+      <span>Automação & Processamento</span>
+    </div>
+
+    <h2 class="case-title">AutoRelatório V2 — <strong>Esteira Automatizada de Laudos Técnicos</strong></h2>
+
+    <!-- Slot de Vídeo 16:9 -->
+    <div class="video-slot-container">
+      <div class="video-slot-bg"></div>
+      <div class="video-slot-badge">Demo / Vídeo da Aplicação</div>
+      <div class="video-placeholder-content">
+        <div class="play-indicator">▶</div>
+        <div class="video-placeholder-text">Slot de Demonstração em Vídeo · AutoRelatório V2</div>
+      </div>
+    </div>
+
+    <div class="case-actions-bar">
+      <button class="spec-trigger-btn" onclick="openDrawer('case-1')">
+        <span>⚙️ Ver Arquitetura & Especificações</span> <span>→</span>
+      </button>
+      <span style="font-family:'JetBrains Mono'; font-size:11px; color:var(--faint);">Python · FastAPI · SQLite · Async Engine</span>
+    </div>
+
+    <div class="case-narrative">
+      <div class="narrative-block">
+        <h3>Contexto</h3>
+        <p>Múltiplos contratos institucionais exigindo dezenas de laudos técnicos semanais sob rigorosos prazos e auditoria.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Problema</h3>
+        <p>Coleta de dados manual, montagem em editores de texto e horas consumidas em retrabalho operacional e verificação.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Intervenção</h3>
+        <p>Desenvolvimento de esteira própria que valida variáveis de negócio, formata laudos e compila os PDFs instantaneamente.</p>
+      </div>
+      <div class="narrative-block highlight">
+        <h3>Resultado</h3>
+        <p>85% de ganho comprovado de velocidade, zero retrabalho de formatação e padronização visual completa.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- APLICAÇÃO 02: TM MISSION CONTROL -->
+  <article class="case-study" id="case-2">
+    <div class="case-meta">
+      <span class="case-index">02 · Central de Operações</span>
+      <span>Engenharia de Dados & Dashboards</span>
+    </div>
+
+    <h2 class="case-title">TM Mission Control — <strong>Telemetria e Visão Gerencial em Tempo Real</strong></h2>
+
+    <!-- Slot de Vídeo 16:9 -->
+    <div class="video-slot-container">
+      <div class="video-slot-bg"></div>
+      <div class="video-slot-badge">Demo / Vídeo da Aplicação</div>
+      <div class="video-placeholder-content">
+        <div class="play-indicator">▶</div>
+        <div class="video-placeholder-text">Slot de Demonstração em Vídeo · Mission Control</div>
+      </div>
+    </div>
+
+    <div class="case-actions-bar">
+      <button class="spec-trigger-btn" onclick="openDrawer('case-2')">
+        <span>⚙️ Ver Arquitetura & Especificações</span> <span>→</span>
+      </button>
+      <span style="font-family:'JetBrains Mono'; font-size:11px; color:var(--faint);">Next.js · React · Data Pipelines · Real-time</span>
+    </div>
+
+    <div class="case-narrative">
+      <div class="narrative-block">
+        <h3>Contexto</h3>
+        <p>Diretoria e equipes técnicas necessitavam de acompanhamento ágil de indicadores, preventivas e volume de solicitações.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Problema</h3>
+        <p>Dados dispersos em planilhas sem versão única da verdade, gerando atrasos em decisões corretivas.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Intervenção</h3>
+        <p>Pipelines automatizados que unificam dados brutos e os projetam em painéis gerenciais focados em tomada de ação.</p>
+      </div>
+      <div class="narrative-block highlight">
+        <h3>Resultado</h3>
+        <p>Autonomia analítica para a liderança, visibilidade total de gargalos e redução de reuniões de alinhamento.</p>
+      </div>
+    </div>
+  </article>
+
+  <!-- APLICAÇÃO 03: ECOSSISTEMA MULTIAGENTE -->
+  <article class="case-study" id="case-3">
+    <div class="case-meta">
+      <span class="case-index">03 · Autonomia Digital</span>
+      <span>Automação Multiagente & Backoffice</span>
+    </div>
+
+    <h2 class="case-title">Ecossistema Multiagente — <strong>Orquestrador de IA para Operações</strong></h2>
+
+    <!-- Slot de Vídeo 16:9 -->
+    <div class="video-slot-container">
+      <div class="video-slot-bg"></div>
+      <div class="video-slot-badge">Demo / Vídeo da Aplicação</div>
+      <div class="video-placeholder-content">
+        <div class="play-indicator">▶</div>
+        <div class="video-placeholder-text">Slot de Demonstração em Vídeo · Agentes Autônomos</div>
+      </div>
+    </div>
+
+    <div class="case-actions-bar">
+      <button class="spec-trigger-btn" onclick="openDrawer('case-3')">
+        <span>⚙️ Ver Arquitetura & Especificações</span> <span>→</span>
+      </button>
+      <span style="font-family:'JetBrains Mono'; font-size:11px; color:var(--faint);">Hermes Engine · Multi-Agent Router · Webhooks</span>
+    </div>
+
+    <div class="case-narrative">
+      <div class="narrative-block">
+        <h3>Contexto</h3>
+        <p>Volume crescente de demandas operacionais, triagem documental e consultas recorrentes que ocupavam a equipe.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Problema</h3>
+        <p>Gargalo de tempo com atendimentos preliminares e checagem de dados repetitivos antes da resolução técnica.</p>
+      </div>
+      <div class="narrative-block">
+        <h3>Intervenção</h3>
+        <p>Arquitetura de agentes autônomos com perfis especializados para triagem, orçamentos e auditoria contínua.</p>
+      </div>
+      <div class="narrative-block highlight">
+        <h3>Resultado</h3>
+        <p>Operação ininterrupta 24/7 com resposta instantânea e liberação do foco humano para decisões estratégicas.</p>
+      </div>
+    </div>
+  </article>
+
+</main>
+
+<!-- Drawer Lateral de Especificações Técnicas -->
+<div id="spec-drawer-backdrop" onclick="closeDrawer()"></div>
+<aside id="spec-drawer" aria-label="Especificações do Projeto">
+  <div class="drawer-header">
+    <div class="drawer-title">
+      <span id="drawer-tag">ARQUITETURA & ESPECIFICAÇÃO</span>
+      <div id="drawer-heading">Nome do Projeto</div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()" aria-label="Fechar Gaveta">✕</button>
+  </div>
+
+  <div class="drawer-body">
+
+    <div>
+      <div class="drawer-section-title">Métricas de Impacto</div>
+      <div class="metrics-row" id="drawer-metrics">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </div>
+
+    <div>
+      <div class="drawer-section-title">Arquitetura da Solução</div>
+      <p class="drawer-text" id="drawer-arch">
+        Descrição da arquitetura técnica.
+      </p>
+    </div>
+
+    <div>
+      <div class="drawer-section-title">Stack de Tecnologias</div>
+      <div class="stack-grid" id="drawer-stack">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </div>
+
+    <div>
+      <div class="drawer-section-title">Regras de Negócio & Desafio</div>
+      <p class="drawer-text" id="drawer-rules">
+        Regras implementadas e desafios superados.
+      </p>
+    </div>
+
+  </div>
+</aside>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-copy">TM Sempre Tecnologia · Thiago Nascimento Barbosa</div>
+  <a href="contato.html">Prosseguir para Contato →</a>
+</footer>
+
+<script>
+// Dados das Especificações Técnicas de cada Aplicação
+const projectSpecs = {
+  'case-1': {
+    tag: 'SISTEMA DE PRODUÇÃO · VISTORIAS & LAUDOS',
+    title: 'AutoRelatório V2',
+    metrics: [
+      { val: '+85%', lbl: 'Velocidade de Entrega' },
+      { val: '100%', lbl: 'Aderência a SLAs' },
+      { val: '0', lbl: 'Erros de Formatação' }
+    ],
+    arch: 'Esteira de processamento assíncrono orientada a eventos. O formulário em campo envia o payload estruturado para a API FastAPI em Python, que valida fotos, dimensões e variáveis de conformidade contra o SQLite local e compila o PDF com tipografia vetorial em menos de 2 segundos.',
+    stack: ['Python', 'FastAPI', 'SQLite', 'ReportLab / WeasyPrint', 'Pydantic', 'AsyncIO'],
+    rules: 'Validação automática de conformidade fotográfica, conferência de divergências em vistorias preventivas institucionais (BB/Caixa) e auditoria de assinaturas técnicas digitais.'
+  },
+  'case-2': {
+    tag: 'ENGENHARIA DE DADOS & GESTÃO',
+    title: 'TM Mission Control',
+    metrics: [
+      { val: 'Real-time', lbl: 'Atualização de Indicadores' },
+      { val: '-70%', lbl: 'Tempo em Reuniões' },
+      { val: '9 Contratos', lbl: 'Monitoramento Centralizado' }
+    ],
+    arch: 'Dashboard reativo construído com Next.js e React Server Components. Conecta-se a pipelines de agregação de dados e expõe métricas consolidadas de SLA, preventivas pendentes e orçamentos em gráficos de alta densidade visual.',
+    stack: ['Next.js', 'React', 'Tailwind CSS', 'Tremor / Recharts', 'Python ETL', 'REST APIs'],
+    rules: 'Alertas preditivos para ordens de serviço prestes a vencer, segregação de permissões por contrato e relatórios executivos para exportação direta em um clique.'
+  },
+  'case-3': {
+    tag: 'AUTOMAÇÃO MULTIAGENTE & IA',
+    title: 'Ecossistema de Agentes Autônomos',
+    metrics: [
+      { val: '24/7', lbl: 'Operação Contínua' },
+      { val: '< 3s', lbl: 'Tempo Médio de Triagem' },
+      { val: '8 Perfis', lbl: 'Agentes Especializados' }
+    ],
+    arch: 'Roteador inteligente de tarefas que distribui requisições entre agentes de IA com memórias isoladas e ferramentas personalizadas (Tool Calling / Skills). Integração nativa com Webhooks, Telegram e Gateways corporativos.',
+    stack: ['Hermes Agent Core', 'Python', 'LangChain / Custom Runners', 'Claude / Gemini Models', 'Webhooks', 'Cron Schedulers'],
+    rules: 'Processamento de ordens de serviço via chat, extração inteligente de dados em imagens de campo e automação de rotinas de backoffice com validação em duas etapas.'
+  }
+};
+
+// Funções do Drawer
+const drawerBackdrop = document.getElementById('spec-drawer-backdrop');
+const drawer = document.getElementById('spec-drawer');
+
+function openDrawer(caseId) {
+  const data = projectSpecs[caseId];
+  if (!data) return;
+
+  document.getElementById('drawer-tag').textContent = data.tag;
+  document.getElementById('drawer-heading').textContent = data.title;
+  document.getElementById('drawer-arch').textContent = data.arch;
+  document.getElementById('drawer-rules').textContent = data.rules;
+
+  // Renderiza Métricas
+  const metricsContainer = document.getElementById('drawer-metrics');
+  metricsContainer.innerHTML = data.metrics.map(m => `
+    <div class="metric-box">
+      <div class="metric-val">${m.val}</div>
+      <div class="metric-lbl">${m.lbl}</div>
+    </div>
+  `).join('');
+
+  // Renderiza Stack
+  const stackContainer = document.getElementById('drawer-stack');
+  stackContainer.innerHTML = data.stack.map(s => `
+    <span class="stack-badge">${s}</span>
+  `).join('');
+
+  drawerBackdrop.classList.add('open');
+  drawer.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDrawer() {
+  drawerBackdrop.classList.remove('open');
+  drawer.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeDrawer();
+});
+
+// Observer para Foco Editorial no Scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('active');
+    } else {
+      const rect = entry.target.getBoundingClientRect();
+      if (rect.top > window.innerHeight || rect.bottom < 0) {
+        entry.target.classList.remove('active');
+      }
+    }
+  });
+}, { threshold: 0.25, rootMargin: "-40px 0px -40px 0px" });
+
+document.querySelectorAll('.case-study').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
