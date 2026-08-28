@@ -7,7 +7,7 @@
 <title>TM — Sempre Tecnologia · Origem e Visão</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --orange: #d96526;
@@ -27,17 +27,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ── VÍDEO CINEMATOGRÁFICO DE FUNDO ── */
-#bg-video {
+/* ── CANVAS CINEMATOGRÁFICO DE FUNDO (RESPOSTA INSTANTÂNEA EM DESKTOP E MOBILE) ── */
+#bg-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
   width: 100vw;
   height: 100vh;
   object-fit: cover;
-  object-position: center;
+  pointer-events: none;
   background: var(--ink) url('hero-poster.jpg') center/cover no-repeat;
-  filter: saturate(0.94) contrast(1.05);
+  filter: saturate(0.95) contrast(1.05);
   transform: translate3d(0,0,0);
 }
 
@@ -48,7 +48,7 @@ body {
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(3, 5, 9, 0.90) 0%, rgba(3, 5, 9, 0.42) 36%, rgba(3, 5, 9, 0.15) 65%, rgba(3, 5, 9, 0.55) 100%),
+    linear-gradient(90deg, rgba(3, 5, 9, 0.92) 0%, rgba(3, 5, 9, 0.44) 38%, rgba(3, 5, 9, 0.15) 65%, rgba(3, 5, 9, 0.55) 100%),
     linear-gradient(180deg, rgba(2, 4, 8, 0.52) 0%, transparent 32%, rgba(2, 4, 8, 0.85) 100%);
 }
 #tone::after {
@@ -317,12 +317,12 @@ h1 strong, h2 strong {
   letter-spacing: 1px;
 }
 
-/* ── RESPONSIVIDADE ── */
+/* ── RESPONSIVIDADE MOBILE ── */
 @media (max-width: 768px) {
   #tone {
     background:
-      linear-gradient(180deg, rgba(3, 5, 9, 0.40) 0%, rgba(3, 5, 9, 0.20) 30%, rgba(3, 5, 9, 0.88) 100%),
-      linear-gradient(90deg, rgba(3, 5, 9, 0.50) 0%, transparent 80%);
+      linear-gradient(180deg, rgba(3, 5, 9, 0.45) 0%, rgba(3, 5, 9, 0.25) 30%, rgba(3, 5, 9, 0.90) 100%),
+      linear-gradient(90deg, rgba(3, 5, 9, 0.65) 0%, transparent 85%);
   }
   .topbar { top: 18px; left: 20px; right: 20px; }
   .chapter, .chapter:first-child {
@@ -353,10 +353,8 @@ h1 strong, h2 strong {
 </head>
 <body>
 
-<!-- Vídeo de Fundo -->
-<video id="bg-video" muted playsinline preload="auto" poster="hero-poster.jpg" aria-hidden="true" disablepictureinpicture disableremoteplayback>
-  <source src="assets-video-cover.mp4" type="video/mp4">
-</video>
+<!-- Canvas 2D de Alta Performance (Zero Latência de Decodificação) -->
+<canvas id="bg-canvas"></canvas>
 
 <div id="tone"></div>
 <div id="progress"></div>
@@ -375,7 +373,7 @@ h1 strong, h2 strong {
 <main class="story">
 
   <!-- MOMENTO 0: O PONTO DE PARTIDA -->
-  <section class="chapter active" data-time-start="0" data-time-end="1.5">
+  <section class="chapter active">
     <div class="chapter-inner">
       <div class="eyebrow">Origem & Método</div>
       <h1>Do caos<br>ao <strong>sistema.</strong></h1>
@@ -386,7 +384,7 @@ h1 strong, h2 strong {
   </section>
 
   <!-- MOMENTO 1: A DESCOBERTA NOS RELATÓRIOS -->
-  <section class="chapter right" data-time-start="1.5" data-time-end="3.6">
+  <section class="chapter right">
     <div class="chapter-inner">
       <div class="eyebrow">01 · A Descoberta</div>
       <h2>O primeiro contato<br>com o <strong>código.</strong></h2>
@@ -396,7 +394,7 @@ h1 strong, h2 strong {
   </section>
 
   <!-- MOMENTO 2: A VIRADA E O MARCO DE 85% -->
-  <section class="chapter" data-time-start="3.6" data-time-end="6.8">
+  <section class="chapter">
     <div class="chapter-inner">
       <div class="eyebrow">02 · A Virada</div>
       <div class="metric-highlight">+85%</div>
@@ -407,7 +405,7 @@ h1 strong, h2 strong {
   </section>
 
   <!-- MOMENTO 3: EXPANSÃO PARA SISTEMAS E DADOS -->
-  <section class="chapter right" data-time-start="6.8" data-time-end="8.6">
+  <section class="chapter right">
     <div class="chapter-inner">
       <div class="eyebrow">03 · A Expansão</div>
       <h2>Automação,<br><strong>dados e escala.</strong></h2>
@@ -417,7 +415,7 @@ h1 strong, h2 strong {
   </section>
 
   <!-- MOMENTO 4: PRESENTE E ASSINATURA TM -->
-  <section class="chapter center" data-time-start="8.6" data-time-end="10">
+  <section class="chapter center">
     <div class="chapter-inner">
       <div class="eyebrow">04 · Sempre Tecnologia</div>
       <h2>Observar.<br>Estruturar.<br><strong>Entregar.</strong></h2>
@@ -445,114 +443,98 @@ h1 strong, h2 strong {
 
 <script>
 /**
- * HIGH-PERFORMANCE VIDEO SCRUBBING ENGINE
- * Sincronização fluida com fila de seeks, debounce de decodificação e rAF
+ * HIGH-PERFORMANCE CANVAS FRAME RENDERER (60 FPS INSTANT SCRUBBING)
+ * Zero decodificação de vídeo em tempo de execução: resposta imediata ao scroll em mobile e desktop.
  */
 (function() {
-  const video = document.getElementById('bg-video');
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d', { alpha: false });
   const progressBar = document.getElementById('progress');
   const chapters = [...document.querySelectorAll('.chapter')];
 
-  let duration = 10;
-  let videoReady = false;
-  let isSeeking = false;
-  let targetTime = 0;
-  let currentScrubTime = 0;
-  let scrollProgress = 0;
+  const TOTAL_FRAMES = 150;
+  const images = new Array(TOTAL_FRAMES);
+  let loadedCount = 0;
+  let currentRenderedIndex = -1;
   let animFrameId = 0;
 
-  const MIN_SEEK_DELTA = 0.035; // ~35ms threshold (ideal para 24/30fps)
-
-  // 1. Inicialização segura dos metadados
-  function onMetadataReady() {
-    if (Number.isFinite(video.duration) && video.duration > 0) {
-      duration = video.duration;
-    }
-    videoReady = true;
-    updateScrollMetrics();
-    triggerSeek();
+  // 1. Redimensionamento do Canvas mantendo a proporção exata da tela
+  function resizeCanvas() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    currentRenderedIndex = -1; // força re-desenho
+    renderFrame(getCurrentFrameIndex());
   }
 
-  video.addEventListener('loadedmetadata', onMetadataReady, { once: true });
-  if (video.readyState >= 1) onMetadataReady();
+  // 2. Renderização em Proporção 'cover' (centralizado e sem distorção)
+  function renderFrame(index) {
+    if (index === currentRenderedIndex) return;
+    const img = images[index];
+    if (!img || !img.complete || img.naturalWidth === 0) return;
 
-  // 2. Fila de Seek Inteligente (evita sobrecarregar decodificador do navegador)
-  function triggerSeek() {
-    if (!videoReady) return;
-    if (isSeeking || video.seeking) return;
+    currentRenderedIndex = index;
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
 
-    const delta = Math.abs(video.currentTime - targetTime);
-    if (delta >= MIN_SEEK_DELTA) {
-      isSeeking = true;
-      try {
-        if (typeof video.fastSeek === 'function' && delta > 0.4) {
-          video.fastSeek(targetTime);
-        } else {
-          video.currentTime = targetTime;
-        }
-      } catch (err) {
-        video.currentTime = targetTime;
-      }
-    }
+    const scale = Math.max(cw / iw, ch / ih);
+    const sw = iw * scale;
+    const sh = ih * scale;
+    const sx = (cw - sw) / 2;
+    const sy = (ch - sh) / 2;
+
+    ctx.drawImage(img, 0, 0, iw, ih, sx, sy, sw, sh);
   }
 
-  video.addEventListener('seeked', () => {
-    isSeeking = false;
-    // Se o usuário rolou enquanto o seek anterior acontecia, aplica o mais recente
-    if (Math.abs(video.currentTime - targetTime) >= MIN_SEEK_DELTA) {
-      triggerSeek();
-    }
-  });
-
-  video.addEventListener('seeking', () => {
-    isSeeking = true;
-  });
-
-  // 3. Atualização de Scroll e Lerp para suavidade cinematográfica
-  function updateScrollMetrics() {
+  function getCurrentFrameIndex() {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    scrollProgress = maxScroll > 0 ? Math.max(0, Math.min(1, window.scrollY / maxScroll)) : 0;
-    progressBar.style.width = (scrollProgress * 100) + '%';
-    targetTime = scrollProgress * duration;
-
-    triggerSeek();
+    const progress = maxScroll > 0 ? Math.max(0, Math.min(1, window.scrollY / maxScroll)) : 0;
+    progressBar.style.width = (progress * 100) + '%';
+    return Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.floor(progress * TOTAL_FRAMES)));
   }
 
-  function onScroll() {
+  function update() {
+    renderFrame(getCurrentFrameIndex());
+    animFrameId = 0;
+  }
+
+  function requestUpdate() {
     if (!animFrameId) {
-      animFrameId = requestAnimationFrame(() => {
-        updateScrollMetrics();
-        animFrameId = 0;
-      });
+      animFrameId = requestAnimationFrame(update);
     }
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', () => { updateScrollMetrics(); }, { passive: true });
+  // 3. Pré-carregamento Inteligente e Progressivo
+  // Carrega o primeiro frame imediatamente para pintar a tela instantaneamente
+  const firstImg = new Image();
+  firstImg.src = 'frames/frame_000.jpg';
+  firstImg.onload = () => {
+    images[0] = firstImg;
+    renderFrame(0);
+  };
 
-  // 4. Desbloqueio e warm-up para iOS / Android / Safari
-  function warmupVideo() {
-    if (video.paused && video.readyState < 2) {
-      video.play().then(() => { video.pause(); }).catch(() => {});
-    }
-    window.removeEventListener('touchstart', warmupVideo);
-    window.removeEventListener('pointerdown', warmupVideo);
-  }
-  window.addEventListener('touchstart', warmupVideo, { passive: true, once: true });
-  window.addEventListener('pointerdown', warmupVideo, { passive: true, once: true });
-
-  // 5. requestVideoFrameCallback (sincronia nativa com o compositor quando suportado)
-  if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
-    const frameCallback = () => {
-      if (!isSeeking && Math.abs(video.currentTime - targetTime) >= MIN_SEEK_DELTA) {
-        triggerSeek();
+  // Carrega o restante em segundo plano
+  for (let i = 0; i < TOTAL_FRAMES; i++) {
+    const num = String(i).padStart(3, '0');
+    const img = new Image();
+    img.src = `frames/frame_${num}.jpg`;
+    img.onload = () => {
+      images[i] = img;
+      loadedCount++;
+      if (i === getCurrentFrameIndex()) {
+        renderFrame(i);
       }
-      video.requestVideoFrameCallback(frameCallback);
     };
-    video.requestVideoFrameCallback(frameCallback);
   }
 
-  // 6. Observer de Capítulos (Entrada e saída suave dos textos)
+  // Listeners de Scroll e Resize otimizados
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+  window.addEventListener('orientationchange', resizeCanvas, { passive: true });
+
+  // 4. Observer de Capítulos (Fade in/out dos textos no scroll)
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       entry.target.classList.toggle('active', entry.isIntersecting);
@@ -561,8 +543,8 @@ h1 strong, h2 strong {
 
   chapters.forEach(ch => observer.observe(ch));
 
-  // Primeira execução
-  updateScrollMetrics();
+  // Inicialização
+  resizeCanvas();
 })();
 </script>
 </body>
