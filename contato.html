@@ -4,19 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#05070b">
-<title>Contato — TM Sempre Tecnologia</title>
+<title>Contato & Conexão — TM Sempre Tecnologia</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --orange: #d96526;
-  --orange-glow: rgba(217, 101, 38, 0.65);
+  --orange-bright: #ff7733;
+  --orange-glow: rgba(217, 101, 38, 0.75);
+  --cyan: #00d4ff;
   --ink: #05070b;
-  --surface: #0a0d14;
+  --surface: rgba(10, 13, 20, 0.75);
   --line: rgba(255, 255, 255, 0.12);
-  --muted: rgba(255, 255, 255, 0.58);
-  --faint: rgba(255, 255, 255, 0.32);
+  --line-orange: rgba(217, 101, 38, 0.35);
+  --muted: rgba(255, 255, 255, 0.62);
+  --faint: rgba(255, 255, 255, 0.35);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { background: var(--ink); scroll-behavior: smooth; }
@@ -32,19 +35,26 @@ body {
   position: relative;
 }
 
-/* ── AMBIENT BREATHING SPOTLIGHT ── */
-#ambient-glow {
+/* ── THREE.JS CANVAS DO REATOR 3D ── */
+#reactor-canvas {
   position: fixed;
   inset: 0;
-  pointer-events: none;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(217, 101, 38, 0.08) 0%, transparent 65%);
-  transition: background 0.4s ease-out;
-  animation: breathPulse 8s ease-in-out infinite alternate;
+  pointer-events: none;
 }
-@keyframes breathPulse {
-  0% { opacity: 0.6; }
-  100% { opacity: 1; }
+
+/* ── OVERLAY DE GRADIENTE CIBERNÉTICO ── */
+#hud-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 65% 50%, rgba(217, 101, 38, 0.08) 0%, transparent 60%),
+    linear-gradient(90deg, rgba(5, 7, 11, 0.94) 0%, rgba(5, 7, 11, 0.65) 45%, rgba(5, 7, 11, 0.25) 100%),
+    linear-gradient(180deg, rgba(5, 7, 11, 0.6) 0%, transparent 40%, rgba(5, 7, 11, 0.85) 100%);
 }
 
 /* ── NAVEGAÇÃO ── */
@@ -104,18 +114,44 @@ body {
   box-shadow: 0 0 8px var(--orange);
 }
 
-/* ── CONTEÚDO EDITORIAL SILENCIOSO ── */
+/* ── TELEMETRIA DE TOPO (HUD HEADER) ── */
+.hud-telemetry-bar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-bottom: 18px;
+}
+.hud-telemetry-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.hud-telemetry-bar .active-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
+  animation: pulseBeacon 2s infinite;
+}
+
+/* ── CONTEÚDO EDITORIAL SILENCIOSO COM ESTILO HUD ── */
 .contact-container {
   flex: 1;
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 170px clamp(24px, 8vw, 120px) 100px;
+  padding: 160px clamp(24px, 8vw, 120px) 90px;
   width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .eyebrow {
@@ -127,7 +163,7 @@ body {
   font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 .eyebrow::before {
   content: "";
@@ -138,11 +174,11 @@ body {
 }
 
 h1 {
-  font-size: clamp(38px, 6vw, 72px);
+  font-size: clamp(38px, 5.5vw, 70px);
   font-weight: 300;
   letter-spacing: -0.04em;
   line-height: 1.05;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 h1 strong {
   color: var(--orange);
@@ -151,19 +187,41 @@ h1 strong {
 
 .statement {
   color: var(--muted);
-  font-size: clamp(15px, 1.4vw, 18px);
+  font-size: clamp(14px, 1.3vw, 17px);
   line-height: 1.7;
-  max-width: 640px;
-  margin-bottom: 54px;
+  max-width: 580px;
+  margin-bottom: 44px;
 }
 
-/* ── LISTAGEM DE CANAIS COM MICRO-INTERAÇÕES ── */
+/* ── PAINEL HUD DE CANAIS ── */
+.hud-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+  border-radius: 4px;
+  padding: 36px;
+  position: relative;
+  overflow: hidden;
+}
+.hud-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 40px; height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange);
+}
+.hud-panel::after {
+  content: "";
+  position: absolute;
+  bottom: 0; right: 0; width: 40px; height: 1px;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange);
+}
+
 .channels-list {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  border-top: 1px solid var(--line);
-  padding-top: 44px;
+  gap: 20px;
 }
 
 .channel-item {
@@ -172,18 +230,23 @@ h1 strong {
   align-items: center;
   flex-wrap: wrap;
   gap: 16px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  transition: transform 0.25s, border-color 0.25s;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
 }
 .channel-item:hover {
-  border-color: rgba(217, 101, 38, 0.35);
+  background: rgba(217, 101, 38, 0.08);
+  border-color: var(--line-orange);
+  transform: translateX(4px);
 }
 
 .channel-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 .status-beacon {
   width: 6px;
@@ -191,11 +254,11 @@ h1 strong {
   border-radius: 50%;
   background: var(--orange);
   box-shadow: 0 0 10px var(--orange);
-  animation: beaconPulse 2.5s infinite;
+  animation: pulseBeacon 2.5s infinite;
 }
-@keyframes beaconPulse {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.3); }
+@keyframes pulseBeacon {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
 }
 
 .channel-label {
@@ -213,7 +276,7 @@ h1 strong {
 }
 
 .channel-link {
-  font-size: clamp(14px, 1.3vw, 17px);
+  font-size: clamp(13px, 1.2vw, 16px);
   color: #fff;
   text-decoration: none;
   letter-spacing: 0.5px;
@@ -223,18 +286,18 @@ h1 strong {
   gap: 6px;
 }
 .channel-link:hover {
-  color: var(--orange);
+  color: var(--orange-bright);
 }
 
 .copy-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
   color: var(--muted);
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  padding: 4px 8px;
+  padding: 5px 10px;
   border-radius: 3px;
   cursor: pointer;
   transition: all 0.2s;
@@ -242,11 +305,11 @@ h1 strong {
 .copy-btn:hover {
   color: #fff;
   border-color: var(--orange);
-  background: rgba(217, 101, 38, 0.15);
+  background: rgba(217, 101, 38, 0.2);
 }
 .copy-btn.copied {
-  color: var(--orange);
-  border-color: var(--orange);
+  color: var(--orange-bright);
+  border-color: var(--orange-bright);
 }
 
 .channel-meta {
@@ -259,8 +322,8 @@ h1 strong {
 /* ── FOOTER ── */
 .footer {
   border-top: 1px solid var(--line);
-  padding: 40px clamp(24px, 8vw, 120px);
-  max-width: 900px;
+  padding: 34px clamp(24px, 8vw, 120px);
+  max-width: 960px;
   margin: 0 auto;
   width: 100%;
   display: flex;
@@ -270,7 +333,7 @@ h1 strong {
   letter-spacing: 1.5px;
   color: var(--faint);
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 .footer a {
   color: var(--muted);
@@ -279,15 +342,18 @@ h1 strong {
 }
 .footer a:hover { color: #fff; }
 
-@media (max-width: 600px) {
-  .channel-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+@media (max-width: 768px) {
+  .hud-panel { padding: 20px 14px; }
+  .channel-item { flex-direction: column; align-items: flex-start; gap: 10px; }
   .channel-actions { width: 100%; justify-content: space-between; margin-top: 4px; }
 }
 </style>
 </head>
 <body>
 
-<div id="ambient-glow"></div>
+<!-- Canvas 3D Three.js do Reator Arc / Núcleo Cibernético -->
+<canvas id="reactor-canvas"></canvas>
+<div id="hud-overlay"></div>
 
 <!-- Topbar -->
 <header class="topbar">
@@ -299,78 +365,87 @@ h1 strong {
   </nav>
 </header>
 
-<!-- Conteúdo Direto -->
+<!-- Conteúdo Editorial HUD -->
 <main class="contact-container">
+
+  <div class="hud-telemetry-bar">
+    <span><i class="active-dot"></i> TRANSMISSION PROTOCOL: ONLINE</span>
+    <span>SYS CORE: ACTIVE</span>
+  </div>
+
   <div class="eyebrow">Diálogo & Conexão Direta</div>
   <h1>Vamos transformar o<br><strong>próximo processo.</strong></h1>
   <p class="statement">Para operações com gargalos manuais, fluxos de alta complexidade ou concepção de sistemas sob medida e agentes autônomos, estes são meus canais diretos de comunicação.</p>
 
-  <div class="channels-list">
+  <div class="hud-panel">
+    <div class="channels-list">
 
-    <!-- E-MAIL -->
-    <div class="channel-item">
-      <div class="channel-left">
-        <span class="status-beacon"></span>
-        <span class="channel-label">E-mail Direto</span>
+      <!-- E-MAIL -->
+      <div class="channel-item" data-energy="1.6">
+        <div class="channel-left">
+          <span class="status-beacon"></span>
+          <span class="channel-label">E-mail Direto</span>
+        </div>
+        <div class="channel-actions">
+          <a href="mailto:thiagonascimento.barbosapro@gmail.com" class="channel-link">
+            thiagonascimento.barbosapro@gmail.com <span>↗</span>
+          </a>
+          <button class="copy-btn" onclick="copyData('thiagonascimento.barbosapro@gmail.com', this)">Copiar</button>
+        </div>
       </div>
-      <div class="channel-actions">
-        <a href="mailto:thiagonascimento.barbosapro@gmail.com" class="channel-link">
-          thiagonascimento.barbosapro@gmail.com <span>↗</span>
-        </a>
-        <button class="copy-btn" onclick="copyData('thiagonascimento.barbosapro@gmail.com', this)">Copiar</button>
+
+      <!-- WHATSAPP -->
+      <div class="channel-item" data-energy="2.0">
+        <div class="channel-left">
+          <span class="status-beacon"></span>
+          <span class="channel-label">WhatsApp Corporativo</span>
+        </div>
+        <div class="channel-actions">
+          <a href="https://wa.me/5562996046458" target="_blank" rel="noopener noreferrer" class="channel-link">
+            +55 (62) 99604-6458 <span>↗</span>
+          </a>
+          <button class="copy-btn" onclick="copyData('+5562996046458', this)">Copiar</button>
+        </div>
       </div>
+
+      <!-- GITHUB -->
+      <div class="channel-item" data-energy="1.8">
+        <div class="channel-left">
+          <span class="status-beacon"></span>
+          <span class="channel-label">Repositórios & Código</span>
+        </div>
+        <div class="channel-actions">
+          <a href="https://github.com/TM-SEMPRE-TECNOLOGIA" target="_blank" rel="noopener noreferrer" class="channel-link">
+            github.com/TM-SEMPRE-TECNOLOGIA <span>↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- PLATAFORMA PESSOAL -->
+      <div class="channel-item" data-energy="1.5">
+        <div class="channel-left">
+          <span class="status-beacon"></span>
+          <span class="channel-label">Plataforma Pessoal</span>
+        </div>
+        <div class="channel-actions">
+          <a href="https://thiagonascimentobarbosapro.com" target="_blank" rel="noopener noreferrer" class="channel-link">
+            thiagonascimentobarbosapro.com <span>↗</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- LOCALIZAÇÃO -->
+      <div class="channel-item" data-energy="1.2">
+        <div class="channel-left">
+          <span class="status-beacon" style="opacity: 0.3;"></span>
+          <span class="channel-label">Base de Operações</span>
+        </div>
+        <span class="channel-meta">Goiânia, GO · Brasil</span>
+      </div>
+
     </div>
-
-    <!-- WHATSAPP -->
-    <div class="channel-item">
-      <div class="channel-left">
-        <span class="status-beacon"></span>
-        <span class="channel-label">WhatsApp Corporativo</span>
-      </div>
-      <div class="channel-actions">
-        <a href="https://wa.me/5562996046458" target="_blank" rel="noopener noreferrer" class="channel-link">
-          +55 (62) 99604-6458 <span>↗</span>
-        </a>
-        <button class="copy-btn" onclick="copyData('+5562996046458', this)">Copiar</button>
-      </div>
-    </div>
-
-    <!-- GITHUB -->
-    <div class="channel-item">
-      <div class="channel-left">
-        <span class="status-beacon"></span>
-        <span class="channel-label">Repositórios & Código</span>
-      </div>
-      <div class="channel-actions">
-        <a href="https://github.com/TM-SEMPRE-TECNOLOGIA" target="_blank" rel="noopener noreferrer" class="channel-link">
-          github.com/TM-SEMPRE-TECNOLOGIA <span>↗</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- PLATAFORMA PESSOAL -->
-    <div class="channel-item">
-      <div class="channel-left">
-        <span class="status-beacon"></span>
-        <span class="channel-label">Plataforma Pessoal</span>
-      </div>
-      <div class="channel-actions">
-        <a href="https://thiagonascimentobarbosapro.com" target="_blank" rel="noopener noreferrer" class="channel-link">
-          thiagonascimentobarbosapro.com <span>↗</span>
-        </a>
-      </div>
-    </div>
-
-    <!-- LOCALIZAÇÃO -->
-    <div class="channel-item">
-      <div class="channel-left">
-        <span class="status-beacon" style="opacity: 0.3;"></span>
-        <span class="channel-label">Base de Operações</span>
-      </div>
-      <span class="channel-meta">Goiânia, GO · Brasil</span>
-    </div>
-
   </div>
+
 </main>
 
 <!-- Footer -->
@@ -379,14 +454,182 @@ h1 strong {
   <a href="index.html">← Retornar à Origem</a>
 </footer>
 
+<!-- Bibliotecas de Engine Gráfica -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
 <script>
-// Ambient Glow interativo com o mouse
-const glow = document.getElementById('ambient-glow');
-window.addEventListener('pointermove', (e) => {
-  const x = (e.clientX / window.innerWidth) * 100;
-  const y = (e.clientY / window.innerHeight) * 100;
-  glow.style.background = `radial-gradient(circle at ${x}% ${y}%, rgba(217, 101, 38, 0.10) 0%, transparent 65%)`;
-}, { passive: true });
+/**
+ * THREE.JS 3D CYBERNETIC / ARC REACTOR CORE
+ * Núcleo holográfico em anéis concêntricos giroscópicos com energia reativa
+ */
+(function() {
+  const canvas = document.getElementById('reactor-canvas');
+  if (!canvas) return;
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 7.5);
+
+  // Iluminação
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  scene.add(ambientLight);
+
+  const coreLight = new THREE.PointLight(0xd96526, 4, 15);
+  coreLight.position.set(2, 0, 2);
+  scene.add(coreLight);
+
+  const cyanRim = new THREE.PointLight(0x00d4ff, 1.5, 12);
+  cyanRim.position.set(-3, 2, -1);
+  scene.add(cyanRim);
+
+  // Grupo Principal do Reator
+  const reactorGroup = new THREE.Group();
+  // Posiciona ligeiramente deslocado para a direita em desktop (fundo estético)
+  reactorGroup.position.set(window.innerWidth > 900 ? 1.8 : 0, 0, 0);
+  scene.add(reactorGroup);
+
+  // 1. Núcleo de Energia Central (Glowing Icosahedron Core)
+  const coreGeo = new THREE.IcosahedronGeometry(0.7, 1);
+  const coreMat = new THREE.MeshStandardMaterial({
+    color: 0xd96526,
+    emissive: 0xd96526,
+    emissiveIntensity: 1.2,
+    roughness: 0.2,
+    metalness: 0.8,
+    wireframe: true
+  });
+  const innerCore = new THREE.Mesh(coreGeo, coreMat);
+  reactorGroup.add(innerCore);
+
+  // Esfera de pulso interno
+  const pulseGeo = new THREE.SphereGeometry(0.45, 24, 24);
+  const pulseMat = new THREE.MeshBasicMaterial({ color: 0xff8844 });
+  const pulseSphere = new THREE.Mesh(pulseGeo, pulseMat);
+  reactorGroup.add(pulseSphere);
+
+  // 2. Anel Concêntrico 1 (Giroscópio Interno)
+  const ring1Geo = new THREE.TorusGeometry(1.3, 0.04, 16, 80);
+  const ringMat = new THREE.MeshStandardMaterial({
+    color: 0x999999,
+    metalness: 0.9,
+    roughness: 0.2
+  });
+  const ring1 = new THREE.Mesh(ring1Geo, ringMat);
+  reactorGroup.add(ring1);
+
+  // 3. Anel Concêntrico 2 (Anel Médio Tecnológico com Marcadores)
+  const ring2Geo = new THREE.TorusGeometry(1.9, 0.05, 16, 90);
+  const ring2Mat = new THREE.MeshStandardMaterial({
+    color: 0xd96526,
+    metalness: 0.8,
+    roughness: 0.3,
+    wireframe: false
+  });
+  const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+  reactorGroup.add(ring2);
+
+  // 4. Anel Concêntrico 3 (Estrutura Externa Wireframe / HUD Orbit)
+  const ring3Geo = new THREE.TorusGeometry(2.6, 0.03, 16, 100);
+  const ring3Mat = new THREE.MeshBasicMaterial({
+    color: 0x555555,
+    wireframe: true
+  });
+  const ring3 = new THREE.Mesh(ring3Geo, ring3Mat);
+  reactorGroup.add(ring3);
+
+  // 5. Marcadores Angulares do Reator (Arc Segments)
+  const segGroup = new THREE.Group();
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const boxGeo = new THREE.BoxGeometry(0.12, 0.04, 0.16);
+    const boxMat = new THREE.MeshBasicMaterial({ color: 0xd96526 });
+    const segment = new THREE.Mesh(boxGeo, boxMat);
+    segment.position.set(Math.cos(angle) * 1.9, Math.sin(angle) * 1.9, 0);
+    segment.rotation.z = angle;
+    segGroup.add(segment);
+  }
+  reactorGroup.add(segGroup);
+
+  // Estados de Interatividade e Energia
+  let energyLevel = 1.0;
+  let targetEnergy = 1.0;
+  let targetRotX = 0;
+  let targetRotY = 0;
+
+  // Interatividade de Mouse / Parallax
+  window.addEventListener('pointermove', (e) => {
+    const normX = (e.clientX / window.innerWidth) * 2 - 1;
+    const normY = -(e.clientY / window.innerHeight) * 2 + 1;
+    targetRotY = normX * 0.45;
+    targetRotX = normY * 0.35;
+  }, { passive: true });
+
+  // Reação aos Canais de Contato
+  document.querySelectorAll('.channel-item').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      const boost = parseFloat(item.dataset.energy) || 1.6;
+      targetEnergy = boost;
+      gsap.to(coreLight, { intensity: 7, duration: 0.4 });
+      gsap.to(coreMat, { emissiveIntensity: 2.2, duration: 0.4 });
+    });
+    item.addEventListener('mouseleave', () => {
+      targetEnergy = 1.0;
+      gsap.to(coreLight, { intensity: 4, duration: 0.6 });
+      gsap.to(coreMat, { emissiveIntensity: 1.2, duration: 0.6 });
+    });
+  });
+
+  // Loop de Animação do Reator 3D
+  let clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+    const time = clock.getElapsedTime();
+
+    // Interpolação suave de energia
+    energyLevel += (targetEnergy - energyLevel) * 0.08;
+
+    // Rotação dos anéis giroscópicos
+    ring1.rotation.x += 0.012 * energyLevel;
+    ring1.rotation.y += 0.018 * energyLevel;
+
+    ring2.rotation.x -= 0.008 * energyLevel;
+    ring2.rotation.z += 0.014 * energyLevel;
+
+    ring3.rotation.y += 0.005 * energyLevel;
+    ring3.rotation.z -= 0.007 * energyLevel;
+
+    segGroup.rotation.z += 0.010 * energyLevel;
+
+    innerCore.rotation.x += 0.02 * energyLevel;
+    innerCore.rotation.y += 0.03 * energyLevel;
+
+    // Pulso do núcleo interno
+    const pulseScale = 1 + Math.sin(time * 3 * energyLevel) * 0.08;
+    pulseSphere.scale.set(pulseScale, pulseScale, pulseScale);
+
+    // Parallax suave com a posição do mouse
+    reactorGroup.rotation.y += (targetRotY - reactorGroup.rotation.y) * 0.05;
+    reactorGroup.rotation.x += (targetRotX - reactorGroup.rotation.x) * 0.05;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // Resize Handler
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    reactorGroup.position.set(window.innerWidth > 900 ? 1.8 : 0, 0, 0);
+  }, { passive: true });
+
+})();
 
 // Função silenciosa de cópia
 function copyData(text, btn) {
