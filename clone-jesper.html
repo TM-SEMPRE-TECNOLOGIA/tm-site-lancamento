@@ -21,10 +21,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <style>
+  <style>
     :root {
-      --bg: #000000;
-      --text: #ffffff;
-      --accent: #d9a441;
+      --orange: #d96526;
+      --orange-glow: rgba(217, 101, 38, 0.65);
+      --ink: #05070b;
       --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
@@ -41,8 +42,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: var(--ink);
+      color: #ffffff;
       font-family: var(--font-main);
       touch-action: none;
     }
@@ -55,6 +56,28 @@
       cursor: grabbing !important;
     }
 
+    /* ── BACKGROUND CINEMATOGRÁFICO CONECTADO AO VÍDEO ── */
+    #bg-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: var(--ink) url('frames/frame_149.jpg') center/cover no-repeat;
+      filter: saturate(0.85) contrast(1.1) brightness(0.65);
+      pointer-events: none;
+    }
+
+    /* Overlay Editorial com Radial Glow Laranja */
+    #bg-tone {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 65% 55% at 50% 50%, rgba(217, 101, 38, 0.18) 0%, transparent 70%),
+        linear-gradient(90deg, rgba(5, 7, 11, 0.95) 0%, rgba(5, 7, 11, 0.55) 40%, rgba(5, 7, 11, 0.35) 65%, rgba(5, 7, 11, 0.85) 100%),
+        linear-gradient(180deg, rgba(5, 7, 11, 0.75) 0%, transparent 35%, rgba(5, 7, 11, 0.92) 100%);
+    }
+
     /* WebGL canvas container */
     #webgl-canvas {
       position: fixed;
@@ -62,7 +85,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: 1;
+      z-index: 2;
       pointer-events: auto;
     }
 
@@ -86,13 +109,13 @@
       text-transform: uppercase;
     }
 
-    /* Glass Panels for Overlays */
+    /* Glass Panels for Config */
     .glass-panel {
-      background: rgba(10, 10, 12, 0.85);
+      background: rgba(5, 7, 11, 0.88);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(217, 101, 38, 0.25);
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.9), 0 0 30px rgba(217, 101, 38, 0.12);
     }
 
     /* Custom Floating Live Shader/Effects Config Panel */
@@ -101,7 +124,7 @@
     }
     #config-panel.collapsed {
       transform: translateX(calc(100% + 20px));
-      opacity: 0.2;
+      opacity: 0.25;
     }
     #config-panel.collapsed:hover {
       opacity: 1;
@@ -110,13 +133,14 @@
     /* Scroll progress bar */
     .progress-bar {
       height: 2px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.12);
       border-radius: 999px;
       overflow: hidden;
     }
     .progress-fill {
       height: 100%;
-      background: #ffffff;
+      background: var(--orange);
+      box-shadow: 0 0 12px var(--orange-glow);
       width: 0%;
       transition: width 0.05s linear;
     }
@@ -125,7 +149,7 @@
     #loader {
       position: fixed;
       inset: 0;
-      background: #000;
+      background: #05070b;
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -136,7 +160,7 @@
     .loader-bar {
       width: 45px;
       height: 4px;
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(217, 101, 38, 0.2);
       border-radius: 4px;
       overflow: hidden;
       position: relative;
@@ -148,7 +172,8 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background: #fff;
+      background: var(--orange);
+      box-shadow: 0 0 8px var(--orange-glow);
       animation: load-anim 1.2s ease-in-out infinite;
     }
     .loader-bar:nth-child(2)::after { animation-delay: 0.2s; }
@@ -161,7 +186,13 @@
     }
   </style>
 </head>
-<body class="selection:bg-white/20 selection:text-white">
+<body class="selection:bg-amber-500/20 selection:text-white">
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  BACKGROUND CINEMATOGRÁFICO (ÚLTIMO FRAME DO VÍDEO)         -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="bg-backdrop"></div>
+  <div id="bg-tone"></div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
   <!--  INTRO LOADER                                               -->
@@ -172,7 +203,7 @@
       <div class="loader-bar"></div>
       <div class="loader-bar"></div>
     </div>
-    <div class="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Inicializando Engine 3D</div>
+    <div class="text-[10px] font-mono tracking-widest text-amber-500/80 uppercase">Carregando Galeria 3D</div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -181,116 +212,36 @@
   <div id="webgl-canvas"></div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!--  FIXED UI NAVIGATION LAYER (Jesper Landberg style)          -->
+  <!--  FIXED UI NAVIGATION LAYER (Minimal & Clean)                -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <div class="ui-layer flex flex-col justify-between p-6 md:p-10">
     
-    <!-- Top Bar -->
-    <header class="flex items-start justify-between">
-      <a href="#" onclick="resetPosition(); return false;" class="interactive label text-sm font-medium tracking-tight hover:opacity-70 transition flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span id="ui-brand-name">Jesper Landberg</span>
-      </a>
-
-      <div class="flex items-center gap-4">
-        <button onclick="toggleOverlay('profile')" class="interactive label opacity-80 hover:opacity-100 transition px-3 py-1.5 rounded-full border border-white/10 hover:border-white/30">
-          Profile
-        </button>
-        <button onclick="toggleConfigPanel()" class="interactive label opacity-80 hover:opacity-100 transition px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 flex items-center gap-1.5">
-          <i class="fa-solid fa-sliders text-[10px]"></i> Efeitos & Config
-        </button>
-      </div>
+    <!-- Top Bar: Apenas o botão de Config/Shaders -->
+    <header class="flex items-start justify-end w-full">
+      <button onclick="toggleConfigPanel()" class="interactive label text-xs opacity-85 hover:opacity-100 transition px-3.5 py-2 rounded-full bg-black/60 backdrop-blur-md border border-amber-500/30 text-amber-400 hover:border-amber-400 flex items-center gap-2 shadow-lg shadow-amber-500/10">
+        <i class="fa-solid fa-sliders text-[11px]"></i> Efeitos & Config
+      </button>
     </header>
 
-    <!-- Bottom Bar -->
-    <footer class="flex items-end justify-between">
+    <!-- Bottom Bar: Barra de progresso e dica de arraste -->
+    <footer class="flex items-end justify-between w-full">
       <div class="flex items-center gap-3">
-        <nav class="label flex items-center gap-2" aria-label="Project views">
-          <button onclick="setFilter('featured')" id="btn-featured" class="interactive font-bold text-white transition">Featured</button>
-          <span class="opacity-30">/</span>
-          <button onclick="setFilter('all')" id="btn-all" class="interactive opacity-50 hover:opacity-100 text-white transition">All (8)</button>
-        </nav>
+        <div class="text-[10px] font-mono tracking-widest text-neutral-400 uppercase flex items-center gap-2">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#d96526] animate-pulse"></span>
+          <span>Projetos em Destaque</span>
+        </div>
       </div>
 
       <!-- Center drag hint -->
-      <div class="hidden md:flex flex-col items-center gap-1 opacity-40">
-        <div class="text-[9px] font-mono tracking-widest uppercase">Arraste ou use o scroll lateral</div>
-        <div class="w-24 progress-bar">
+      <div class="flex flex-col items-center gap-1.5 opacity-70">
+        <div class="text-[9px] font-mono tracking-widest uppercase text-neutral-400">Arraste para navegar</div>
+        <div class="w-28 progress-bar">
           <div id="scroll-progress" class="progress-fill"></div>
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button onclick="toggleOverlay('newsletter')" class="interactive label opacity-80 hover:opacity-100 transition px-3 py-1.5 rounded-full border border-white/10 hover:border-white/30">
-          Newsletter
-        </button>
-      </div>
+      <div class="w-20"></div>
     </footer>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!--  PROFILE MODAL / OVERLAY                                    -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div id="overlay-profile" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-400">
-    <div class="glass-panel max-w-lg w-full rounded-2xl p-8 space-y-6 relative border border-white/10">
-      <button onclick="toggleOverlay('profile')" class="absolute top-6 right-6 text-neutral-400 hover:text-white transition">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
-
-      <div class="space-y-3">
-        <div class="text-[11px] font-mono uppercase tracking-widest text-amber-400">Design Engineer Portfolio</div>
-        <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">Jesper Landberg</h2>
-        <p class="text-sm text-neutral-300 leading-relaxed font-light">
-          Swedish design engineer, named Awwwards Independent of the Year in 2022 and 2024, building visually rich, motion-driven websites. Responsible for front-end architecture, WebGL shaders, 3D math and interaction design.
-        </p>
-      </div>
-
-      <div class="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2">
-        <div class="text-xs font-semibold text-neutral-200">74 Reconhecimentos Globais</div>
-        <div class="text-xs text-neutral-400">30× Awwwards • 37× FWA • 3× Webby • 2× Lovie</div>
-      </div>
-
-      <div class="pt-2 border-t border-white/10 flex flex-wrap gap-4 text-xs font-medium">
-        <a href="https://www.instagram.com/jesperlandberg222/" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1.5">
-          <i class="fa-brands fa-instagram"></i> Instagram
-        </a>
-        <a href="https://x.com/jesper_alpacka" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1.5">
-          <i class="fa-brands fa-x-twitter"></i> X (Twitter)
-        </a>
-        <a href="https://www.linkedin.com/in/jesper-landberg-ba2984256/" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1.5">
-          <i class="fa-brands fa-linkedin"></i> LinkedIn
-        </a>
-        <a href="mailto:jesper@alpacka.studio" class="hover:text-amber-400 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-envelope"></i> Email
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <!--  NEWSLETTER MODAL / OVERLAY                                 -->
-  <!-- ═══════════════════════════════════════════════════════════ -->
-  <div id="overlay-newsletter" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-400">
-    <div class="glass-panel max-w-md w-full rounded-2xl p-8 space-y-5 relative border border-white/10">
-      <button onclick="toggleOverlay('newsletter')" class="absolute top-6 right-6 text-neutral-400 hover:text-white transition">
-        <i class="fa-solid fa-xmark text-lg"></i>
-      </button>
-
-      <div class="space-y-2">
-        <div class="text-[11px] font-mono uppercase tracking-widest text-amber-400">Updates & Shaders</div>
-        <h3 class="text-xl font-bold">Newsletter Exclusiva</h3>
-        <p class="text-xs text-neutral-400 leading-relaxed">
-          Artigos periódicos sobre engenharia criativa, shaders GLSL, física de animação e bastidores de projetos premiados.
-        </p>
-      </div>
-
-      <form onsubmit="handleSubscribe(event)" class="space-y-3">
-        <input type="email" required placeholder="seu.email@exemplo.com" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400 transition" />
-        <button type="submit" class="w-full py-3 bg-white text-black font-semibold text-xs rounded-xl hover:bg-neutral-200 transition">
-          Inscrever-se
-        </button>
-      </form>
-    </div>
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
@@ -298,7 +249,7 @@
   <!-- ═══════════════════════════════════════════════════════════ -->
   <aside id="config-panel" class="fixed top-20 right-6 z-40 glass-panel p-5 rounded-2xl w-80 text-xs space-y-4 text-neutral-200 max-h-[80vh] overflow-y-auto">
     <div class="flex items-center justify-between border-b border-white/10 pb-3">
-      <div class="font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+      <div class="font-bold uppercase tracking-wider text-[#d96526] flex items-center gap-2">
         <i class="fa-solid fa-wand-magic-sparkles"></i> 3D Engine Setup
       </div>
       <button onclick="toggleConfigPanel()" class="text-neutral-400 hover:text-white text-xs">
@@ -309,7 +260,7 @@
     <!-- Efeito de Shader dos Cards -->
     <div class="space-y-1.5">
       <label class="font-semibold text-neutral-400 block">Efeito Shader (Distorção)</label>
-      <select id="select-shader" onchange="updateShaderEffect(this.value)" class="w-full bg-black/60 border border-white/15 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-400">
+      <select id="select-shader" onchange="updateShaderEffect(this.value)" class="w-full bg-black/60 border border-white/15 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-[#d96526]">
         <option value="wave">1. Onda de Velocidade (Kinetic Wave)</option>
         <option value="rgb">2. RGB Shift / Aberração Cromática</option>
         <option value="bulge">3. Lente 3D Esférica (Bulge / Fish-eye)</option>
@@ -322,54 +273,48 @@
     <div class="space-y-1.5">
       <div class="flex justify-between">
         <label class="font-semibold text-neutral-400">Intensidade do Efeito</label>
-        <span id="val-intensity" class="font-mono text-[10px] text-amber-400">100%</span>
+        <span id="val-intensity" class="font-mono text-[10px] text-[#d96526]">80%</span>
       </div>
-      <input type="range" id="input-intensity" min="0" max="250" step="5" value="100" oninput="updateShaderIntensity(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+      <input type="range" id="input-intensity" min="0" max="250" step="5" value="80" oninput="updateShaderIntensity(this.value)" class="w-full accent-[#d96526] bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
     </div>
 
     <!-- Curvatura do Cilindro 3D -->
     <div class="space-y-1.5">
       <div class="flex justify-between">
         <label class="font-semibold text-neutral-400">Curvatura Cilíndrica (Raio)</label>
-        <span id="val-radius" class="font-mono text-[10px] text-amber-400">18.0</span>
+        <span id="val-radius" class="font-mono text-[10px] text-[#d96526]">10.0</span>
       </div>
-      <input type="range" id="input-radius" min="8" max="35" step="0.5" value="18" oninput="updateCylinderRadius(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+      <input type="range" id="input-radius" min="6" max="35" step="0.5" value="10" oninput="updateCylinderRadius(this.value)" class="w-full accent-[#d96526] bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
     </div>
 
     <!-- Espaçamento dos Cards -->
     <div class="space-y-1.5">
       <div class="flex justify-between">
         <label class="font-semibold text-neutral-400">Espaçamento Horizontal</label>
-        <span id="val-spacing" class="font-mono text-[10px] text-amber-400">5.2</span>
+        <span id="val-spacing" class="font-mono text-[10px] text-[#d96526]">5.2</span>
       </div>
-      <input type="range" id="input-spacing" min="3.5" max="8.0" step="0.1" value="5.2" oninput="updateCardSpacing(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+      <input type="range" id="input-spacing" min="3.5" max="8.0" step="0.1" value="5.2" oninput="updateCardSpacing(this.value)" class="w-full accent-[#d96526] bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
     </div>
 
     <!-- Sensibilidade do Scroll / Drag -->
     <div class="space-y-1.5">
       <div class="flex justify-between">
         <label class="font-semibold text-neutral-400">Inércia & Física (Damping)</label>
-        <span id="val-damping" class="font-mono text-[10px] text-amber-400">0.075</span>
+        <span id="val-damping" class="font-mono text-[10px] text-[#d96526]">0.020</span>
       </div>
-      <input type="range" id="input-damping" min="0.02" max="0.2" step="0.005" value="0.075" oninput="updateDamping(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+      <input type="range" id="input-damping" min="0.01" max="0.2" step="0.002" value="0.020" oninput="updateDamping(this.value)" class="w-full accent-[#d96526] bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
     </div>
 
     <!-- Grid de Fundo -->
     <div class="flex items-center justify-between pt-2 border-t border-white/10">
-      <span class="text-neutral-400">Grid 3D no Chão</span>
-      <input type="checkbox" id="toggle-grid" checked onchange="toggleGrid(this.checked)" class="accent-amber-400 w-4 h-4 cursor-pointer" />
-    </div>
-
-    <!-- Nome da Marca / Header -->
-    <div class="space-y-1.5 pt-2 border-t border-white/10">
-      <label class="font-semibold text-neutral-400 block">Texto do Logo / Topo</label>
-      <input type="text" id="input-brand" value="Jesper Landberg" oninput="document.getElementById('ui-brand-name').textContent = this.value" class="w-full bg-black/60 border border-white/15 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-400" />
+      <span class="text-neutral-400">Grid 3D no Chão (#d96526)</span>
+      <input type="checkbox" id="toggle-grid" checked onchange="toggleGrid(this.checked)" class="accent-[#d96526] w-4 h-4 cursor-pointer" />
     </div>
 
     <!-- ── GERENCIADOR DE IMAGENS / CARDS ── -->
     <div class="pt-3 border-t border-white/10 space-y-2">
       <div class="flex items-center justify-between">
-        <label class="font-bold text-amber-400 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+        <label class="font-bold text-[#d96526] flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
           <i class="fa-solid fa-images"></i> Substituir Imagens (8 Cards)
         </label>
       </div>
@@ -383,63 +328,63 @@
   <!--  THREE.JS 3D SCENE & SHADER LOGIC                           -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <script>
-    // ─── Project Dataset (Original High-Res Assets from DatoCMS) ─
+    // ─── Project Dataset (8 Cards Descontraídos de Em Construção) ─
     const PROJECTS = [
       {
-        id: "nathan-riley",
-        title: "Nathan Riley",
-        category: "3D Visuals & Art Direction",
-        image: "https://www.datocms-assets.com/223669/1786207557-nathan-1.jpg?auto=format&fit=crop&h=720&w=1250",
-        aspect: 2048 / 1172,
+        id: "cat-dev",
+        title: "Gato Dev // Em Construção",
+        category: "Work In Progress",
+        image: "assets/cards/card_1.jpg",
+        aspect: 16 / 9,
       },
       {
-        id: "casa-di-solare",
-        title: "Casa Di Solare",
-        category: "Typeface & Design System",
-        image: "https://www.datocms-assets.com/223669/1785656645-image-84.jpg?auto=format&fit=crop&h=720&w=1250",
-        aspect: 2048 / 1204,
+        id: "robot-spark",
+        title: "Robô Spark // Dev Trabalhando",
+        category: "Hardware & Circuits",
+        image: "assets/cards/card_2.jpg",
+        aspect: 16 / 9,
       },
       {
-        id: "the-lookback",
-        title: "The Lookback",
-        category: "Digital Time Capsule",
-        image: "https://www.datocms-assets.com/223669/1785656633-tlb4.jpg?auto=format&fit=crop&h=720&w=1250",
-        aspect: 1250 / 720,
+        id: "duck-debug",
+        title: "Rubber Duck // Debugging",
+        category: "Coffee & Bugs",
+        image: "assets/cards/card_3.jpg",
+        aspect: 16 / 9,
       },
       {
-        id: "book-of-happiness",
-        title: "Book of Happiness",
-        category: "Editorial & Wellbeing Experience",
-        image: "https://www.datocms-assets.com/223669/1786210260-book-1.jpg?auto=format&fit=crop&h=720&w=1250",
-        aspect: 2048 / 1114,
+        id: "astronaut-chill",
+        title: "Astronauta // Projeto no Forno",
+        category: "Lunar Station",
+        image: "assets/cards/card_4.jpg",
+        aspect: 16 / 9,
       },
       {
-        id: "dogelon-mars",
-        title: "Dogelon Mars",
-        category: "Intergalactic Storytelling",
-        image: "https://www.datocms-assets.com/223669/1786207957-dogelon-2.jpg?auto=format&fit=crop&h=720&w=1250",
-        aspect: 3360 / 2200,
+        id: "cyber-helmet",
+        title: "Cyber Helmet // Obras Digitais",
+        category: "System Build",
+        image: "assets/cards/card_5.jpg",
+        aspect: 16 / 9,
       },
       {
-        id: "gil-huybrecht",
-        title: "Gil Huybrecht",
-        category: "Typography Portfolio",
-        image: "https://www.datocms-assets.com/223669/1786208283-betteroff-thumb.avif?auto=format&fit=crop&h=720&w=1250",
-        aspect: 1196 / 720,
+        id: "coffee-compile",
+        title: "Café & Code // 99% Compilado",
+        category: "Processing Assets",
+        image: "assets/cards/card_6.jpg",
+        aspect: 16 / 9,
       },
       {
-        id: "discoveryland",
-        title: "Discoveryland",
-        category: "Luxury Real Estate 3D",
-        image: "https://www.datocms-assets.com/223669/1786432901-dlc-thumbnail.jpg?auto=format&fit=crop&h=720&w=1250",
-        aspect: 1372 / 1029,
+        id: "drone-labs",
+        title: "Drone Labs // TM Em Obras",
+        category: "Automated Deploy",
+        image: "assets/cards/card_7.jpg",
+        aspect: 16 / 9,
       },
       {
-        id: "griflan",
-        title: "Griflan",
-        category: "Creative Strategy Studio",
-        image: "https://www.datocms-assets.com/223669/1786207051-ts2.jpg?auto=format&fit=crop&h=720&w=1250",
-        aspect: 1162 / 720,
+        id: "cactus-cook",
+        title: "Cacto Dev // Tá Cozinhando",
+        category: "AI Datacenter",
+        image: "assets/cards/card_8.jpg",
+        aspect: 16 / 9,
       }
     ];
 
@@ -456,13 +401,13 @@
     let startX = 0;
     let dragStartX = 0;
 
-    // Config options
+    // Config options (Exatamente como definido pelo usuário)
     let config = {
-      cylinderRadius: 18.0,
+      cylinderRadius: 10.0,
       cardSpacing: 5.2,
-      damping: 0.075,
-      shaderType: 0, // 0: wave, 1: rgb, 2: bulge, 3: hologram, 4: clean
-      intensity: 1.0,
+      damping: 0.020,
+      shaderType: 0, // 0: wave (Onda de Velocidade)
+      intensity: 0.8, // 80%
       showGrid: true,
       cardBaseHeight: 2.8,
     };
@@ -529,13 +474,31 @@
       uniform int uShaderType;
       uniform float uIntensity;
       uniform float uHover;
+      uniform float uAspect;
 
       varying vec2 vUv;
       varying vec3 vNormal;
       varying float vDistortion;
 
+      // SDF para cantos arredondados perfeitos
+      float roundedBox(vec2 p, vec2 b, float r) {
+        vec2 q = abs(p) - b + r;
+        return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
+      }
+
       void main() {
         vec2 uv = vUv;
+
+        // 1. Cálculo de Cantos Arredondados com Anti-aliasing
+        vec2 p = uv - vec2(0.5);
+        p.x *= uAspect;
+        vec2 halfSize = vec2(0.5 * uAspect, 0.5);
+        float cornerRadius = 0.048; // Borda levemente arredondada elegante
+        float dist = roundedBox(p, halfSize, cornerRadius);
+        
+        float alpha = 1.0 - smoothstep(0.0, 0.005, dist);
+        if (alpha < 0.02) discard;
+
         vec4 color = vec4(1.0);
 
         if (uShaderType == 0) {
@@ -544,7 +507,7 @@
           waveUv.x += sin(uv.y * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
           waveUv.y += cos(uv.x * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
           color = texture2D(uTexture, waveUv);
-          color.rgb += vec3(0.1, 0.2, 0.25) * abs(sin(uv.y * 8.0 + uTime * 2.0)) * (abs(uVelocity) * 2.0 + uHover * 0.3) * uIntensity;
+          color.rgb += vec3(0.85, 0.4, 0.15) * abs(sin(uv.y * 8.0 + uTime * 2.0)) * (abs(uVelocity) * 1.5 + uHover * 0.25) * uIntensity;
 
         } else if (uShaderType == 1) {
           // 2. RGB Shift / Aberração Cromática Dramática
@@ -569,7 +532,7 @@
           vec4 base = texture2D(uTexture, uv);
           float scanline = sin(uv.y * 300.0 + uTime * 10.0) * 0.15 * uIntensity;
           float noise = fract(sin(dot(uv, vec2(12.9898, 78.233)) + uTime) * 43758.5453) * 0.12 * uIntensity;
-          vec3 holoColor = mix(base.rgb, vec3(0.2, 0.85, 1.0), 0.28 * uIntensity);
+          vec3 holoColor = mix(base.rgb, vec3(0.85, 0.45, 0.15), 0.25 * uIntensity);
           color = vec4(holoColor - scanline + noise, 1.0);
 
         } else {
@@ -581,10 +544,14 @@
         float vignette = smoothstep(0.85, 0.15, length(uv - vec2(0.5)));
         color.rgb *= mix(0.88, 1.05, vignette);
 
-        // Hover highlight
-        color.rgb += uHover * 0.1;
+        // Borda luminosa alaranjada sutil (#d96526)
+        float borderGlow = 1.0 - smoothstep(0.0, 0.009, abs(dist));
+        color.rgb += vec3(0.85, 0.4, 0.15) * borderGlow * (0.35 + uHover * 0.5);
 
-        gl_FragColor = color;
+        // Hover highlight
+        color.rgb += uHover * 0.08;
+
+        gl_FragColor = vec4(color.rgb, alpha);
       }
     `;
 
@@ -597,23 +564,23 @@
     function initThree() {
       const container = document.getElementById('webgl-canvas');
 
-      // 1. Scene & Camera
+      // 1. Scene & Camera (Fundo transparente para mesclar com o backdrop)
       scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x000000);
-      scene.fog = new THREE.FogExp2(0x000000, 0.035);
+      scene.background = null;
+      scene.fog = new THREE.FogExp2(0x05070b, 0.028);
 
       const aspect = window.innerWidth / window.innerHeight;
       camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
       updateCameraPosition();
 
-      // 2. Renderer
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      // 2. Renderer com canal alpha transparente
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.outputEncoding = THREE.sRGBEncoding;
       container.appendChild(renderer.domElement);
 
-      // 3. Grid no chão (Floor Grid 3D)
+      // 3. Grid no chão no tom Laranja (#d96526)
       createGridFloor();
 
       // 4. Carregar Texturas e Criar Cards
@@ -644,11 +611,14 @@
       }
     }
 
-    // ─── Create 3D Grid Floor ────────────────────────────────
+    // ─── Create 3D Grid Floor (Laranja #d96526) ──────────────
     function createGridFloor() {
       const size = 60;
       const divisions = 60;
-      gridHelper = new THREE.GridHelper(size, divisions, 0x222225, 0x111114);
+      // Cor primária #d96526, cor secundária marrom-alaranjado escuro
+      gridHelper = new THREE.GridHelper(size, divisions, 0xd96526, 0x4a1e0b);
+      gridHelper.material.opacity = 0.65;
+      gridHelper.material.transparent = true;
       gridHelper.position.y = isMobile() ? -3.5 : -1.8;
       gridHelper.position.z = -5;
       scene.add(gridHelper);
@@ -673,6 +643,7 @@
 
       PROJECTS.forEach((proj, idx) => {
         const { width, height } = getCardDimensions(proj);
+        const cardAspect = proj.aspect || (width / height);
 
         // Geometria subdividida para curvatura suave no shader
         const geometry = new THREE.PlaneGeometry(width, height, 32, 16);
@@ -683,7 +654,7 @@
           tex.minFilter = THREE.LinearMipmapLinearFilter;
         });
 
-        // Shader Material Customizado
+        // Shader Material Customizado com Transparência para Bordas Arredondadas
         const material = new THREE.ShaderMaterial({
           vertexShader: vertexShader,
           fragmentShader: fragmentShader,
@@ -696,7 +667,9 @@
             uIntensity: { value: config.intensity },
             uHover: { value: 0.0 },
             uIsMobile: { value: isMobile() ? 1 : 0 },
+            uAspect: { value: cardAspect },
           },
+          transparent: true,
           side: THREE.DoubleSide,
         });
 

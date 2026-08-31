@@ -12,6 +12,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Three.js & GSAP para Carrossel 3D -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <style>
 :root {
   --orange: #d96526;
@@ -275,6 +278,58 @@ h1 strong, h2 strong {
   background: var(--faint);
 }
 
+/* ── SOUND EXPERIENCE MASTER BADGE ── */
+.sound-experience-badge {
+  position: fixed;
+  top: 24px;
+  right: 28px;
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(5, 7, 11, 0.85);
+  border: 1px solid rgba(217, 101, 38, 0.45);
+  border-radius: 999px;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(217, 101, 38, 0.2);
+  transition: all 0.3s ease;
+  user-select: none;
+}
+.sound-experience-badge:hover {
+  background: rgba(217, 101, 38, 0.25);
+  border-color: #ff7733;
+  box-shadow: 0 0 20px rgba(255, 119, 51, 0.5);
+  transform: scale(1.04);
+}
+
+.sound-wave-icon {
+  display: flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 12px;
+}
+.sound-wave-icon span {
+  width: 2px;
+  height: 100%;
+  background: var(--orange);
+  border-radius: 999px;
+  animation: wave-bar 1.2s ease-in-out infinite;
+}
+.sound-wave-icon span:nth-child(2) { animation-delay: 0.2s; height: 60%; }
+.sound-wave-icon span:nth-child(3) { animation-delay: 0.4s; height: 80%; }
+
+@keyframes wave-bar {
+  0%, 100% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1.0); }
+}
+
 /* ── MARQUEE BAND (TICKER DE DISPONIBILIDADE) ── */
 .marquee-band {
   position: relative;
@@ -347,24 +402,174 @@ h1 strong, h2 strong {
   flex-shrink: 0;
 }
 
-/* ── SLOTS PLACEHOLDER (SEÇÕES FUTURAS) ── */
+/* ── SEÇÃO 1: TRANSIÇÃO CINEMATOGRÁFICA EM VÍDEO NEON (FULL-WIDTH DE PONTA A PONTA) ── */
+.section-laser-divider {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.laser-line-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(217, 101, 38, 0.4) 20%, #ff7733 50%, rgba(217, 101, 38, 0.4) 80%, transparent 100%);
+  box-shadow: 0 0 18px rgba(255, 119, 51, 0.75), 0 0 40px rgba(217, 101, 38, 0.45);
+  z-index: 2;
+}
+
+/* Vídeo Full-Width de Ponta a Ponta */
+.neon-video-frame {
+  position: relative;
+  width: 100%;
+  width: 100vw;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.neon-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── PINNED SCROLL WRAPPER (TRAVAMENTO DE SCROLL POR 1 CICLO COMPLETO) ── */
+#portfolio-pin-wrapper {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  height: 360vh; /* Altura ideal para percorrer os 8 cards suavemente */
+  background: transparent;
+}
+
+#section-portfolio-3d {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100vh;
+  background: var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#carousel-webgl-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+  z-index: 1;
+}
+
+#carousel-webgl-stage.grabbing {
+  cursor: grabbing !important;
+}
+
+/* Header & Footer do 3D Stage */
+.stage-ui-header {
+  position: relative;
+  z-index: 10;
+  padding: 32px clamp(24px, 6vw, 80px) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+.stage-ui-title h3 {
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+.stage-ui-title h3 strong {
+  font-weight: 800;
+  color: var(--orange);
+}
+.stage-ui-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.stage-ui-footer {
+  position: relative;
+  z-index: 10;
+  padding: 0 clamp(24px, 6vw, 80px) 36px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+.carousel-drag-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+}
+.drag-hint-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+.carousel-progress-track {
+  width: 140px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.carousel-progress-thumb {
+  height: 100%;
+  width: 0%;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange-glow);
+  transition: width 0.05s linear;
+}
+
+
+
 .slot-placeholder {
   position: relative;
   z-index: 2;
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   background: var(--ink);
-  border: 2px dashed rgba(255, 255, 255, 0.12);
-  border-left: none;
-  border-right: none;
-}
-.slot-placeholder + .slot-placeholder {
-  border-top: none;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
 }
 .slot-label {
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.35);
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   font-weight: 500;
@@ -466,7 +671,13 @@ h1 strong, h2 strong {
 <div id="tone"></div>
 <div id="progress"></div>
 
-<!-- Topbar (desativada — será reativada com as páginas prontas) -->
+<!-- Topbar / Sound Switch Master -->
+<div class="sound-experience-badge" onclick="toggleGlobalSound(event)">
+  <span class="sound-wave-icon">
+    <span></span><span></span><span></span>
+  </span>
+  <span id="global-sound-label">SOM: ATIVADO</span>
+</div>
 
 <!-- Marquee Band — Ticker de Disponibilidade Profissional -->
 <div class="marquee-band" aria-label="Disponibilidade profissional. Passe o mouse para pausar.">
@@ -573,15 +784,54 @@ h1 strong, h2 strong {
   </div>
 </footer>
 
-<!-- ═══ SLOTS PARA NOVAS SEÇÕES ═══ -->
-<section class="slot-placeholder" id="slot-1">
-  <span class="slot-label">SEÇÃO 01 — A DEFINIR</span>
+<!-- ═══ TRANSIÇÃO CINEMATOGRÁFICA: ASSINATURA EM VÍDEO NEON (FULL-WIDTH) ═══ -->
+<section id="section-neon-signature" class="section-laser-divider">
+  <div class="laser-line-glow"></div>
+  <div class="neon-video-frame">
+    <video id="neon-name-video" class="neon-video-element" src="meu-nome-neon.mp4" playsinline webkit-playsinline autoplay muted loop preload="auto"></video>
+    <audio id="neon-audio-track" src="meu-nome-neon.mp4" preload="auto"></audio>
+  </div>
 </section>
+
+<!-- ═══ SEÇÃO 01: PINNED SCROLL 3D MOTION SHOWCASE ═══ -->
+<div id="portfolio-pin-wrapper">
+  <section id="section-portfolio-3d">
+    <!-- UI Superior do Palco 3D -->
+    <div class="stage-ui-header">
+      <div class="stage-ui-title">
+        <div class="eyebrow" style="margin-bottom: 8px;">Showcase Interativo</div>
+        <h3>Produtos, Sistemas & <strong>Soluções.</strong></h3>
+        <p class="stage-ui-subtitle">Engenharia Digital · Automação · SaaS</p>
+      </div>
+    </div>
+
+    <!-- Three.js Canvas Container -->
+    <div id="carousel-webgl-stage"></div>
+
+    <!-- UI Inferior do Palco 3D -->
+    <div class="stage-ui-footer">
+      <div class="carousel-drag-hint">
+        <span class="drag-hint-text">Role a página para navegar nos projetos</span>
+        <div class="carousel-progress-track">
+          <div id="carousel-progress-fill" class="carousel-progress-thumb"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══ PRÓXIMAS SEÇÕES PLANEJADAS ═══ -->
 <section class="slot-placeholder" id="slot-2">
-  <span class="slot-label">SEÇÃO 02 — A DEFINIR</span>
+  <span class="slot-label">SEÇÃO 02 — ENGENHARIA & STACK // O MOTOR DE CONSTRUÇÃO</span>
 </section>
 <section class="slot-placeholder" id="slot-3">
-  <span class="slot-label">SEÇÃO 03 — A DEFINIR</span>
+  <span class="slot-label">SEÇÃO 03 — IMPACTO & RESULTADOS REAIS</span>
+</section>
+<section class="slot-placeholder" id="slot-4">
+  <span class="slot-label">SEÇÃO 04 — MANIFESTO & PERFIL // THIAGO NASCIMENTO</span>
+</section>
+<section class="slot-placeholder" id="slot-5">
+  <span class="slot-label">SEÇÃO 05 — TERMINAL DE CONTATO & CONEXÃO</span>
 </section>
 
 <script>
@@ -687,7 +937,18 @@ h1 strong, h2 strong {
     };
   }
 
-  // Listeners de Scroll e Resize otimizados
+  // 5. Parallax Suave da Plataforma de Lançamento (Opção 2)
+  const platformImg = document.getElementById('parallax-platform');
+  function updatePlatformParallax() {
+    if (!platformImg) return;
+    const rect = platformImg.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      const scrollProgress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+      const moveY = (scrollProgress - 0.5) * 35; // deslocamento sutil de 35px
+      platformImg.style.transform = `translate3d(0, ${moveY.toFixed(1)}px, 0)`;
+    }
+  }
+
   window.addEventListener('scroll', requestUpdate, { passive: true });
   window.addEventListener('resize', resizeCanvas, { passive: true });
   window.addEventListener('orientationchange', resizeCanvas, { passive: true });
@@ -703,6 +964,631 @@ h1 strong, h2 strong {
 
   // Inicialização
   resizeCanvas();
+})();
+
+/**
+ * ════════════════════════════════════════════════════════════════════
+ * THREE.JS 3D CYLINDRICAL MOTION CAROUSEL (EXACT JESPER CLONE ENGINE)
+ * ════════════════════════════════════════════════════════════════════
+ */
+(function init3DCarousel() {
+  const container = document.getElementById('carousel-webgl-stage');
+  const progressBar = document.getElementById('carousel-progress-fill');
+  if (!container || typeof THREE === 'undefined') return;
+
+  const PROJECTS = [
+    { id: "cat-dev", title: "Sistemas & Pipelines de Dados", category: "Fullstack Architecture", image: "assets/cards/card_1.jpg", aspect: 16 / 9 },
+    { id: "robot-spark", title: "Agentes Autônomos & Workflows", category: "Agentic AI & LLMs", image: "assets/cards/card_2.jpg", aspect: 16 / 9 },
+    { id: "duck-debug", title: "Plataformas Web de Alto Desempenho", category: "Next.js & Cloud", image: "assets/cards/card_3.jpg", aspect: 16 / 9 },
+    { id: "astronaut-chill", title: "Dashboards & Gestão em Tempo Real", category: "Operação Digital", image: "assets/cards/card_4.jpg", aspect: 16 / 9 },
+    { id: "cyber-helmet", title: "Automação de Processos Críticos", category: "Ganho de +85% Eficiência", image: "assets/cards/card_5.jpg", aspect: 16 / 9 },
+    { id: "coffee-compile", title: "Engenharia & Arquitetura Digital", category: "Reverse Engine", image: "assets/cards/card_6.jpg", aspect: 16 / 9 },
+    { id: "drone-labs", title: "Interfaces Cinemáticas & 3D Web", category: "UI/UX & WebGL", image: "assets/cards/card_7.jpg", aspect: 16 / 9 },
+    { id: "cactus-cook", title: "APIs Resilientes & Microsserviços", category: "Backend & Infraestrutura", image: "assets/cards/card_8.jpg", aspect: 16 / 9 }
+  ];
+
+  let scene, camera, renderer;
+  let cardMeshes = [];
+  let gridHelper;
+  let textureLoader = new THREE.TextureLoader();
+
+  let targetScroll = 0;
+  let currentScroll = 0;
+  let scrollVelocity = 0;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let isIntersecting = false;
+
+  // Efeito Padrão de Alta Definição
+  const config = {
+    cylinderRadius: 10.0,
+    cardSpacing: 5.2,
+    damping: 0.020,
+    shaderType: 0, // 0: Kinetic Wave / Liquid Distortion
+    intensity: 0.8, // 80%
+    showGrid: true,
+    cardBaseHeight: 2.8,
+  };
+
+  const vertexShader = `
+    uniform float uTime;
+    uniform float uVelocity;
+    uniform float uRadius;
+    uniform int uShaderType;
+    uniform float uIntensity;
+    uniform float uHover;
+    uniform int uIsMobile;
+
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying float vDistortion;
+
+    void main() {
+      vUv = uv;
+      vNormal = normal;
+
+      vec3 pos = position;
+
+      // 1. Curvatura Cilíndrica profunda
+      if (uIsMobile == 1) {
+        float arc = pos.y / uRadius;
+        pos.z -= (1.0 - cos(arc)) * uRadius;
+        pos.y = sin(arc) * uRadius;
+      } else {
+        float arc = pos.x / uRadius;
+        pos.z -= (1.0 - cos(arc)) * uRadius;
+        pos.x = sin(arc) * uRadius;
+      }
+
+      float distVal = 0.0;
+
+      // 2. Deformações por Shader Mode (Kinetic Wave)
+      if (uShaderType == 0) {
+        float wave = sin((uIsMobile == 1 ? vUv.x : vUv.y) * 6.28 + uTime * 3.0 + (uIsMobile == 1 ? pos.y : pos.x)) * (abs(uVelocity) * 1.8 + 0.05 * uHover) * uIntensity;
+        pos.z += wave;
+        distVal = wave;
+      }
+
+      // Hover scale suave
+      pos.z += uHover * 0.35;
+
+      vDistortion = distVal;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    }
+  `;
+
+  const fragmentShader = `
+    uniform sampler2D uTexture;
+    uniform float uVelocity;
+    uniform float uTime;
+    uniform int uShaderType;
+    uniform float uIntensity;
+    uniform float uHover;
+    uniform float uAspect;
+
+    varying vec2 vUv;
+    varying vec3 vNormal;
+    varying float vDistortion;
+
+    // SDF para cantos arredondados perfeitos
+    float roundedBox(vec2 p, vec2 b, float r) {
+      vec2 q = abs(p) - b + r;
+      return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
+    }
+
+    void main() {
+      vec2 uv = vUv;
+
+      // 1. Cálculo de Cantos Arredondados com Anti-aliasing
+      vec2 p = uv - vec2(0.5);
+      p.x *= uAspect;
+      vec2 halfSize = vec2(0.5 * uAspect, 0.5);
+      float cornerRadius = 0.048;
+      float dist = roundedBox(p, halfSize, cornerRadius);
+      
+      float alpha = 1.0 - smoothstep(0.0, 0.005, dist);
+      if (alpha < 0.02) discard;
+
+      vec4 color = vec4(1.0);
+
+      if (uShaderType == 0) {
+        // Kinetic Wave + Liquid Distortion
+        vec2 waveUv = uv;
+        waveUv.x += sin(uv.y * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
+        waveUv.y += cos(uv.x * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
+        color = texture2D(uTexture, waveUv);
+        color.rgb += vec3(0.85, 0.4, 0.15) * abs(sin(uv.y * 8.0 + uTime * 2.0)) * (abs(uVelocity) * 1.5 + uHover * 0.25) * uIntensity;
+      } else {
+        color = texture2D(uTexture, uv);
+      }
+
+      // Vinheta de borda e contraste editorial
+      float vignette = smoothstep(0.85, 0.15, length(uv - vec2(0.5)));
+      color.rgb *= mix(0.88, 1.05, vignette);
+
+      // Borda luminosa alaranjada sutil (#d96526)
+      float borderGlow = 1.0 - smoothstep(0.0, 0.009, abs(dist));
+      color.rgb += vec3(0.85, 0.4, 0.15) * borderGlow * (0.35 + uHover * 0.5);
+
+      // Hover highlight
+      color.rgb += uHover * 0.08;
+
+      gl_FragColor = vec4(color.rgb, alpha);
+    }
+  `;
+
+  function isMobile() {
+    return window.innerWidth < 768;
+  }
+
+  function init() {
+    scene = new THREE.Scene();
+    scene.background = null;
+    scene.fog = new THREE.FogExp2(0x05070b, 0.028);
+
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+
+    const aspect = w / h;
+    camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+    updateCameraPosition();
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(w, h);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    container.appendChild(renderer.domElement);
+
+    createGridFloor();
+    createCards();
+    setupInteraction();
+    animate();
+  }
+
+  function updateCameraPosition() {
+    if (isMobile()) {
+      camera.position.set(0, 0, 7.8);
+      camera.lookAt(0, 0, 0);
+    } else {
+      camera.position.set(0, 0.2, 7.5);
+      camera.lookAt(0, 0, 0);
+    }
+  }
+
+  function createGridFloor() {
+    const size = 60;
+    const divisions = 60;
+    gridHelper = new THREE.GridHelper(size, divisions, 0xd96526, 0x4a1e0b);
+    gridHelper.material.opacity = 0.65;
+    gridHelper.material.transparent = true;
+    gridHelper.position.y = isMobile() ? -3.5 : -1.8;
+    gridHelper.position.z = -5;
+    scene.add(gridHelper);
+  }
+
+  function getCardDimensions(proj) {
+    if (isMobile()) {
+      const width = 3.6;
+      const height = width / (proj.aspect || 1.6);
+      return { width, height };
+    } else {
+      const height = config.cardBaseHeight;
+      const width = height * (proj.aspect || 1.6);
+      return { width, height };
+    }
+  }
+
+  function createCards() {
+    cardMeshes.forEach(m => scene.remove(m));
+    cardMeshes = [];
+
+    PROJECTS.forEach((proj, idx) => {
+      const { width, height } = getCardDimensions(proj);
+      const cardAspect = proj.aspect || (width / height);
+
+      const geometry = new THREE.PlaneGeometry(width, height, 32, 16);
+
+      const texture = textureLoader.load(proj.image, (tex) => {
+        tex.generateMipmaps = true;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+      });
+
+      const material = new THREE.ShaderMaterial({
+        vertexShader,
+        fragmentShader,
+        uniforms: {
+          uTexture: { value: texture },
+          uTime: { value: 0 },
+          uVelocity: { value: 0 },
+          uRadius: { value: isMobile() ? 14.0 : config.cylinderRadius },
+          uShaderType: { value: config.shaderType },
+          uIntensity: { value: config.intensity },
+          uHover: { value: 0.0 },
+          uIsMobile: { value: isMobile() ? 1 : 0 },
+          uAspect: { value: cardAspect },
+        },
+        transparent: true,
+        side: THREE.DoubleSide,
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.userData = { id: proj.id, title: proj.title, index: idx, baseWidth: width, baseHeight: height };
+      scene.add(mesh);
+      cardMeshes.push(mesh);
+    });
+  }
+
+  function updateCardPositions() {
+    const totalCards = cardMeshes.length;
+    const mobile = isMobile();
+
+    if (mobile) {
+      const spacing = 3.2;
+      const totalHeight = totalCards * spacing;
+      const radius = 14.0;
+
+      cardMeshes.forEach((mesh, i) => {
+        let yOffset = -(i * spacing - currentScroll) % totalHeight;
+        if (yOffset < -totalHeight / 2) yOffset += totalHeight;
+        if (yOffset > totalHeight / 2) yOffset -= totalHeight;
+
+        mesh.position.x = 0;
+        mesh.position.y = yOffset;
+
+        const arc = yOffset / radius;
+        mesh.position.z = -((1.0 - Math.cos(arc)) * radius);
+        mesh.rotation.x = -arc;
+        mesh.rotation.y = 0;
+
+        if (mesh.material.uniforms) {
+          mesh.material.uniforms.uVelocity.value = scrollVelocity;
+          mesh.material.uniforms.uRadius.value = radius;
+          mesh.material.uniforms.uShaderType.value = config.shaderType;
+          mesh.material.uniforms.uIntensity.value = config.intensity;
+          mesh.material.uniforms.uIsMobile.value = 1;
+        }
+      });
+
+      if (progressBar) {
+        const norm = Math.abs(currentScroll % totalHeight) / totalHeight;
+        progressBar.style.width = (norm * 100).toFixed(1) + '%';
+      }
+    } else {
+      const totalWidth = totalCards * config.cardSpacing;
+
+      cardMeshes.forEach((mesh, i) => {
+        let xOffset = (i * config.cardSpacing - currentScroll) % totalWidth;
+        if (xOffset < -totalWidth / 2) xOffset += totalWidth;
+        if (xOffset > totalWidth / 2) xOffset -= totalWidth;
+
+        mesh.position.x = xOffset;
+        mesh.position.y = 0;
+
+        const arc = xOffset / config.cylinderRadius;
+        mesh.position.z = -((1.0 - Math.cos(arc)) * config.cylinderRadius);
+        mesh.rotation.x = 0;
+        mesh.rotation.y = -arc;
+
+        if (mesh.material.uniforms) {
+          mesh.material.uniforms.uVelocity.value = scrollVelocity;
+          mesh.material.uniforms.uRadius.value = config.cylinderRadius;
+          mesh.material.uniforms.uShaderType.value = config.shaderType;
+          mesh.material.uniforms.uIntensity.value = config.intensity;
+          mesh.material.uniforms.uIsMobile.value = 0;
+        }
+      });
+
+      if (progressBar) {
+        const norm = Math.abs(currentScroll % totalWidth) / totalWidth;
+        progressBar.style.width = (norm * 100).toFixed(1) + '%';
+      }
+    }
+  }
+
+  let clock = new THREE.Clock();
+
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isIntersecting) return;
+
+    const elapsedTime = clock.getElapsedTime();
+
+    const diff = targetScroll - currentScroll;
+    currentScroll += diff * config.damping;
+    scrollVelocity = diff * config.damping;
+
+    updateCardPositions();
+
+    cardMeshes.forEach(mesh => {
+      if (mesh.material.uniforms) {
+        mesh.material.uniforms.uTime.value = elapsedTime;
+      }
+    });
+
+    renderer.render(scene, camera);
+  }
+
+  // Raycaster para Hover nos Cards
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+  let hoveredMesh = null;
+
+  function handleRaycastHover(e) {
+    const rect = container.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(cardMeshes);
+
+    if (intersects.length > 0) {
+      const mesh = intersects[0].object;
+      if (hoveredMesh !== mesh) {
+        if (hoveredMesh) resetMeshHover(hoveredMesh);
+        hoveredMesh = mesh;
+        animateMeshHover(mesh, 1.0);
+      }
+    } else {
+      if (hoveredMesh) {
+        resetMeshHover(hoveredMesh);
+        hoveredMesh = null;
+      }
+    }
+  }
+
+  function animateMeshHover(mesh, val) {
+    if (!mesh || !mesh.material.uniforms) return;
+    gsap.to(mesh.material.uniforms.uHover, {
+      value: val,
+      duration: 0.35,
+      ease: "power2.out"
+    });
+  }
+
+  function resetMeshHover(mesh) {
+    if (!mesh || !mesh.material.uniforms) return;
+    gsap.to(mesh.material.uniforms.uHover, {
+      value: 0.0,
+      duration: 0.35,
+      ease: "power2.out"
+    });
+  }
+
+  let manualDragOffset = 0;
+
+  function getPinScrollProgress() {
+    const pinWrapper = document.getElementById('portfolio-pin-wrapper');
+    if (!pinWrapper) return 0;
+    const rect = pinWrapper.getBoundingClientRect();
+    const totalDistance = pinWrapper.offsetHeight - window.innerHeight;
+    if (totalDistance <= 0) return 0;
+    const progress = Math.max(0, Math.min(1, -rect.top / totalDistance));
+    return progress;
+  }
+
+  function updateScrollTarget() {
+    const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
+    const pinProgress = getPinScrollProgress();
+    
+    // Se o usuário não está arrastando manualmente, o scroll da página guia o carrossel
+    if (!isDragging) {
+      targetScroll = (pinProgress * totalSpan) + manualDragOffset;
+    }
+  }
+
+  function setupInteraction() {
+    // 1. Scroll da Página sincronizado com a rotação dos 8 cards
+    window.addEventListener('scroll', () => {
+      if (isIntersecting) {
+        updateScrollTarget();
+      }
+    }, { passive: true });
+
+    // 2. Drag & Drop Manual (Mouse)
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      dragStartX = targetScroll;
+      dragStartY = targetScroll;
+      container.classList.add('grabbing');
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) {
+        handleRaycastHover(e);
+        return;
+      }
+      if (isMobile()) {
+        const deltaY = e.clientY - startY;
+        targetScroll = dragStartY + deltaY * 0.015;
+      } else {
+        const deltaX = e.clientX - startX;
+        targetScroll = dragStartX - deltaX * 0.015;
+      }
+      const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
+      manualDragOffset = targetScroll - (getPinScrollProgress() * totalSpan);
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        container.classList.remove('grabbing');
+      }
+    });
+
+    // 3. Touch Support
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        dragStartX = targetScroll;
+        dragStartY = targetScroll;
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (isDragging && e.touches.length === 1) {
+        if (isMobile()) {
+          const deltaY = e.touches[0].clientY - startY;
+          targetScroll = dragStartY + deltaY * 0.015;
+        } else {
+          const deltaX = e.touches[0].clientX - startX;
+          targetScroll = dragStartX - deltaX * 0.015;
+        }
+        const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
+        manualDragOffset = targetScroll - (getPinScrollProgress() * totalSpan);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+
+    // 4. Resize
+    window.addEventListener('resize', () => {
+      if (!renderer || !camera) return;
+      const w = container.clientWidth || window.innerWidth;
+      const h = container.clientHeight || window.innerHeight;
+      camera.aspect = w / h;
+      updateCameraPosition();
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+      createCards();
+      updateScrollTarget();
+    });
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        isIntersecting = entry.isIntersecting;
+        if (isIntersecting) {
+          updateScrollTarget();
+        }
+      });
+    }, { threshold: 0.02 });
+
+    const pinWrapper = document.getElementById('portfolio-pin-wrapper');
+    if (pinWrapper) {
+      sectionObserver.observe(pinWrapper);
+    }
+  }
+
+  init();
+})();
+
+/**
+ * ════════════════════════════════════════════════════════════════════
+ * VÍDEO EM LOOP VISUAL + WEB AUDIO API ENGINE (AUTO-PLAY AUTOMÁTICO NO SCROLL)
+ * ════════════════════════════════════════════════════════════════════
+ */
+let globalSoundActive = true;
+
+function toggleGlobalSound(e) {
+  if (e) e.stopPropagation();
+  globalSoundActive = !globalSoundActive;
+  const label = document.getElementById('global-sound-label');
+  const badge = document.querySelector('.sound-experience-badge');
+  
+  if (label) {
+    label.textContent = globalSoundActive ? 'SOM: ATIVADO' : 'SOM: MUDO';
+  }
+  if (badge) {
+    badge.style.opacity = globalSoundActive ? '1' : '0.5';
+  }
+}
+
+(function initNeonWebAudioEngine() {
+  const vid = document.getElementById('neon-name-video');
+  const audio = document.getElementById('neon-audio-track');
+  if (!vid) return;
+
+  // Garante loop visual contínuo
+  vid.muted = true;
+  vid.loop = true;
+  vid.play().catch(() => {});
+
+  let audioHasPlayed = false;
+  let audioCtx = null;
+  let audioBuffer = null;
+  const AudioCtx = window.AudioContext || window.webkitAudioContext;
+
+  // 1. Pré-carrega o áudio diretamente na memória RAM (Web Audio API Buffer)
+  if (AudioCtx) {
+    try {
+      audioCtx = new AudioCtx();
+      fetch('meu-nome-neon.mp4')
+        .then(res => res.arrayBuffer())
+        .then(arrayBuffer => audioCtx.decodeAudioData(arrayBuffer))
+        .then(decoded => {
+          audioBuffer = decoded;
+        })
+        .catch(() => {});
+    } catch(err) {}
+  }
+
+  // 2. Destrava o AudioContext em qualquer gesto
+  function resumeCtx() {
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
+  }
+
+  ['pointerdown', 'mousedown', 'touchstart', 'click', 'keydown', 'scroll', 'wheel'].forEach(evt => {
+    window.addEventListener(evt, resumeCtx, { passive: true });
+  });
+
+  // 3. Dispara o áudio de 4s
+  function triggerAudioAuto(force = false) {
+    if (!globalSoundActive) return;
+    if (audioHasPlayed && !force) return;
+
+    if (audioCtx && audioBuffer) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const source = audioCtx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioCtx.destination);
+      source.start(0);
+      audioHasPlayed = true;
+    } else if (audio) {
+      audio.currentTime = 0;
+      audio.volume = 1.0;
+      audio.play().then(() => {
+        audioHasPlayed = true;
+      }).catch(() => {});
+    }
+  }
+
+  // Se o usuário clicar no vídeo do neon, toca o som imediatamente (mesmo se já tocou antes)
+  vid.style.cursor = 'pointer';
+  vid.addEventListener('click', () => {
+    triggerAudioAuto(true);
+  });
+
+  // Monitora a dobra no scroll contínuo e com IntersectionObserver
+  function checkScrollTrigger() {
+    const rect = vid.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.75 && rect.bottom > 100) {
+      triggerAudioAuto();
+    }
+  }
+
+  window.addEventListener('scroll', checkScrollTrigger, { passive: true });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !audioHasPlayed) {
+        triggerAudioAuto();
+      }
+    });
+  }, { threshold: 0.15 });
+
+  observer.observe(vid);
 })();
 </script>
 </body>
