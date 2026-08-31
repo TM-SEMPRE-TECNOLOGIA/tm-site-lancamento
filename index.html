@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#05070b">
-<title>TM — Sempre Tecnologia · Origem e Visão</title>
+<title>Thiago Nascimento — Desenvolvimento Web & Inteligência Artificial</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -271,6 +275,103 @@ h1 strong, h2 strong {
   background: var(--faint);
 }
 
+/* ── MARQUEE BAND (TICKER DE DISPONIBILIDADE) ── */
+.marquee-band {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  overflow: hidden;
+  background: var(--orange);
+  padding: 14px 0;
+  cursor: default;
+  user-select: none;
+}
+
+.marquee-band__track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 38s linear infinite;
+}
+
+.marquee-band:hover .marquee-band__track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee-band__group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.marquee-band__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-family: 'JetBrains Mono', 'Inter', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 0 8px;
+}
+
+.marquee-band__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.25);
+  animation: dot-pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
+}
+
+.marquee-band__sep {
+  color: #fff;
+  font-size: 10px;
+  padding: 0 16px;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+/* ── SLOTS PLACEHOLDER (SEÇÕES FUTURAS) ── */
+.slot-placeholder {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  border: 2px dashed rgba(255, 255, 255, 0.12);
+  border-left: none;
+  border-right: none;
+}
+.slot-placeholder + .slot-placeholder {
+  border-top: none;
+}
+.slot-label {
+  color: rgba(255, 255, 255, 0.18);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
 /* ── FOOTER EDITORIAL ── */
 .footer {
   min-height: 75vh;
@@ -343,11 +444,17 @@ h1 strong, h2 strong {
   .footer { min-height: 60vh; padding: 70px 24px; }
   .footer .chapter-inner { display: block; }
   .footer-copy { margin-top: 24px; }
+  .marquee-band { padding: 10px 0; }
+  .marquee-band__item { font-size: 10px; letter-spacing: 2px; }
+  .marquee-band__sep { padding: 0 12px; }
+  .marquee-band__track { animation-duration: 28s; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .chapter-inner { transition: none; }
+  .marquee-band__track { animation: none; }
+  .marquee-band__dot { animation: none; }
 }
 </style>
 </head>
@@ -359,15 +466,45 @@ h1 strong, h2 strong {
 <div id="tone"></div>
 <div id="progress"></div>
 
-<!-- Topbar com Navegação Discreta -->
-<header class="topbar">
-  <a href="index.html" class="brand">TM<i>.</i></a>
-  <nav class="nav-links" aria-label="Navegação Principal">
-    <a href="index.html" class="nav-link active">Home</a>
-    <a href="portfolio.html" class="nav-link">Portfólio</a>
-    <a href="contato.html" class="nav-link">Contato</a>
-  </nav>
-</header>
+<!-- Topbar (desativada — será reativada com as páginas prontas) -->
+
+<!-- Marquee Band — Ticker de Disponibilidade Profissional -->
+<div class="marquee-band" aria-label="Disponibilidade profissional. Passe o mouse para pausar.">
+  <div class="marquee-band__track">
+    <div class="marquee-band__group" aria-hidden="false">
+      <span class="marquee-band__item"><span class="marquee-band__dot" aria-hidden="true"></span> DISPONÍVEL FULL-TIME E FREELANCE</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">DESENVOLVIMENTO WEB · FULLSTACK</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">AI FULLSTACK ENGINEER · AGENTIC AI</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">NEXT.JS · TYPESCRIPT · REACT</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">AUTOMAÇÃO · DADOS · SISTEMAS</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">PYTHON · NODE.JS · APIS</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">GOIÂNIA · REMOTO PARA O MUNDO</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+    </div>
+    <div class="marquee-band__group" aria-hidden="true">
+      <span class="marquee-band__item"><span class="marquee-band__dot" aria-hidden="true"></span> DISPONÍVEL FULL-TIME E FREELANCE</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">DESENVOLVIMENTO WEB · FULLSTACK</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">AI FULLSTACK ENGINEER · AGENTIC AI</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">NEXT.JS · TYPESCRIPT · REACT</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">AUTOMAÇÃO · DADOS · SISTEMAS</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">PYTHON · NODE.JS · APIS</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+      <span class="marquee-band__item">GOIÂNIA · REMOTO PARA O MUNDO</span>
+      <span class="marquee-band__sep" aria-hidden="true">✦</span>
+    </div>
+  </div>
+</div>
 
 <!-- Filme de Origem / Narrativa por Scroll -->
 <main class="story">
@@ -378,7 +515,6 @@ h1 strong, h2 strong {
       <div class="eyebrow">Origem & Método</div>
       <h1>Do caos<br>ao <strong>sistema.</strong></h1>
       <p class="lead">Quando entrei na operação, meu primeiro contato com desenvolvimento nasceu de uma necessidade real: transformar rotinas manuais e relatórios dispersos em sistemas autônomos.</p>
-      <p class="micro">Thiago Nascimento · Operador & Desenvolvedor</p>
     </div>
     <div class="scroll-cue"><span></span> role para percorrer</div>
   </section>
@@ -430,16 +566,23 @@ h1 strong, h2 strong {
 <footer class="footer">
   <div class="chapter-inner">
     <div class="footer-signature">
-      <strong>TM.</strong>
-      Thiago Nascimento Barbosa
-      <div class="footer-links-inline">
-        <a href="portfolio.html">Ver Portfólio</a>
-        <a href="contato.html">Contato Direto</a>
-      </div>
+      <strong>TN.</strong>
+      Thiago Nascimento
     </div>
     <div class="footer-copy">Sistemas · Automação · Dados · Experiências Digitais</div>
   </div>
 </footer>
+
+<!-- ═══ SLOTS PARA NOVAS SEÇÕES ═══ -->
+<section class="slot-placeholder" id="slot-1">
+  <span class="slot-label">SEÇÃO 01 — A DEFINIR</span>
+</section>
+<section class="slot-placeholder" id="slot-2">
+  <span class="slot-label">SEÇÃO 02 — A DEFINIR</span>
+</section>
+<section class="slot-placeholder" id="slot-3">
+  <span class="slot-label">SEÇÃO 03 — A DEFINIR</span>
+</section>
 
 <script>
 /**
@@ -488,10 +631,25 @@ h1 strong, h2 strong {
     ctx.drawImage(img, 0, 0, iw, ih, sx, sy, sw, sh);
   }
 
+  // Calcula a distância de scroll exata onde a narrativa de vídeo acontece
+  function getVideoScrollRange() {
+    const storyEl = document.querySelector('.story');
+    const footerEl = document.querySelector('.footer');
+    const targetEnd = footerEl || storyEl;
+    if (!targetEnd) {
+      return Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    }
+    // O vídeo completa 100% exatamente quando o último capítulo / footer é atingido
+    const endOffset = targetEnd.offsetTop + targetEnd.offsetHeight - window.innerHeight;
+    return Math.max(1, endOffset);
+  }
+
   function getCurrentFrameIndex() {
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = maxScroll > 0 ? Math.max(0, Math.min(1, window.scrollY / maxScroll)) : 0;
-    progressBar.style.width = (progress * 100) + '%';
+    const videoRange = getVideoScrollRange();
+    const progress = Math.max(0, Math.min(1, window.scrollY / videoRange));
+    if (progressBar) {
+      progressBar.style.width = (progress * 100) + '%';
+    }
     return Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.floor(progress * TOTAL_FRAMES)));
   }
 

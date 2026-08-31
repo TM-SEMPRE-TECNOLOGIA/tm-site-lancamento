@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="grabbable">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jesper Landberg — 3D Cylindrical Motion Clone</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Three.js & GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #000000;
+      --text: #ffffff;
+      --accent: #d9a441;
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-main);
+      touch-action: none;
+    }
+
+    html.grabbable, html.grabbable * {
+      cursor: grab;
+    }
+
+    html.grabbing, html.grabbing * {
+      cursor: grabbing !important;
+    }
+
+    /* WebGL canvas container */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: auto;
+    }
+
+    /* Custom UI Overlays */
+    .ui-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .interactive {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+
+    /* Glass Panels for Overlays */
+    .glass-panel {
+      background: rgba(10, 10, 12, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.9);
+    }
+
+    /* Custom Floating Live Shader/Effects Config Panel */
+    #config-panel {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    }
+    #config-panel.collapsed {
+      transform: translateX(calc(100% + 20px));
+      opacity: 0.2;
+    }
+    #config-panel.collapsed:hover {
+      opacity: 1;
+    }
+
+    /* Scroll progress bar */
+    .progress-bar {
+      height: 2px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: #ffffff;
+      width: 0%;
+      transition: width 0.05s linear;
+    }
+
+    /* Intro loader */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+    .loader-bar {
+      width: 45px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    .loader-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      animation: load-anim 1.2s ease-in-out infinite;
+    }
+    .loader-bar:nth-child(2)::after { animation-delay: 0.2s; }
+    .loader-bar:nth-child(3)::after { animation-delay: 0.4s; }
+
+    @keyframes load-anim {
+      0% { left: -100%; }
+      50% { left: 0%; }
+      100% { left: 100%; }
+    }
+  </style>
+</head>
+<body class="selection:bg-white/20 selection:text-white">
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  INTRO LOADER                                               -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="loader">
+    <div class="flex gap-2 mb-4">
+      <div class="loader-bar"></div>
+      <div class="loader-bar"></div>
+      <div class="loader-bar"></div>
+    </div>
+    <div class="text-[10px] font-mono tracking-widest text-neutral-500 uppercase">Inicializando Engine 3D</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  WEBGL THREE.JS CANVAS CONTAINER                            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="webgl-canvas"></div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  FIXED UI NAVIGATION LAYER (Jesper Landberg style)          -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="ui-layer flex flex-col justify-between p-6 md:p-10">
+    
+    <!-- Top Bar -->
+    <header class="flex items-start justify-between">
+      <a href="#" onclick="resetPosition(); return false;" class="interactive label text-sm font-medium tracking-tight hover:opacity-70 transition flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="ui-brand-name">Jesper Landberg</span>
+      </a>
+
+      <div class="flex items-center gap-4">
+        <button onclick="toggleOverlay('profile')" class="interactive label opacity-80 hover:opacity-100 transition px-3 py-1.5 rounded-full border border-white/10 hover:border-white/30">
+          Profile
+        </button>
+        <button onclick="toggleConfigPanel()" class="interactive label opacity-80 hover:opacity-100 transition px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 flex items-center gap-1.5">
+          <i class="fa-solid fa-sliders text-[10px]"></i> Efeitos & Config
+        </button>
+      </div>
+    </header>
+
+    <!-- Bottom Bar -->
+    <footer class="flex items-end justify-between">
+      <div class="flex items-center gap-3">
+        <nav class="label flex items-center gap-2" aria-label="Project views">
+          <button onclick="setFilter('featured')" id="btn-featured" class="interactive font-bold text-white transition">Featured</button>
+          <span class="opacity-30">/</span>
+          <button onclick="setFilter('all')" id="btn-all" class="interactive opacity-50 hover:opacity-100 text-white transition">All (8)</button>
+        </nav>
+      </div>
+
+      <!-- Center drag hint -->
+      <div class="hidden md:flex flex-col items-center gap-1 opacity-40">
+        <div class="text-[9px] font-mono tracking-widest uppercase">Arraste ou use o scroll lateral</div>
+        <div class="w-24 progress-bar">
+          <div id="scroll-progress" class="progress-fill"></div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="toggleOverlay('newsletter')" class="interactive label opacity-80 hover:opacity-100 transition px-3 py-1.5 rounded-full border border-white/10 hover:border-white/30">
+          Newsletter
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  PROFILE MODAL / OVERLAY                                    -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="overlay-profile" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-400">
+    <div class="glass-panel max-w-lg w-full rounded-2xl p-8 space-y-6 relative border border-white/10">
+      <button onclick="toggleOverlay('profile')" class="absolute top-6 right-6 text-neutral-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="space-y-3">
+        <div class="text-[11px] font-mono uppercase tracking-widest text-amber-400">Design Engineer Portfolio</div>
+        <h2 class="text-xl md:text-2xl font-bold tracking-tight text-white">Jesper Landberg</h2>
+        <p class="text-sm text-neutral-300 leading-relaxed font-light">
+          Swedish design engineer, named Awwwards Independent of the Year in 2022 and 2024, building visually rich, motion-driven websites. Responsible for front-end architecture, WebGL shaders, 3D math and interaction design.
+        </p>
+      </div>
+
+      <div class="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2">
+        <div class="text-xs font-semibold text-neutral-200">74 Reconhecimentos Globais</div>
+        <div class="text-xs text-neutral-400">30× Awwwards • 37× FWA • 3× Webby • 2× Lovie</div>
+      </div>
+
+      <div class="pt-2 border-t border-white/10 flex flex-wrap gap-4 text-xs font-medium">
+        <a href="https://www.instagram.com/jesperlandberg222/" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1.5">
+          <i class="fa-brands fa-instagram"></i> Instagram
+        </a>
+        <a href="https://x.com/jesper_alpacka" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1.5">
+          <i class="fa-brands fa-x-twitter"></i> X (Twitter)
+        </a>
+        <a href="https://www.linkedin.com/in/jesper-landberg-ba2984256/" target="_blank" class="hover:text-amber-400 transition flex items-center gap-1.5">
+          <i class="fa-brands fa-linkedin"></i> LinkedIn
+        </a>
+        <a href="mailto:jesper@alpacka.studio" class="hover:text-amber-400 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-envelope"></i> Email
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  NEWSLETTER MODAL / OVERLAY                                 -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div id="overlay-newsletter" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-400">
+    <div class="glass-panel max-w-md w-full rounded-2xl p-8 space-y-5 relative border border-white/10">
+      <button onclick="toggleOverlay('newsletter')" class="absolute top-6 right-6 text-neutral-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="space-y-2">
+        <div class="text-[11px] font-mono uppercase tracking-widest text-amber-400">Updates & Shaders</div>
+        <h3 class="text-xl font-bold">Newsletter Exclusiva</h3>
+        <p class="text-xs text-neutral-400 leading-relaxed">
+          Artigos periódicos sobre engenharia criativa, shaders GLSL, física de animação e bastidores de projetos premiados.
+        </p>
+      </div>
+
+      <form onsubmit="handleSubscribe(event)" class="space-y-3">
+        <input type="email" required placeholder="seu.email@exemplo.com" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-3 text-xs text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400 transition" />
+        <button type="submit" class="w-full py-3 bg-white text-black font-semibold text-xs rounded-xl hover:bg-neutral-200 transition">
+          Inscrever-se
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  LIVE CONFIG & SHADER CONTROLLER (Floating Aside)           -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <aside id="config-panel" class="fixed top-20 right-6 z-40 glass-panel p-5 rounded-2xl w-80 text-xs space-y-4 text-neutral-200 max-h-[80vh] overflow-y-auto">
+    <div class="flex items-center justify-between border-b border-white/10 pb-3">
+      <div class="font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> 3D Engine Setup
+      </div>
+      <button onclick="toggleConfigPanel()" class="text-neutral-400 hover:text-white text-xs">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+
+    <!-- Efeito de Shader dos Cards -->
+    <div class="space-y-1.5">
+      <label class="font-semibold text-neutral-400 block">Efeito Shader (Distorção)</label>
+      <select id="select-shader" onchange="updateShaderEffect(this.value)" class="w-full bg-black/60 border border-white/15 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        <option value="wave">1. Onda de Velocidade (Kinetic Wave)</option>
+        <option value="rgb">2. RGB Shift / Aberração Cromática</option>
+        <option value="bulge">3. Lente 3D Esférica (Bulge / Fish-eye)</option>
+        <option value="hologram">4. Holograma & Noise Digital</option>
+        <option value="clean">5. Clean 3D (Sem distorção)</option>
+      </select>
+    </div>
+
+    <!-- Intensidade do Efeito Shader -->
+    <div class="space-y-1.5">
+      <div class="flex justify-between">
+        <label class="font-semibold text-neutral-400">Intensidade do Efeito</label>
+        <span id="val-intensity" class="font-mono text-[10px] text-amber-400">100%</span>
+      </div>
+      <input type="range" id="input-intensity" min="0" max="250" step="5" value="100" oninput="updateShaderIntensity(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+    </div>
+
+    <!-- Curvatura do Cilindro 3D -->
+    <div class="space-y-1.5">
+      <div class="flex justify-between">
+        <label class="font-semibold text-neutral-400">Curvatura Cilíndrica (Raio)</label>
+        <span id="val-radius" class="font-mono text-[10px] text-amber-400">18.0</span>
+      </div>
+      <input type="range" id="input-radius" min="8" max="35" step="0.5" value="18" oninput="updateCylinderRadius(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+    </div>
+
+    <!-- Espaçamento dos Cards -->
+    <div class="space-y-1.5">
+      <div class="flex justify-between">
+        <label class="font-semibold text-neutral-400">Espaçamento Horizontal</label>
+        <span id="val-spacing" class="font-mono text-[10px] text-amber-400">5.2</span>
+      </div>
+      <input type="range" id="input-spacing" min="3.5" max="8.0" step="0.1" value="5.2" oninput="updateCardSpacing(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+    </div>
+
+    <!-- Sensibilidade do Scroll / Drag -->
+    <div class="space-y-1.5">
+      <div class="flex justify-between">
+        <label class="font-semibold text-neutral-400">Inércia & Física (Damping)</label>
+        <span id="val-damping" class="font-mono text-[10px] text-amber-400">0.075</span>
+      </div>
+      <input type="range" id="input-damping" min="0.02" max="0.2" step="0.005" value="0.075" oninput="updateDamping(this.value)" class="w-full accent-amber-400 bg-neutral-800 h-1.5 rounded-lg cursor-pointer" />
+    </div>
+
+    <!-- Grid de Fundo -->
+    <div class="flex items-center justify-between pt-2 border-t border-white/10">
+      <span class="text-neutral-400">Grid 3D no Chão</span>
+      <input type="checkbox" id="toggle-grid" checked onchange="toggleGrid(this.checked)" class="accent-amber-400 w-4 h-4 cursor-pointer" />
+    </div>
+
+    <!-- Nome da Marca / Header -->
+    <div class="space-y-1.5 pt-2 border-t border-white/10">
+      <label class="font-semibold text-neutral-400 block">Texto do Logo / Topo</label>
+      <input type="text" id="input-brand" value="Jesper Landberg" oninput="document.getElementById('ui-brand-name').textContent = this.value" class="w-full bg-black/60 border border-white/15 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-amber-400" />
+    </div>
+
+    <!-- ── GERENCIADOR DE IMAGENS / CARDS ── -->
+    <div class="pt-3 border-t border-white/10 space-y-2">
+      <div class="flex items-center justify-between">
+        <label class="font-bold text-amber-400 flex items-center gap-1.5 uppercase tracking-wider text-[10px]">
+          <i class="fa-solid fa-images"></i> Substituir Imagens (8 Cards)
+        </label>
+      </div>
+      <div id="cards-editor-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+        <!-- Renderizado dinamicamente pelo JS -->
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!--  THREE.JS 3D SCENE & SHADER LOGIC                           -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <script>
+    // ─── Project Dataset (Original High-Res Assets from DatoCMS) ─
+    const PROJECTS = [
+      {
+        id: "nathan-riley",
+        title: "Nathan Riley",
+        category: "3D Visuals & Art Direction",
+        image: "https://www.datocms-assets.com/223669/1786207557-nathan-1.jpg?auto=format&fit=crop&h=720&w=1250",
+        aspect: 2048 / 1172,
+      },
+      {
+        id: "casa-di-solare",
+        title: "Casa Di Solare",
+        category: "Typeface & Design System",
+        image: "https://www.datocms-assets.com/223669/1785656645-image-84.jpg?auto=format&fit=crop&h=720&w=1250",
+        aspect: 2048 / 1204,
+      },
+      {
+        id: "the-lookback",
+        title: "The Lookback",
+        category: "Digital Time Capsule",
+        image: "https://www.datocms-assets.com/223669/1785656633-tlb4.jpg?auto=format&fit=crop&h=720&w=1250",
+        aspect: 1250 / 720,
+      },
+      {
+        id: "book-of-happiness",
+        title: "Book of Happiness",
+        category: "Editorial & Wellbeing Experience",
+        image: "https://www.datocms-assets.com/223669/1786210260-book-1.jpg?auto=format&fit=crop&h=720&w=1250",
+        aspect: 2048 / 1114,
+      },
+      {
+        id: "dogelon-mars",
+        title: "Dogelon Mars",
+        category: "Intergalactic Storytelling",
+        image: "https://www.datocms-assets.com/223669/1786207957-dogelon-2.jpg?auto=format&fit=crop&h=720&w=1250",
+        aspect: 3360 / 2200,
+      },
+      {
+        id: "gil-huybrecht",
+        title: "Gil Huybrecht",
+        category: "Typography Portfolio",
+        image: "https://www.datocms-assets.com/223669/1786208283-betteroff-thumb.avif?auto=format&fit=crop&h=720&w=1250",
+        aspect: 1196 / 720,
+      },
+      {
+        id: "discoveryland",
+        title: "Discoveryland",
+        category: "Luxury Real Estate 3D",
+        image: "https://www.datocms-assets.com/223669/1786432901-dlc-thumbnail.jpg?auto=format&fit=crop&h=720&w=1250",
+        aspect: 1372 / 1029,
+      },
+      {
+        id: "griflan",
+        title: "Griflan",
+        category: "Creative Strategy Studio",
+        image: "https://www.datocms-assets.com/223669/1786207051-ts2.jpg?auto=format&fit=crop&h=720&w=1250",
+        aspect: 1162 / 720,
+      }
+    ];
+
+    // ─── Global State & Parameters ───────────────────────────
+    let scene, camera, renderer;
+    let cardMeshes = [];
+    let gridHelper;
+    let textureLoader;
+
+    let targetScroll = 0;
+    let currentScroll = 0;
+    let scrollVelocity = 0;
+    let isDragging = false;
+    let startX = 0;
+    let dragStartX = 0;
+
+    // Config options
+    let config = {
+      cylinderRadius: 18.0,
+      cardSpacing: 5.2,
+      damping: 0.075,
+      shaderType: 0, // 0: wave, 1: rgb, 2: bulge, 3: hologram, 4: clean
+      intensity: 1.0,
+      showGrid: true,
+      cardBaseHeight: 2.8,
+    };
+
+    // ─── Custom Vertex & Fragment Shaders (Extremamente Visíveis) ───
+    const vertexShader = `
+      uniform float uTime;
+      uniform float uVelocity;
+      uniform float uRadius;
+      uniform int uShaderType;
+      uniform float uIntensity;
+      uniform float uHover;
+      uniform int uIsMobile;
+
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      varying float vDistortion;
+
+      void main() {
+        vUv = uv;
+        vNormal = normal;
+
+        vec3 pos = position;
+
+        // 1. Curvatura Cilíndrica profunda (Horizontal no Desktop / Vertical no Mobile)
+        if (uIsMobile == 1) {
+          float arc = pos.y / uRadius;
+          pos.z -= (1.0 - cos(arc)) * uRadius;
+          pos.y = sin(arc) * uRadius;
+        } else {
+          float arc = pos.x / uRadius;
+          pos.z -= (1.0 - cos(arc)) * uRadius;
+          pos.x = sin(arc) * uRadius;
+        }
+
+        float distVal = 0.0;
+
+        // 2. Deformações por Shader Mode
+        if (uShaderType == 0) {
+          // 1. Liquid / Kinetic Wave (Onda fluida senoidal)
+          float wave = sin((uIsMobile == 1 ? vUv.x : vUv.y) * 6.28 + uTime * 3.0 + (uIsMobile == 1 ? pos.y : pos.x)) * (abs(uVelocity) * 1.8 + 0.05 * uHover) * uIntensity;
+          pos.z += wave;
+          distVal = wave;
+        } else if (uShaderType == 2) {
+          // 3. Bulge 3D (Lente Esférica de Vidro)
+          float dist = distance(vUv, vec2(0.5));
+          float bulge = (1.0 - smoothstep(0.0, 0.6, dist)) * (0.35 + abs(uVelocity) * 1.5) * uIntensity;
+          pos.z += bulge;
+          distVal = bulge;
+        }
+
+        // Hover scale suave
+        pos.z += uHover * 0.35;
+
+        vDistortion = distVal;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    `;
+
+    const fragmentShader = `
+      uniform sampler2D uTexture;
+      uniform float uVelocity;
+      uniform float uTime;
+      uniform int uShaderType;
+      uniform float uIntensity;
+      uniform float uHover;
+
+      varying vec2 vUv;
+      varying vec3 vNormal;
+      varying float vDistortion;
+
+      void main() {
+        vec2 uv = vUv;
+        vec4 color = vec4(1.0);
+
+        if (uShaderType == 0) {
+          // 1. Kinetic Wave + Liquid Distortion
+          vec2 waveUv = uv;
+          waveUv.x += sin(uv.y * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
+          waveUv.y += cos(uv.x * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
+          color = texture2D(uTexture, waveUv);
+          color.rgb += vec3(0.1, 0.2, 0.25) * abs(sin(uv.y * 8.0 + uTime * 2.0)) * (abs(uVelocity) * 2.0 + uHover * 0.3) * uIntensity;
+
+        } else if (uShaderType == 1) {
+          // 2. RGB Shift / Aberração Cromática Dramática
+          float shift = (abs(uVelocity) * 0.12 + 0.02 * uHover + 0.008) * uIntensity;
+          float r = texture2D(uTexture, uv + vec2(shift, 0.0)).r;
+          float g = texture2D(uTexture, uv).g;
+          float b = texture2D(uTexture, uv - vec2(shift, 0.0)).b;
+          color = vec4(r, g, b, 1.0);
+
+        } else if (uShaderType == 2) {
+          // 3. 3D Lens Bulge / Fish-Eye Óptico
+          vec2 center = vec2(0.5);
+          vec2 d = uv - center;
+          float r = length(d);
+          float zoom = 1.0 + (0.35 + abs(uVelocity) * 0.8) * uIntensity * (1.0 - r * 1.4);
+          vec2 bulgeUv = center + d * clamp(zoom, 0.5, 2.0);
+          color = texture2D(uTexture, bulgeUv);
+          color.rgb *= mix(0.7, 1.1, 1.0 - r);
+
+        } else if (uShaderType == 3) {
+          // 4. Sci-Fi Hologram Matrix & Scanlines
+          vec4 base = texture2D(uTexture, uv);
+          float scanline = sin(uv.y * 300.0 + uTime * 10.0) * 0.15 * uIntensity;
+          float noise = fract(sin(dot(uv, vec2(12.9898, 78.233)) + uTime) * 43758.5453) * 0.12 * uIntensity;
+          vec3 holoColor = mix(base.rgb, vec3(0.2, 0.85, 1.0), 0.28 * uIntensity);
+          color = vec4(holoColor - scanline + noise, 1.0);
+
+        } else {
+          // 5. Clean 3D Studio (Pure texture)
+          color = texture2D(uTexture, uv);
+        }
+
+        // Borda e profundidade
+        float vignette = smoothstep(0.85, 0.15, length(uv - vec2(0.5)));
+        color.rgb *= mix(0.88, 1.05, vignette);
+
+        // Hover highlight
+        color.rgb += uHover * 0.1;
+
+        gl_FragColor = color;
+      }
+    `;
+
+    // ─── Helper: Responsive Mode Check ───────────────────────
+    function isMobile() {
+      return window.innerWidth < 768;
+    }
+
+    // ─── Initialize Three.js Scene ───────────────────────────
+    function initThree() {
+      const container = document.getElementById('webgl-canvas');
+
+      // 1. Scene & Camera
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x000000);
+      scene.fog = new THREE.FogExp2(0x000000, 0.035);
+
+      const aspect = window.innerWidth / window.innerHeight;
+      camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+      updateCameraPosition();
+
+      // 2. Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      container.appendChild(renderer.domElement);
+
+      // 3. Grid no chão (Floor Grid 3D)
+      createGridFloor();
+
+      // 4. Carregar Texturas e Criar Cards
+      textureLoader = new THREE.TextureLoader();
+      createCards();
+
+      // 5. Event Listeners para Interatividade (Drag, Wheel, Resize)
+      setupInteraction();
+
+      // 6. Loop de Renderização
+      animate();
+
+      // Esconder loader após 1 segundo
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+      }, 800);
+    }
+
+    function updateCameraPosition() {
+      if (isMobile()) {
+        camera.position.set(0, 0, 7.8);
+        camera.lookAt(0, 0, 0);
+      } else {
+        camera.position.set(0, 0.2, 7.5);
+        camera.lookAt(0, 0, 0);
+      }
+    }
+
+    // ─── Create 3D Grid Floor ────────────────────────────────
+    function createGridFloor() {
+      const size = 60;
+      const divisions = 60;
+      gridHelper = new THREE.GridHelper(size, divisions, 0x222225, 0x111114);
+      gridHelper.position.y = isMobile() ? -3.5 : -1.8;
+      gridHelper.position.z = -5;
+      scene.add(gridHelper);
+    }
+
+    // ─── Create 3D Cylindrical Cards ─────────────────────────
+    function getCardDimensions(proj) {
+      if (isMobile()) {
+        const width = 3.6;
+        const height = width / (proj.aspect || 1.6);
+        return { width, height };
+      } else {
+        const height = config.cardBaseHeight;
+        const width = height * (proj.aspect || 1.6);
+        return { width, height };
+      }
+    }
+
+    function createCards() {
+      cardMeshes.forEach(m => scene.remove(m));
+      cardMeshes = [];
+
+      PROJECTS.forEach((proj, idx) => {
+        const { width, height } = getCardDimensions(proj);
+
+        // Geometria subdividida para curvatura suave no shader
+        const geometry = new THREE.PlaneGeometry(width, height, 32, 16);
+
+        // Carregar textura
+        const texture = textureLoader.load(proj.image, (tex) => {
+          tex.generateMipmaps = true;
+          tex.minFilter = THREE.LinearMipmapLinearFilter;
+        });
+
+        // Shader Material Customizado
+        const material = new THREE.ShaderMaterial({
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
+          uniforms: {
+            uTexture: { value: texture },
+            uTime: { value: 0 },
+            uVelocity: { value: 0 },
+            uRadius: { value: isMobile() ? 14.0 : config.cylinderRadius },
+            uShaderType: { value: config.shaderType },
+            uIntensity: { value: config.intensity },
+            uHover: { value: 0.0 },
+            uIsMobile: { value: isMobile() ? 1 : 0 },
+          },
+          side: THREE.DoubleSide,
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.userData = {
+          id: proj.id,
+          title: proj.title,
+          index: idx,
+          baseWidth: width,
+          baseHeight: height,
+        };
+
+        scene.add(mesh);
+        cardMeshes.push(mesh);
+      });
+    }
+
+    // ─── Update Card Positions on Cylindrical Curve ──────────
+    function updateCardPositions() {
+      const totalCards = cardMeshes.length;
+      const mobile = isMobile();
+
+      if (mobile) {
+        // MODO MOBILE: DISPOSIÇÃO VERTICAL CILÍNDRICA
+        const spacing = 3.2;
+        const totalHeight = totalCards * spacing;
+        const radius = 14.0;
+
+        cardMeshes.forEach((mesh, i) => {
+          let yOffset = -(i * spacing - currentScroll) % totalHeight;
+          if (yOffset < -totalHeight / 2) yOffset += totalHeight;
+          if (yOffset > totalHeight / 2) yOffset -= totalHeight;
+
+          mesh.position.x = 0;
+          mesh.position.y = yOffset;
+
+          // Curvatura cilíndrica vertical (arco no eixo Y)
+          const arc = yOffset / radius;
+          mesh.position.z = -((1.0 - Math.cos(arc)) * radius);
+          mesh.rotation.x = -arc; // Inclina para a câmera
+          mesh.rotation.y = 0;
+
+          if (mesh.material.uniforms) {
+            mesh.material.uniforms.uVelocity.value = scrollVelocity;
+            mesh.material.uniforms.uRadius.value = radius;
+            mesh.material.uniforms.uShaderType.value = config.shaderType;
+            mesh.material.uniforms.uIntensity.value = config.intensity;
+            mesh.material.uniforms.uIsMobile.value = 1;
+          }
+        });
+
+        const progressEl = document.getElementById('scroll-progress');
+        if (progressEl) {
+          const norm = Math.abs(currentScroll % totalHeight) / totalHeight;
+          progressEl.style.width = (norm * 100).toFixed(1) + '%';
+        }
+
+      } else {
+        // MODO DESKTOP: DISPOSIÇÃO HORIZONTAL CILÍNDRICA
+        const totalWidth = totalCards * config.cardSpacing;
+
+        cardMeshes.forEach((mesh, i) => {
+          let xOffset = (i * config.cardSpacing - currentScroll) % totalWidth;
+          if (xOffset < -totalWidth / 2) xOffset += totalWidth;
+          if (xOffset > totalWidth / 2) xOffset -= totalWidth;
+
+          mesh.position.x = xOffset;
+          mesh.position.y = 0;
+
+          // Curvatura cilíndrica horizontal (arco no eixo X)
+          const arc = xOffset / config.cylinderRadius;
+          mesh.position.z = -((1.0 - Math.cos(arc)) * config.cylinderRadius);
+          mesh.rotation.x = 0;
+          mesh.rotation.y = -arc;
+
+          if (mesh.material.uniforms) {
+            mesh.material.uniforms.uVelocity.value = scrollVelocity;
+            mesh.material.uniforms.uRadius.value = config.cylinderRadius;
+            mesh.material.uniforms.uShaderType.value = config.shaderType;
+            mesh.material.uniforms.uIntensity.value = config.intensity;
+            mesh.material.uniforms.uIsMobile.value = 0;
+          }
+        });
+
+        const progressEl = document.getElementById('scroll-progress');
+        if (progressEl) {
+          const norm = Math.abs(currentScroll % totalWidth) / totalWidth;
+          progressEl.style.width = (norm * 100).toFixed(1) + '%';
+        }
+      }
+    }
+
+    // ─── Animation Loop (60 FPS Physics & Render) ────────────
+    let clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const elapsedTime = clock.getElapsedTime();
+
+      // Física com amortecimento (Inertia Damping)
+      const diff = targetScroll - currentScroll;
+      currentScroll += diff * config.damping;
+      scrollVelocity = diff * config.damping;
+
+      // Atualizar posições dos cards no cilindro
+      updateCardPositions();
+
+      // Atualizar tempo nos shaders
+      cardMeshes.forEach(mesh => {
+        if (mesh.material.uniforms) {
+          mesh.material.uniforms.uTime.value = elapsedTime;
+        }
+      });
+
+      // Renderizar cena
+      renderer.render(scene, camera);
+    }
+
+    // ─── Interaction Handlers (Drag, Wheel, Touch) ───────────
+    let startY = 0;
+    let dragStartY = 0;
+
+    function setupInteraction() {
+      // 1. Wheel Scroll (Trackpad / Mouse Wheel)
+      window.addEventListener('wheel', (e) => {
+        if (isMobile()) {
+          targetScroll += e.deltaY * 0.008;
+        } else {
+          const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+          targetScroll += delta * 0.008;
+        }
+      }, { passive: true });
+
+      // 2. Drag & Drop (Mouse)
+      window.addEventListener('mousedown', (e) => {
+        if (e.target.closest('#config-panel, .ui-layer button, .ui-layer a, input, select')) return;
+
+        isDragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        dragStartX = targetScroll;
+        dragStartY = targetScroll;
+        document.documentElement.classList.remove('grabbable');
+        document.documentElement.classList.add('grabbing');
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) {
+          handleRaycastHover(e);
+          return;
+        }
+        if (isMobile()) {
+          const deltaY = e.clientY - startY;
+          targetScroll = dragStartY + deltaY * 0.015;
+        } else {
+          const deltaX = e.clientX - startX;
+          targetScroll = dragStartX - deltaX * 0.015;
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+        document.documentElement.classList.remove('grabbing');
+        document.documentElement.classList.add('grabbable');
+      });
+
+      // 3. Touch Support (Mobile & Tablet)
+      window.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          dragStartX = targetScroll;
+          dragStartY = targetScroll;
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches.length === 1) {
+          if (isMobile()) {
+            const deltaY = e.touches[0].clientY - startY;
+            targetScroll = dragStartY + deltaY * 0.015;
+          } else {
+            const deltaX = e.touches[0].clientX - startX;
+            targetScroll = dragStartX - deltaX * 0.015;
+          }
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+
+      // 4. Resize
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    // Raycast para Hover 3D nos Cards
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let hoveredMesh = null;
+
+    function handleRaycastHover(e) {
+      mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(cardMeshes);
+
+      if (intersects.length > 0) {
+        const mesh = intersects[0].object;
+        if (hoveredMesh !== mesh) {
+          if (hoveredMesh) resetMeshHover(hoveredMesh);
+          hoveredMesh = mesh;
+          animateMeshHover(mesh, 1.0);
+        }
+      } else {
+        if (hoveredMesh) {
+          resetMeshHover(hoveredMesh);
+          hoveredMesh = null;
+        }
+      }
+    }
+
+    function animateMeshHover(mesh, targetVal) {
+      if (mesh.material && mesh.material.uniforms) {
+        gsap.to(mesh.material.uniforms.uHover, {
+          value: targetVal,
+          duration: 0.4,
+          ease: 'power2.out',
+        });
+      }
+    }
+
+    function resetMeshHover(mesh) {
+      animateMeshHover(mesh, 0.0);
+    }
+
+    let lastIsMobile = isMobile();
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      updateCameraPosition();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      if (gridHelper) {
+        gridHelper.position.y = isMobile() ? -3.5 : -1.8;
+      }
+
+      // Se alternou entre mobile e desktop, recria os cards com as novas dimensões
+      if (isMobile() !== lastIsMobile) {
+        lastIsMobile = isMobile();
+        createCards();
+      }
+    }
+
+    // ─── UI & Config Control Functions ───────────────────────
+    function toggleConfigPanel() {
+      const panel = document.getElementById('config-panel');
+      panel.classList.toggle('collapsed');
+    }
+
+    function toggleOverlay(type) {
+      const overlay = document.getElementById(`overlay-${type}`);
+      const isOpen = overlay.classList.contains('opacity-100');
+
+      if (isOpen) {
+        overlay.classList.remove('opacity-100', 'pointer-events-auto');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        overlay.classList.add('opacity-100', 'pointer-events-auto');
+      }
+    }
+
+    function updateShaderEffect(val) {
+      const map = { wave: 0, rgb: 1, bulge: 2, hologram: 3, clean: 4 };
+      config.shaderType = map[val] !== undefined ? map[val] : 0;
+    }
+
+    function updateShaderIntensity(val) {
+      config.intensity = parseFloat(val) / 100.0;
+      document.getElementById('val-intensity').textContent = val + '%';
+      cardMeshes.forEach(mesh => {
+        if (mesh.material.uniforms) {
+          mesh.material.uniforms.uIntensity.value = config.intensity;
+        }
+      });
+    }
+
+    function updateCylinderRadius(val) {
+      config.cylinderRadius = parseFloat(val);
+      document.getElementById('val-radius').textContent = parseFloat(val).toFixed(1);
+    }
+
+    function updateCardSpacing(val) {
+      config.cardSpacing = parseFloat(val);
+      document.getElementById('val-spacing').textContent = parseFloat(val).toFixed(1);
+    }
+
+    function updateDamping(val) {
+      config.damping = parseFloat(val);
+      document.getElementById('val-damping').textContent = parseFloat(val).toFixed(3);
+    }
+
+    function toggleGrid(show) {
+      if (gridHelper) gridHelper.visible = show;
+    }
+
+    function resetPosition() {
+      gsap.to(this, {
+        duration: 1.2,
+        ease: 'power3.out',
+        onUpdate: () => { targetScroll = 0; }
+      });
+    }
+
+    function setFilter(type) {
+      const btnFeatured = document.getElementById('btn-featured');
+      const btnAll = document.getElementById('btn-all');
+      if (type === 'featured') {
+        btnFeatured.className = 'interactive font-bold text-white transition';
+        btnAll.className = 'interactive opacity-50 hover:opacity-100 text-white transition';
+      } else {
+        btnAll.className = 'interactive font-bold text-white transition';
+        btnFeatured.className = 'interactive opacity-50 hover:opacity-100 text-white transition';
+      }
+    }
+
+    function handleSubscribe(e) {
+      e.preventDefault();
+      alert('Obrigado pela inscrição! Você receberá atualizações em breve.');
+      toggleOverlay('newsletter');
+    }
+
+    // ─── Live Cards & Image Replacer Editor ──────────────────
+    function renderCardsEditor() {
+      const list = document.getElementById('cards-editor-list');
+      if (!list) return;
+      list.innerHTML = '';
+
+      PROJECTS.forEach((proj, idx) => {
+        const item = document.createElement('div');
+        item.className = 'p-2.5 bg-black/40 rounded-xl border border-white/10 space-y-1.5';
+        item.innerHTML = `
+          <div class="flex items-center justify-between text-[11px] font-semibold text-neutral-300">
+            <span>Card #${idx + 1}: ${proj.title}</span>
+          </div>
+          <div class="space-y-1">
+            <input type="text" value="${proj.image}" placeholder="URL da Imagem (https://...)" onchange="updateCardImage(${idx}, this.value)" class="w-full bg-neutral-900 border border-white/10 rounded px-2 py-1 text-[10px] text-neutral-300 focus:outline-none focus:border-amber-400 font-mono truncate" />
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function updateCardImage(idx, newUrl) {
+      if (!newUrl || !cardMeshes[idx]) return;
+      PROJECTS[idx].image = newUrl;
+      textureLoader.load(newUrl, (tex) => {
+        tex.generateMipmaps = true;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        cardMeshes[idx].material.uniforms.uTexture.value = tex;
+        cardMeshes[idx].material.needsUpdate = true;
+      });
+    }
+
+    // Inicialização na carga da página
+    window.addEventListener('DOMContentLoaded', () => {
+      initThree();
+      renderCardsEditor();
+    });
+  </script>
+</body>
+</html>
