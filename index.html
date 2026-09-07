@@ -451,12 +451,12 @@ h1 strong, h2 strong {
   display: block;
 }
 
-/* ── PINNED SCROLL WRAPPER (TRAVAMENTO DE SCROLL POR 1 CICLO COMPLETO) ── */
+/* ── PINNED SCROLL WRAPPER UNIFICADO (PORTFÓLIO 3D + MERGULHO CYBER-CHAKRA) ── */
 #portfolio-pin-wrapper {
   position: relative;
   z-index: 3;
   width: 100%;
-  height: 360vh; /* Altura ideal para percorrer os 8 cards suavemente */
+  height: 960vh; /* 420vh para os 8 cards + 260vh para a transição lateral + 280vh para exploração interativa */
   background: transparent;
 }
 
@@ -490,18 +490,22 @@ h1 strong, h2 strong {
 /* Header & Footer do 3D Stage */
 .stage-ui-header {
   position: relative;
-  z-index: 10;
-  padding: 32px clamp(24px, 6vw, 80px) 0;
+  z-index: 35;
+  padding: 30px clamp(24px, 5vw, 64px) 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   pointer-events: none;
 }
+.stage-ui-title {
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
 .stage-ui-title h3 {
-  font-size: clamp(24px, 4vw, 44px);
+  font-size: clamp(22px, 3.2vw, 38px);
   font-weight: 300;
   letter-spacing: -0.03em;
   color: #fff;
+  line-height: 1.15;
 }
 .stage-ui-title h3 strong {
   font-weight: 800;
@@ -509,11 +513,37 @@ h1 strong, h2 strong {
 }
 .stage-ui-subtitle {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11.5px;
   letter-spacing: 2px;
   font-family: 'JetBrains Mono', monospace;
   text-transform: uppercase;
   margin-top: 6px;
+}
+.stage-ui-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stage-meta-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.stage-meta-pill::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
 }
 
 .stage-ui-footer {
@@ -556,6 +586,332 @@ h1 strong, h2 strong {
 }
 
 
+
+/* ── SEÇÃO 02: CYBER-CHAKRA INTEGRADA AO PINNED SCROLL ── */
+.chakra-experience-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 60px;
+  opacity: 0;
+  transform: translateX(110vw) scale(0.85);
+  transition: opacity 0.2s linear;
+  will-change: transform, opacity;
+}
+.chakra-experience-container.interactive {
+  pointer-events: auto;
+}
+
+.chakra-grid-bg {
+  position: absolute;
+  inset: 0;
+  background: url('grid.svg') repeat;
+  opacity: 0.04;
+  pointer-events: none;
+}
+.chakra-scanlines-bg {
+  position: absolute;
+  inset: 0;
+  background: url('scanlines.svg') repeat;
+  opacity: 0.05;
+  pointer-events: none;
+}
+.chakra-art-ground {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1550px;
+  height: 460px;
+  background: url('art-bg.webp') bottom center/cover no-repeat;
+  opacity: 0.85;
+  pointer-events: none;
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, transparent 100%);
+}
+
+#chakra-mouse-spotlight {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(217, 101, 38, 0.04) 45%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.chakra-stage-content {
+  position: relative;
+  z-index: 25;
+  width: 100%;
+  max-width: 1400px;
+  height: clamp(520px, 70vh, 660px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+#chakra-laser-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.chakra-avatar-figure {
+  position: relative;
+  height: 100%;
+  max-height: 640px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+.chakra-avatar-img {
+  height: 100%;
+  max-height: 640px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 35px rgba(0,0,0,0.92)) drop-shadow(0 0 18px rgba(10, 252, 219, 0.16));
+  user-select: none;
+  display: block;
+}
+
+.chakra-node {
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 30;
+}
+.chakra-pulse {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  opacity: 0.5;
+  animation: nodePulse 2.4s infinite cubic-bezier(0.2, 0.8, 0.4, 1);
+}
+.chakra-core {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 15%, currentColor 85%);
+  box-shadow: 0 0 14px currentColor, 0 0 28px currentColor;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.chakra-node:hover .chakra-core,
+.chakra-node.active .chakra-core {
+  transform: scale(1.6);
+  box-shadow: 0 0 22px currentColor, 0 0 40px currentColor;
+}
+
+@keyframes nodePulse {
+  0% { transform: scale(0.7); opacity: 0.85; }
+  50% { transform: scale(1.5); opacity: 0.3; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.laser-beam {
+  stroke-width: 1.5;
+  fill: none;
+  opacity: 0.45;
+  stroke-dasharray: 4 6;
+  animation: laserStream 3s linear infinite;
+  transition: opacity 0.35s ease, stroke-width 0.35s ease;
+}
+@keyframes laserStream {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+.laser-beam.active {
+  stroke-width: 2.5;
+  stroke-dasharray: none;
+  opacity: 1;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.skill-chakra-card {
+  position: absolute;
+  width: 280px;
+  background: rgba(9, 11, 16, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid var(--card-accent, var(--orange));
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 25;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.85);
+  overflow: hidden;
+}
+.skill-chakra-card:hover {
+  border-color: var(--card-accent, var(--orange));
+  border-left-width: 4px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.95), 0 0 20px var(--card-glow, var(--orange-glow));
+  transform: translateY(-2px);
+}
+.skill-chakra-card.active {
+  border-color: var(--card-accent, var(--orange));
+  border-left-width: 4px;
+  box-shadow: 0 22px 56px rgba(0,0,0,0.98), 0 0 28px var(--card-glow, var(--orange-glow));
+  width: 340px;
+  z-index: 50;
+}
+
+.skill-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+}
+.skill-card-category {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 1.2px;
+  color: var(--card-accent, var(--orange));
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.skill-card-chakra {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #64748b;
+}
+.skill-card-title {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.expand-indicator {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--card-accent, var(--orange));
+  transition: transform 0.3s;
+}
+.skill-chakra-card.active .expand-indicator {
+  transform: rotate(45deg);
+}
+.skill-card-summary {
+  font-size: 10.5px;
+  color: #94a3b8;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.skill-chakra-card.active .skill-card-summary {
+  -webkit-line-clamp: unset;
+}
+.skill-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3.5px;
+  margin-top: 5px;
+}
+.skill-pill {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: #cbd5e1;
+  font-size: 8.5px;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 1.5px 5px;
+  border-radius: 3px;
+}
+
+.skill-card-expand {
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+  overflow: hidden;
+}
+.skill-chakra-card.active .skill-card-expand {
+  max-height: 480px;
+  opacity: 1;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.expanded-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin-bottom: 10px;
+}
+.expanded-spec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.expanded-spec-item {
+  font-size: 11px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 6px 10px;
+  border-radius: 4px;
+  line-height: 1.4;
+}
+.expanded-spec-item strong {
+  color: var(--card-accent, #38bdf8);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  display: block;
+  margin-bottom: 2px;
+}
+.card-github-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 252, 219, 0.08);
+  border: 1px solid rgba(10, 252, 219, 0.25);
+  color: var(--primary);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.card-github-link:hover {
+  background: var(--primary);
+  color: #030608;
+}
+
+#chakra-dive-flash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(10, 252, 219, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 18;
+}
 
 .slot-placeholder {
   position: relative;
@@ -796,22 +1152,43 @@ h1 strong, h2 strong {
 <!-- ═══ SEÇÃO 01: PINNED SCROLL 3D MOTION SHOWCASE ═══ -->
 <div id="portfolio-pin-wrapper">
   <section id="section-portfolio-3d">
-    <!-- UI Superior do Palco 3D -->
+    <!-- UI Superior do Palco 3D Unificada -->
     <div class="stage-ui-header">
-      <div class="stage-ui-title">
-        <div class="eyebrow" style="margin-bottom: 8px;">Showcase Interativo</div>
-        <h3>Produtos, Sistemas & <strong>Soluções.</strong></h3>
-        <p class="stage-ui-subtitle">Engenharia Digital · Automação · SaaS</p>
+      <div class="stage-ui-title" id="stage-ui-title-container">
+        <div class="eyebrow" id="stage-eyebrow" style="margin-bottom: 8px;">Showcase Interativo</div>
+        <h3 id="stage-title">Produtos, Sistemas & <strong>Soluções.</strong></h3>
+        <p class="stage-ui-subtitle" id="stage-subtitle">Engenharia Digital · Automação · SaaS</p>
+      </div>
+      <div class="stage-ui-meta">
+        <span class="stage-meta-pill" id="stage-badge-pill">8 PROJETOS EM PRODUÇÃO</span>
       </div>
     </div>
 
     <!-- Three.js Canvas Container -->
     <div id="carousel-webgl-stage"></div>
 
+    <!-- Flash Overlay de Transição -->
+    <div id="chakra-dive-flash"></div>
+
+    <!-- ═══ SEÇÃO 02: CYBER-CHAKRA EXPERIENCE (THIAGO NASCIMENTO) ═══ -->
+    <div id="chakra-experience-layer" class="chakra-experience-container">
+      <div class="chakra-grid-bg"></div>
+      <div class="chakra-scanlines-bg"></div>
+      <div class="chakra-art-ground"></div>
+      <div id="chakra-mouse-spotlight"></div>
+
+      <div class="chakra-stage-content" id="chakra-stage-content">
+        <svg id="chakra-laser-svg"></svg>
+        <div class="chakra-avatar-figure" id="chakra-avatar-figure">
+          <img src="thiago_cyber_chakra_transparent.png" alt="Thiago Nascimento" class="chakra-avatar-img" id="chakra-avatar-img">
+        </div>
+      </div>
+    </div>
+
     <!-- UI Inferior do Palco 3D -->
     <div class="stage-ui-footer">
       <div class="carousel-drag-hint">
-        <span class="drag-hint-text">Role a página para navegar nos projetos</span>
+        <span class="drag-hint-text" id="stage-drag-hint-text">Role a página para navegar nos projetos</span>
         <div class="carousel-progress-track">
           <div id="carousel-progress-fill" class="carousel-progress-thumb"></div>
         </div>
@@ -821,9 +1198,6 @@ h1 strong, h2 strong {
 </div>
 
 <!-- ═══ PRÓXIMAS SEÇÕES PLANEJADAS ═══ -->
-<section class="slot-placeholder" id="slot-2">
-  <span class="slot-label">SEÇÃO 02 — ENGENHARIA & STACK // O MOTOR DE CONSTRUÇÃO</span>
-</section>
 <section class="slot-placeholder" id="slot-3">
   <span class="slot-label">SEÇÃO 03 — IMPACTO & RESULTADOS REAIS</span>
 </section>
@@ -1379,16 +1753,148 @@ h1 strong, h2 strong {
     }
   }
 
+  // ══════════════════════════════════════════════════════════════════════
+  // INTEGRAÇÃO CONTÍNUA: CARROSSEL 3D -> MERGULHO LATERAL CYBER-CHAKRA
+  // ══════════════════════════════════════════════════════════════════════
+  const carouselStage = document.getElementById('carousel-webgl-stage');
+  const chakraLayer = document.getElementById('chakra-experience-layer');
+  const chakraFlash = document.getElementById('chakra-dive-flash');
+  const dragHintText = document.getElementById('stage-drag-hint-text');
+
+  const stageEyebrow = document.getElementById('stage-eyebrow');
+  const stageTitle = document.getElementById('stage-title');
+  const stageSubtitle = document.getElementById('stage-subtitle');
+  const stageBadge = document.getElementById('stage-badge-pill');
+  const titleContainer = document.getElementById('stage-ui-title-container');
+
+  let currentHeaderMode = 'showcase';
+
+  function setHeaderContent(mode) {
+    if (currentHeaderMode === mode) return;
+    currentHeaderMode = mode;
+    if (titleContainer) {
+      titleContainer.style.opacity = '0';
+      titleContainer.style.transform = 'translateY(-6px)';
+    }
+    setTimeout(() => {
+      if (mode === 'chakra') {
+        if (stageEyebrow) stageEyebrow.textContent = "Engenharia & Stack // O Motor de Construção";
+        if (stageTitle) stageTitle.innerHTML = "Linguagens, Frameworks & <strong>Engenharia.</strong>";
+        if (stageSubtitle) stageSubtitle.textContent = "7 Núcleos Anatômicos · Three.js · Python · IA · Cloud";
+        if (stageBadge) stageBadge.textContent = "7 NÚCLEOS ANATÔMICOS";
+      } else {
+        if (stageEyebrow) stageEyebrow.textContent = "Showcase Interativo";
+        if (stageTitle) stageTitle.innerHTML = "Produtos, Sistemas & <strong>Soluções.</strong>";
+        if (stageSubtitle) stageSubtitle.textContent = "Engenharia Digital · Automação · SaaS";
+        if (stageBadge) stageBadge.textContent = "8 PROJETOS EM PRODUÇÃO";
+      }
+      if (titleContainer) {
+        titleContainer.style.opacity = '1';
+        titleContainer.style.transform = 'translateY(0px)';
+      }
+    }, 180);
+  }
+
+  function updateUnifiedFlow(progress) {
+    const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
+
+    // ── FASE 1: NAVEGAÇÃO DOS 8 PROJETOS (0.00 a 0.42) ──
+    if (progress <= 0.42) {
+      const p1 = progress / 0.42; // 0..1
+      if (!isDragging) {
+        targetScroll = (p1 * totalSpan) + manualDragOffset;
+      }
+
+      // Three.js no lugar normal
+      if (carouselStage) {
+        carouselStage.style.transform = 'translateX(0vw)';
+        carouselStage.style.opacity = '1';
+        carouselStage.style.pointerEvents = 'auto';
+      }
+      camera.position.z = isMobile() ? 7.8 : 7.5;
+
+      // Cyber-Chakra fora da tela à direita
+      if (chakraLayer) {
+        chakraLayer.style.opacity = '0';
+        chakraLayer.style.transform = 'translateX(110vw) scale(0.85)';
+        chakraLayer.classList.remove('interactive');
+      }
+      if (chakraFlash) chakraFlash.style.opacity = '0';
+      if (dragHintText) dragHintText.textContent = "Role a página para navegar nos projetos (ou arraste)";
+      setHeaderContent('showcase');
+
+    // ── FASE 2: TRANSIÇÃO LATERAL CINEMÁTICA & MERGULHO (0.42 a 0.68) ──
+    } else if (progress <= 0.68) {
+      const p2 = (progress - 0.42) / 0.26; // 0..1
+
+      // O carrossel 3D desliza fisicamente para a ESQUERDA saindo da tela
+      if (carouselStage) {
+        carouselStage.style.transform = `translateX(${-p2 * 110}vw)`;
+        carouselStage.style.opacity = Math.max(0, 1 - p2 * 1.3);
+        carouselStage.style.pointerEvents = 'none';
+      }
+      targetScroll = totalSpan + (p2 * 6);
+
+      // Flash óptico sutil durante a passagem
+      if (chakraFlash) {
+        chakraFlash.style.opacity = Math.sin(p2 * Math.PI) * 0.6;
+      }
+
+      // A Seção 02 (Cyber-Chakra) entra da DIREITA para o CENTRO com escala suave (0.85 -> 1.0)
+      if (chakraLayer) {
+        const transX = (1 - p2) * 110; // 110vw -> 0vw
+        const scaleVal = 0.85 + (p2 * 0.15); // 0.85 -> 1.00 (confortável, proporções elegantes)
+        chakraLayer.style.opacity = Math.min(1, p2 * 1.8);
+        chakraLayer.style.transform = `translateX(${transX}vw) scale(${scaleVal})`;
+        chakraLayer.classList.remove('interactive');
+      }
+
+      if (p2 >= 0.5) {
+        setHeaderContent('chakra');
+        if (dragHintText) dragHintText.textContent = "Entrando no Motor de Construção...";
+      } else {
+        setHeaderContent('showcase');
+        if (dragHintText) dragHintText.textContent = "Deslizando para a Engenharia...";
+      }
+
+      if (typeof updateChakraLaserLines === 'function') {
+        updateChakraLaserLines();
+      }
+
+    // ── FASE 3: EXPLORAÇÃO TOTAL & INTERAÇÃO COM OS CHAKRAS (0.68 a 1.00) ──
+    } else {
+      if (carouselStage) {
+        carouselStage.style.transform = 'translateX(-110vw)';
+        carouselStage.style.opacity = '0';
+        carouselStage.style.pointerEvents = 'none';
+      }
+
+      if (chakraLayer) {
+        chakraLayer.style.opacity = '1';
+        chakraLayer.style.transform = 'translateX(0vw) scale(1.0)';
+        chakraLayer.classList.add('interactive');
+      }
+      if (chakraFlash) chakraFlash.style.opacity = '0';
+
+      setHeaderContent('chakra');
+      if (dragHintText) dragHintText.textContent = "Clique nos 7 Chakras ou Cards para inspecionar a Engenharia & Código";
+
+      if (typeof updateChakraLaserLines === 'function') {
+        updateChakraLaserLines();
+      }
+    }
+  }
+
   function setupInteraction() {
-    // 1. Scroll da Página sincronizado com a rotação dos 8 cards
     window.addEventListener('scroll', () => {
       if (isIntersecting) {
-        updateScrollTarget();
+        const progress = getPinScrollProgress();
+        updateUnifiedFlow(progress);
       }
     }, { passive: true });
 
-    // 2. Drag & Drop Manual (Mouse)
     container.addEventListener('mousedown', (e) => {
+      if (getPinScrollProgress() > 0.5) return; // Deixa os cliques nos chakras livres na fase 2
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -1420,8 +1926,9 @@ h1 strong, h2 strong {
       }
     });
 
-    // 3. Touch Support
+    // Touch
     container.addEventListener('touchstart', (e) => {
+      if (getPinScrollProgress() > 0.5) return;
       if (e.touches.length === 1) {
         isDragging = true;
         startX = e.touches[0].clientX;
@@ -1449,7 +1956,6 @@ h1 strong, h2 strong {
       isDragging = false;
     });
 
-    // 4. Resize
     window.addEventListener('resize', () => {
       if (!renderer || !camera) return;
       const w = container.clientWidth || window.innerWidth;
@@ -1459,14 +1965,14 @@ h1 strong, h2 strong {
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       createCards();
-      updateScrollTarget();
+      updateUnifiedFlow(getPinScrollProgress());
     });
 
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         isIntersecting = entry.isIntersecting;
         if (isIntersecting) {
-          updateScrollTarget();
+          updateUnifiedFlow(getPinScrollProgress());
         }
       });
     }, { threshold: 0.02 });
@@ -1479,6 +1985,305 @@ h1 strong, h2 strong {
 
   init();
 })();
+
+/**
+ * ════════════════════════════════════════════════════════════════════
+ * SEÇÃO 02: CYBER-CHAKRA LOGIC (THIAGO NASCIMENTO) - EXPANSÃO & LASERS
+ * ════════════════════════════════════════════════════════════════════
+ */
+const CHAKRA_SKILLS_DATA = [
+  {
+    id: "creative-dev",
+    name: "Creative Development",
+    category: "CREATIVE // 3D",
+    chakra: "Sahasrara (Coroa)",
+    tags: ["Three.js", "WebGL", "GLSL Shaders", "GSAP ScrollTrigger"],
+    color: "#c57cff",
+    chakraY: 5.52,
+    chakraX: 49.9,
+    side: "right",
+    cardY: 4,
+    cardX: 71,
+    summary: "3D WebGL, shaders de distorção líquida e narrativa cinemática interativa a 60 FPS.",
+    description: "A etapa onde ideias de design se tornam experiências tridimensionais navegáveis sem sacrificar a velocidade de carregamento em mobile.",
+    details: [
+      { label: "Domínio Principal", value: "Cenas WebGL, shaders customizados GLSL e física de inércia" },
+      { label: "Ferramentas", value: "Three.js, GSAP 3.12, Canvas 2D frame scrubbing, Web Audio API" },
+      { label: "Prova no Site", value: "Carrossel cilíndrico Jesper Landberg e transição galáctica contínua" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/tm-site-lancamento"
+  },
+  {
+    id: "seo-geo",
+    name: "SEO & Generative Engine (GEO)",
+    category: "SEARCH // LLMs",
+    chakra: "Ajna (Terceiro Olho)",
+    tags: ["JSON-LD", "GEO", "OpenGraph", "Core Web Vitals"],
+    color: "#5197f7",
+    chakraY: 11.71,
+    chakraX: 49.9,
+    side: "left",
+    cardY: 12,
+    cardX: 4,
+    summary: "Otimização técnica para busca orgânica do Google e robôs de IA (Perplexity/ChatGPT).",
+    description: "Estruturação semântica de ponta, tags Schema.org profundas e geração de llms.txt para indexação precisa por agentes de IA.",
+    details: [
+      { label: "Domínio Principal", value: "Dados estruturados, Schema.org e performance Lighthouse 100" },
+      { label: "Ferramentas", value: "Lighthouse, Schema Markup Validator, OpenGraph Card Engine" },
+      { label: "Impacto Prático", value: "Indexação imediata de entidades no ecossistema Google e Perplexity" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/tm-seo-geo-engine"
+  },
+  {
+    id: "interface-design",
+    name: "Interface Design & UX",
+    category: "DESIGN // TOKENS",
+    chakra: "Vishuddha (Garganta)",
+    tags: ["Design Systems", "Figma", "Micro-interações", "Dark Mode OLED"],
+    color: "#14b8a6",
+    chakraY: 19.93,
+    chakraX: 49.7,
+    side: "right",
+    cardY: 23.5,
+    cardX: 71,
+    summary: "Identidade visual sólida, contraste editorial (Bloomberg/FT) e hierarquia precisa.",
+    description: "Eliminação total de 'cardzinhos genéricos'. Construção de cockpits monolíticos, tipografia de alto impacto e estética industrial premium.",
+    details: [
+      { label: "Domínio Principal", value: "Layouts densos, paletas calibradas HSL, tipografia JetBrains Mono & Outfit" },
+      { label: "Ferramentas", value: "Figma, CSS Variables, Tokens Primitivos & Semânticos" },
+      { label: "Prova em Produção", value: "Console Monolítico da Central TM e Cockpit Caderno de Leads" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/central-tm"
+  },
+  {
+    id: "fullstack-arch",
+    name: "Fullstack Architecture",
+    category: "ARCHITECTURE // REACT",
+    chakra: "Anahata (Coração)",
+    tags: ["Next.js 15", "React Server Components", "TypeScript", "Tailwind CSS"],
+    color: "#68e468",
+    chakraY: 30.63,
+    chakraX: 49.6,
+    side: "left",
+    cardY: 33,
+    cardX: 4,
+    summary: "Aplicações corporativas escaláveis com SSR em edge e rotas otimizadas.",
+    description: "Engenharia de software moderna com TypeScript estrito, arquitetura de componentes desacoplados e renderização ultra-rápida.",
+    details: [
+      { label: "Domínio Principal", value: "React 19 / Next.js 15 App Router, Server Actions e Edge Runtime" },
+      { label: "Ferramentas", value: "TypeScript, Tailwind CSS, Zustand, TanStack Query" },
+      { label: "Prova em Produção", value: "Dashboard Eleitoral Adir Gentil 2211 com 139 municípios vetoriais" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/dashboard-adir-2211"
+  },
+  {
+    id: "python-data",
+    name: "Python & Data Engineering",
+    category: "DATA // BACKEND",
+    chakra: "Manipura (Plexo Solar)",
+    tags: ["FastAPI", "Python", "Pandas", "Pipelines ETL"],
+    color: "#ffe040",
+    chakraY: 41.44,
+    chakraX: 49.5,
+    side: "right",
+    cardY: 43.5,
+    cardX: 71,
+    summary: "Automação de dados complexos, apuração estatística e microsserviços ágeis.",
+    description: "Construção de pipelines de dados que transformam tarefas de dias em execuções automáticas de poucos minutos (+85% de ganho).",
+    details: [
+      { label: "Domínio Principal", value: "APIs assíncronas, manipulação de dados em massa e scripts de telemetria" },
+      { label: "Ferramentas", value: "Python 3.12, FastAPI, Pandas, OpenPyXL, SQLite/PostgreSQL" },
+      { label: "Ganho Comprovado", value: "+85% de redução de tempo em processamento e relatórios" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/tmlink-core"
+  },
+  {
+    id: "agentic-ai",
+    name: "Agentic AI & Automação",
+    category: "AI // AGENTS",
+    chakra: "Svadhisthana (Sacro)",
+    tags: ["Multi-Agents", "Gemini 3.8", "Claude Sonnet", "Engenharia de Prompts"],
+    color: "#f3651b",
+    chakraY: 52.48,
+    chakraX: 49.5,
+    side: "left",
+    cardY: 53.5,
+    cardX: 4,
+    summary: "Orquestração de agentes autônomos e fluxos operacionais inteligentes.",
+    description: "Desenvolvimento e adaptação de skills cognitivas, ferramentas MCP e pipelines automatizados de desenvolvimento guiado por IA.",
+    details: [
+      { label: "Domínio Principal", value: "Pipelines multi-agente, automação de testes E2E e geração procedural" },
+      { label: "Ferramentas", value: "Antigravity Superpowers, Model Context Protocol (MCP), Python SDK" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/caderno-leads-crm"
+  },
+  {
+    id: "cloud-infra",
+    name: "Infra, Cloud & Resiliência",
+    category: "DEVOPS // CLOUD",
+    chakra: "Muladhara (Raiz)",
+    tags: ["Docker", "Vercel", "Cloudflare", "HTTP Range Streaming"],
+    color: "#d61d23",
+    chakraY: 62.39,
+    chakraX: 49.5,
+    side: "right",
+    cardY: 63.5,
+    cardX: 71,
+    summary: "A base sólida que garante disponibilidade contínua e latência zero em produção.",
+    description: "Servidores configurados com suporte a streaming de vídeo HTTP Range, deploys atômicos com rollback instantâneo e CDN global.",
+    details: [
+      { label: "Domínio Principal", value: "Arquitetura serverless, roteamento HTTP Range, segurança e zero-downtime" },
+      { label: "Ferramentas", value: "Vercel CLI, Cloudflare Edge, Git Flow, Nginx/Python Range servers" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/infra-core"
+  }
+];
+
+function buildChakraSection() {
+  const content = document.getElementById('chakra-stage-content');
+  const figure = document.getElementById('chakra-avatar-figure') || content;
+  const svg = document.getElementById('chakra-laser-svg');
+  if (!content || !svg) return;
+
+  CHAKRA_SKILLS_DATA.forEach(s => {
+    // 1. Hotspot acoplado diretamente na anatomia do avatar
+    const node = document.createElement('div');
+    node.className = 'chakra-node';
+    node.id = `chakra-node-${s.id}`;
+    node.style.color = s.color;
+    node.style.top = `${s.chakraY}%`;
+    node.style.left = `${s.chakraX || 50}%`;
+    node.innerHTML = `
+      <div class="chakra-pulse"></div>
+      <div class="chakra-core"></div>
+    `;
+    node.onclick = (e) => {
+      e.stopPropagation();
+      toggleChakraCard(s.id);
+    };
+    figure.appendChild(node);
+
+    // 2. Linha Laser
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.id = `chakra-laser-${s.id}`;
+    path.setAttribute('class', 'laser-beam');
+    path.setAttribute('stroke', s.color);
+    svg.appendChild(path);
+
+    // 3. Card Lateral
+    const card = document.createElement('div');
+    card.className = 'skill-chakra-card';
+    card.id = `chakra-card-${s.id}`;
+    card.style.setProperty('--card-accent', s.color);
+    card.style.setProperty('--card-glow', `${s.color}66`);
+    card.style.top = `${s.cardY}%`;
+    card.style.left = `${s.cardX}%`;
+
+    let tagsHtml = s.tags.map(t => `<span class="skill-pill">${t}</span>`).join('');
+    let specsHtml = s.details.map(d => `
+      <div class="expanded-spec-item">
+        <strong>${d.label}</strong>
+        ${d.value}
+      </div>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="skill-card-top">
+        <span class="skill-card-category">${s.category}</span>
+        <span class="skill-card-chakra">${s.chakra}</span>
+      </div>
+      <div class="skill-card-title">
+        <span>${s.name}</span>
+        <span class="expand-indicator">+</span>
+      </div>
+      <div class="skill-card-summary">${s.summary}</div>
+      <div class="skill-tags-row">${tagsHtml}</div>
+      
+      <div class="skill-card-expand">
+        <p class="expanded-desc">${s.description}</p>
+        <div class="expanded-spec-list">${specsHtml}</div>
+        <a href="https://github.com/${s.repo}" target="_blank" class="card-github-link">
+          <span>Repositório no GitHub</span>
+          <span>↗</span>
+        </a>
+      </div>
+    `;
+    card.onclick = (e) => {
+      if (e.target.closest('a')) return;
+      e.stopPropagation();
+      toggleChakraCard(s.id);
+    };
+    content.appendChild(card);
+  });
+
+  setTimeout(updateChakraLaserLines, 250);
+}
+
+function updateChakraLaserLines() {
+  const content = document.getElementById('chakra-stage-content');
+  if (!content) return;
+  const contentRect = content.getBoundingClientRect();
+
+  CHAKRA_SKILLS_DATA.forEach(s => {
+    const nodeEl = document.getElementById(`chakra-node-${s.id}`);
+    const cardEl = document.getElementById(`chakra-card-${s.id}`);
+    const laserEl = document.getElementById(`chakra-laser-${s.id}`);
+
+    if (!nodeEl || !cardEl || !laserEl) return;
+
+    const nodeRect = nodeEl.getBoundingClientRect();
+    const cardRect = cardEl.getBoundingClientRect();
+
+    const x1 = nodeRect.left + nodeRect.width / 2 - contentRect.left;
+    const y1 = nodeRect.top + nodeRect.height / 2 - contentRect.top;
+
+    const x2 = s.side === 'right' ? (cardRect.left - contentRect.left) : (cardRect.right - contentRect.left);
+    const y2 = cardRect.top + 22 - contentRect.top;
+
+    const midX = (x1 + x2) / 2;
+    const d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+    laserEl.setAttribute('d', d);
+  });
+}
+
+function toggleChakraCard(id) {
+  const card = document.getElementById(`chakra-card-${id}`);
+  const node = document.getElementById(`chakra-node-${id}`);
+  const laser = document.getElementById(`chakra-laser-${id}`);
+  if (!card || !node || !laser) return;
+  const isAlreadyActive = card.classList.contains('active');
+
+  document.querySelectorAll('.skill-chakra-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.chakra-node').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.laser-beam').forEach(l => l.classList.remove('active'));
+
+  if (!isAlreadyActive) {
+    card.classList.add('active');
+    node.classList.add('active');
+    laser.classList.add('active');
+  }
+
+  setTimeout(updateChakraLaserLines, 120);
+}
+
+// Mouse Spotlight & Parallax
+window.addEventListener('mousemove', (e) => {
+  const spot = document.getElementById('chakra-mouse-spotlight');
+  if (spot) {
+    gsap.to(spot, { x: e.clientX, y: e.clientY, duration: 0.2, ease: "power2.out" });
+  }
+
+  const avatar = document.getElementById('chakra-avatar-img');
+  if (avatar) {
+    const dx = (e.clientX - window.innerWidth / 2) * 0.01;
+    const dy = (e.clientY - window.innerHeight / 2) * 0.01;
+    gsap.to(avatar, { x: dx, y: dy, duration: 0.4, ease: "power2.out" });
+  }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  buildChakraSection();
+});
 
 /**
  * ════════════════════════════════════════════════════════════════════
