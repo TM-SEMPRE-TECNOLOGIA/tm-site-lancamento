@@ -1018,6 +1018,102 @@ h1 strong, h2 strong {
   .marquee-band__track { animation: none; }
   .marquee-band__dot { animation: none; }
 }
+
+/* === LENTE DE AUMENTO HOLOGRÁFICA (CYBER-SCOPE LOUPE) === */
+.chakra-avatar-figure {
+  position: relative;
+  cursor: crosshair;
+}
+
+.chakra-zoom-lens {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 190px;
+  height: 190px;
+  margin-top: -95px;
+  margin-left: -95px;
+  border-radius: 50%;
+  border: 2px solid rgba(10, 252, 219, 0.85);
+  box-shadow: 
+    0 0 30px rgba(10, 252, 219, 0.45),
+    0 0 60px rgba(234, 150, 60, 0.2),
+    inset 0 0 25px rgba(0, 0, 0, 0.9),
+    inset 0 0 12px rgba(10, 252, 219, 0.35);
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  background-image: url('thiago_armor_disassembly.jpg');
+  background-repeat: no-repeat;
+  background-color: #030408;
+}
+
+.chakra-zoom-lens::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, transparent 60%, rgba(10, 252, 219, 0.18) 82%, rgba(10, 252, 219, 0.5) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.chakra-zoom-lens::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px, transparent 2px, transparent 4px);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.lens-reticle-h {
+  position: absolute;
+  top: 50%;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: rgba(10, 252, 219, 0.5);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.lens-reticle-v {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  bottom: 18%;
+  width: 1px;
+  background: rgba(10, 252, 219, 0.5);
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 4;
+}
+
+.lens-tag {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  color: #0afcdb;
+  text-transform: uppercase;
+  background: rgba(5, 7, 15, 0.9);
+  padding: 2.5px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(10, 252, 219, 0.4);
+  box-shadow: 0 0 10px rgba(10, 252, 219, 0.3);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 5;
+}
+
 </style>
 </head>
 <body>
@@ -1182,6 +1278,12 @@ h1 strong, h2 strong {
         <svg id="chakra-laser-svg"></svg>
         <div class="chakra-avatar-figure" id="chakra-avatar-figure">
           <img src="thiago_cyber_chakra_transparent.png" alt="Thiago Nascimento" class="chakra-avatar-img" id="chakra-avatar-img">
+          <!-- LENTE DE AUMENTO HOLOGRÁFICA CYBER-SCOPE -->
+          <div class="chakra-zoom-lens" id="chakra-zoom-lens">
+            <div class="lens-reticle-h"></div>
+            <div class="lens-reticle-v"></div>
+            <span class="lens-tag">SCAN 2.5X // ARMOR</span>
+          </div>
         </div>
       </div>
     </div>
@@ -2284,6 +2386,66 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('DOMContentLoaded', () => {
   buildChakraSection();
+  initCyberScopeLoupe();
+
+// LENTE DE AUMENTO HOLOGRÁFICA (CYBER-SCOPE LOUPE) NO AVATAR
+function initCyberScopeLoupe() {
+  const figure = document.getElementById('chakra-avatar-figure');
+  const img = document.getElementById('chakra-avatar-img');
+  const lens = document.getElementById('chakra-zoom-lens');
+  if (!figure || !img || !lens) return;
+
+  const zoomFactor = 2.45;
+  let isInside = false;
+
+  function updateLoupe(e) {
+    const rect = img.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Verifica se o cursor está dentro da figura do avatar com margem
+    if (x >= -10 && x <= rect.width + 10 && y >= -10 && y <= rect.height + 10) {
+      if (!isInside) {
+        isInside = true;
+        lens.style.opacity = '1';
+      }
+
+      // Converte coordenadas relativas para a figure
+      const figRect = figure.getBoundingClientRect();
+      const lensX = e.clientX - figRect.left;
+      const lensY = e.clientY - figRect.top;
+
+      lens.style.transform = `translate(${lensX}px, ${lensY}px) scale(1)`;
+
+      // Mapeia porcentagens exatas de 0% a 100%
+      const clampedX = Math.max(0, Math.min(rect.width, x));
+      const clampedY = Math.max(0, Math.min(rect.height, y));
+      const pctX = (clampedX / rect.width) * 100;
+      const pctY = (clampedY / rect.height) * 100;
+
+      const bgW = rect.width * zoomFactor;
+      const bgH = rect.height * zoomFactor;
+
+      lens.style.backgroundSize = `${bgW}px ${bgH}px`;
+      lens.style.backgroundPosition = `${pctX}% ${pctY}%`;
+    } else {
+      if (isInside) {
+        isInside = false;
+        lens.style.opacity = '0';
+        lens.style.transform = `scale(0.6)`;
+      }
+    }
+  }
+
+  window.addEventListener('mousemove', updateLoupe, { passive: true });
+
+  figure.addEventListener('mouseleave', () => {
+    isInside = false;
+    lens.style.opacity = '0';
+    lens.style.transform = `scale(0.6)`;
+  });
+}
+
 });
 
 /**
