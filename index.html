@@ -2102,11 +2102,11 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Sahasrara (Coroa)",
     tags: ["Three.js", "WebGL", "GLSL Shaders", "GSAP ScrollTrigger"],
     color: "#c57cff",
-    chakraY: 6.65,
-    chakraX: 49.9,
+    chakraY: 7.20,
+    chakraX: 50.0,
     side: "right",
     cardY: 4,
-    cardX: 71,
+    cardX: 72,
     summary: "3D WebGL, shaders de distorção líquida e narrativa cinemática interativa a 60 FPS.",
     description: "A etapa onde ideias de design se tornam experiências tridimensionais navegáveis sem sacrificar a velocidade de carregamento em mobile.",
     details: [
@@ -2123,10 +2123,10 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Ajna (Terceiro Olho)",
     tags: ["JSON-LD", "GEO", "OpenGraph", "Core Web Vitals"],
     color: "#5197f7",
-    chakraY: 9.92,
-    chakraX: 49.9,
+    chakraY: 11.10,
+    chakraX: 50.0,
     side: "left",
-    cardY: 12,
+    cardY: 10,
     cardX: 4,
     summary: "Otimização técnica para busca orgânica do Google e robôs de IA (Perplexity/ChatGPT).",
     description: "Estruturação semântica de ponta, tags Schema.org profundas e geração de llms.txt para indexação precisa por agentes de IA.",
@@ -2144,11 +2144,11 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Vishuddha (Garganta)",
     tags: ["Design Systems", "Figma", "Micro-interações", "Dark Mode OLED"],
     color: "#14b8a6",
-    chakraY: 17.73,
-    chakraX: 49.7,
+    chakraY: 17.50,
+    chakraX: 50.0,
     side: "right",
-    cardY: 23.5,
-    cardX: 71,
+    cardY: 19,
+    cardX: 72,
     summary: "Identidade visual sólida, contraste editorial (Bloomberg/FT) e hierarquia precisa.",
     description: "Eliminação total de 'cardzinhos genéricos'. Construção de cockpits monolíticos, tipografia de alto impacto e estética industrial premium.",
     details: [
@@ -2165,10 +2165,10 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Anahata (Coração)",
     tags: ["Next.js 15", "React Server Components", "TypeScript", "Tailwind CSS"],
     color: "#68e468",
-    chakraY: 31.12,
-    chakraX: 49.6,
+    chakraY: 31.20,
+    chakraX: 50.0,
     side: "left",
-    cardY: 33,
+    cardY: 29,
     cardX: 4,
     summary: "Aplicações corporativas escaláveis com SSR em edge e rotas otimizadas.",
     description: "Engenharia de software moderna com TypeScript estrito, arquitetura de componentes desacoplados e renderização ultra-rápida.",
@@ -2186,11 +2186,11 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Manipura (Plexo Solar)",
     tags: ["FastAPI", "Python", "Pandas", "Pipelines ETL"],
     color: "#ffe040",
-    chakraY: 36.99,
-    chakraX: 49.5,
+    chakraY: 37.00,
+    chakraX: 50.0,
     side: "right",
-    cardY: 43.5,
-    cardX: 71,
+    cardY: 38,
+    cardX: 72,
     summary: "Automação de dados complexos, apuração estatística e microsserviços ágeis.",
     description: "Construção de pipelines de dados que transformam tarefas de dias em execuções automáticas de poucos minutos (+85% de ganho).",
     details: [
@@ -2207,10 +2207,10 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Svadhisthana (Sacro)",
     tags: ["Multi-Agents", "Gemini 3.8", "Claude Sonnet", "Engenharia de Prompts"],
     color: "#f3651b",
-    chakraY: 42.97,
-    chakraX: 49.5,
+    chakraY: 43.00,
+    chakraX: 50.0,
     side: "left",
-    cardY: 53.5,
+    cardY: 48,
     cardX: 4,
     summary: "Orquestração de agentes autônomos e fluxos operacionais inteligentes.",
     description: "Desenvolvimento e adaptação de skills cognitivas, ferramentas MCP e pipelines automatizados de desenvolvimento guiado por IA.",
@@ -2227,11 +2227,11 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Muladhara (Raiz)",
     tags: ["Docker", "Vercel", "Cloudflare", "HTTP Range Streaming"],
     color: "#d61d23",
-    chakraY: 44.99,
-    chakraX: 49.5,
+    chakraY: 51.50,
+    chakraX: 50.0,
     side: "right",
-    cardY: 63.5,
-    cardX: 71,
+    cardY: 58,
+    cardX: 72,
     summary: "A base sólida que garante disponibilidade contínua e latência zero em produção.",
     description: "Servidores configurados com suporte a streaming de vídeo HTTP Range, deploys atômicos com rollback instantâneo e CDN global.",
     details: [
@@ -2273,7 +2273,7 @@ function buildChakraSection() {
     path.setAttribute('stroke', s.color);
     svg.appendChild(path);
 
-    // 3. Card Lateral
+        // 3. Card Lateral com Pino de Ancoragem de Laser
     const card = document.createElement('div');
     card.className = 'skill-chakra-card';
     card.id = `chakra-card-${s.id}`;
@@ -2281,6 +2281,25 @@ function buildChakraSection() {
     card.style.setProperty('--card-glow', `${s.color}66`);
     card.style.top = `${s.cardY}%`;
     card.style.left = `${s.cardX}%`;
+
+    // Pino de luz que recebe o laser com exatidão milimétrica
+    const anchor = document.createElement('div');
+    anchor.className = 'card-laser-anchor';
+    anchor.style.position = 'absolute';
+    anchor.style.top = '24px';
+    if (s.side === 'right') {
+      anchor.style.left = '-6px';
+    } else {
+      anchor.style.right = '-6px';
+    }
+    anchor.style.width = '10px';
+    anchor.style.height = '10px';
+    anchor.style.borderRadius = '50%';
+    anchor.style.backgroundColor = s.color;
+    anchor.style.boxShadow = `0 0 12px ${s.color}, 0 0 20px ${s.color}`;
+    anchor.style.zIndex = '5';
+    anchor.style.pointerEvents = 'none';
+    card.appendChild(anchor);
 
     let tagsHtml = s.tags.map(t => `<span class="skill-pill">${t}</span>`).join('');
     let specsHtml = s.details.map(d => `
@@ -2324,8 +2343,12 @@ function buildChakraSection() {
 
 function updateChakraLaserLines() {
   const content = document.getElementById('chakra-stage-content');
-  if (!content) return;
+  const svg = document.getElementById('chakra-laser-svg');
+  if (!content || !svg) return;
   const contentRect = content.getBoundingClientRect();
+
+  // Sincroniza dimensões e viewBox do SVG
+  svg.setAttribute('viewBox', `0 0 ${contentRect.width} ${contentRect.height}`);
 
   CHAKRA_SKILLS_DATA.forEach(s => {
     const nodeEl = document.getElementById(`chakra-node-${s.id}`);
@@ -2335,16 +2358,23 @@ function updateChakraLaserLines() {
     if (!nodeEl || !cardEl || !laserEl) return;
 
     const nodeRect = nodeEl.getBoundingClientRect();
-    const cardRect = cardEl.getBoundingClientRect();
+    const anchorEl = cardEl.querySelector('.card-laser-anchor');
+    const anchorRect = anchorEl ? anchorEl.getBoundingClientRect() : cardEl.getBoundingClientRect();
 
-    const x1 = nodeRect.left + nodeRect.width / 2 - contentRect.left;
-    const y1 = nodeRect.top + nodeRect.height / 2 - contentRect.top;
+    // Centro do nó do chakra
+    const x1 = nodeRect.left + (nodeRect.width / 2) - contentRect.left;
+    const y1 = nodeRect.top + (nodeRect.height / 2) - contentRect.top;
 
-    const x2 = s.side === 'right' ? (cardRect.left - contentRect.left) : (cardRect.right - contentRect.left);
-    const y2 = cardRect.top + 22 - contentRect.top;
+    // Centro exato do pino de luz de ancoragem no card
+    const x2 = anchorRect.left + (anchorRect.width / 2) - contentRect.left;
+    const y2 = anchorRect.top + (anchorRect.height / 2) - contentRect.top;
 
-    const midX = (x1 + x2) / 2;
-    const d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+    // Traçado fluido com saída suave na horizontal
+    const dir = s.side === 'right' ? 1 : -1;
+    const cpX1 = x1 + (dir * Math.abs(x2 - x1) * 0.45);
+    const cpX2 = x2 - (dir * Math.abs(x2 - x1) * 0.25);
+
+    const d = `M ${x1} ${y1} C ${cpX1} ${y1}, ${cpX2} ${y2}, ${x2} ${y2}`;
     laserEl.setAttribute('d', d);
   });
 }
@@ -2386,6 +2416,17 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('DOMContentLoaded', () => {
   buildChakraSection();
+  const avatarImg = document.getElementById('chakra-avatar-img');
+  if (avatarImg) {
+    if (avatarImg.complete) {
+      setTimeout(updateChakraLaserLines, 100);
+    } else {
+      avatarImg.addEventListener('load', () => {
+        setTimeout(updateChakraLaserLines, 50);
+      });
+    }
+  }
+
   initCyberScopeLoupe();
 
 // LENTE DE AUMENTO HOLOGRÁFICA (CYBER-SCOPE LOUPE) NO AVATAR
