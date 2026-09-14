@@ -731,23 +731,19 @@ h1 strong, h2 strong {
 }
 
 .laser-beam {
-  stroke-width: 1.5;
+  stroke-width: 2px;
   fill: none;
-  opacity: 0.45;
-  stroke-dasharray: 4 6;
-  animation: laserStream 3s linear infinite;
-  transition: opacity 0.35s ease, stroke-width 0.35s ease;
-}
-@keyframes laserStream {
-  to {
-    stroke-dashoffset: -40;
-  }
+  opacity: 0;
+  stroke-dasharray: none;
+  pointer-events: none;
+  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.25s ease;
 }
 .laser-beam.active {
-  stroke-width: 2.5;
+  stroke-width: 2.5px;
   stroke-dasharray: none;
   opacity: 1;
-  filter: drop-shadow(0 0 8px currentColor);
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 14px currentColor);
 }
 
 .skill-chakra-card {
@@ -778,6 +774,13 @@ h1 strong, h2 strong {
   box-shadow: 0 22px 56px rgba(0,0,0,0.98), 0 0 28px var(--card-glow, var(--orange-glow));
   width: 340px;
   z-index: 50;
+}
+.skill-chakra-card .card-laser-anchor {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+.skill-chakra-card.active .card-laser-anchor {
+  transform: scale(1.4);
+  box-shadow: 0 0 16px var(--card-accent, #fff), 0 0 32px var(--card-accent, #fff) !important;
 }
 
 .skill-card-top {
@@ -912,6 +915,348 @@ h1 strong, h2 strong {
   pointer-events: none;
   opacity: 0;
   z-index: 18;
+}
+
+/* ── MODO CALIBRADOR VISUAL (AJUSTE DOS 7 CHAKRAS) ── */
+.chakra-calibrator-bar {
+  position: absolute;
+  top: 24px;
+  right: clamp(20px, 4vw, 56px);
+  z-index: 60;
+  pointer-events: auto;
+}
+.chakra-calibrator-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(8, 12, 19, 0.92);
+  border: 1px solid rgba(10, 252, 219, 0.45);
+  color: #0afcdb;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 14px rgba(10, 252, 219, 0.18);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.chakra-calibrator-trigger:hover,
+.chakra-calibrator-trigger.active {
+  background: rgba(10, 252, 219, 0.18);
+  border-color: #0afcdb;
+  color: #fff;
+  box-shadow: 0 0 24px rgba(10, 252, 219, 0.55);
+  transform: translateY(-1px);
+}
+.cal-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #0afcdb;
+  box-shadow: 0 0 8px #0afcdb;
+  animation: calDotPulse 1.8s infinite;
+}
+@keyframes calDotPulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 14px #0afcdb; }
+}
+
+.chakra-calibrator-panel {
+  position: absolute;
+  top: 70px;
+  right: clamp(20px, 4vw, 56px);
+  width: 350px;
+  max-width: calc(100vw - 40px);
+  background: rgba(6, 9, 15, 0.96);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(10, 252, 219, 0.35);
+  border-radius: 10px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(10, 252, 219, 0.15);
+  padding: 16px;
+  z-index: 70;
+  pointer-events: auto;
+  font-family: 'JetBrains Mono', monospace;
+  animation: calPanelIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes calPanelIn {
+  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.cal-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.cal-panel-title {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.cal-panel-icon {
+  font-size: 20px;
+}
+.cal-panel-title h4 {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.8px;
+  margin: 0 0 2px 0;
+}
+.cal-panel-title p {
+  font-size: 9.5px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.3;
+}
+.cal-btn-close {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+.cal-btn-close:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: #ef4444;
+  color: #fff;
+}
+
+.cal-table-wrap {
+  max-height: 210px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+.cal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  text-align: left;
+}
+.cal-table th {
+  padding: 6px 8px;
+  color: #64748b;
+  font-size: 8.5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+  background: #080c14;
+}
+.cal-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+}
+.cal-table tr.active-row {
+  background: rgba(10, 252, 219, 0.12);
+}
+.cal-chakra-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+.cal-color-pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px currentColor;
+}
+.cal-coord-val {
+  color: #0afcdb;
+  font-weight: 700;
+}
+.cal-btn-row-focus {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 9px;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.cal-btn-row-focus:hover {
+  border-color: #0afcdb;
+  color: #0afcdb;
+}
+
+.cal-panel-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.cal-btn-copy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #0afcdb 0%, #00d2b4 100%);
+  border: none;
+  border-radius: 6px;
+  color: #030708;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(10, 252, 219, 0.35);
+  transition: all 0.25s;
+}
+.cal-btn-copy:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(10, 252, 219, 0.6);
+  filter: brightness(1.08);
+}
+.cal-btn-reset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #94a3b8;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cal-btn-reset:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.cal-panel-tip {
+  font-size: 9px;
+  color: #64748b;
+  line-height: 1.4;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  padding-top: 8px;
+}
+.cal-panel-tip strong {
+  color: #0afcdb;
+}
+
+/* Estado ativo do Modo Calibrador sobre a figura e os nós */
+.calibrator-active .chakra-avatar-figure {
+  cursor: crosshair;
+}
+.calibrator-active .chakra-node {
+  cursor: grab !important;
+  z-index: 60;
+}
+.calibrator-active .chakra-node::after {
+  content: attr(data-cal-label);
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid currentColor;
+  color: currentColor;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+.calibrator-active .chakra-node:hover,
+.calibrator-active .chakra-node.dragging {
+  cursor: grabbing !important;
+  transform: translate(-50%, -50%) scale(1.4);
+}
+.calibrator-active .chakra-node.dragging {
+  z-index: 100;
+}
+
+/* Retículo e Tooltip Flutuante durante o arraste */
+.cal-crosshair-h {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(10, 252, 219, 0.45);
+  pointer-events: none;
+  z-index: 65;
+  border-top: 1px dashed rgba(10, 252, 219, 0.7);
+}
+.cal-crosshair-v {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(10, 252, 219, 0.45);
+  pointer-events: none;
+  z-index: 65;
+  border-left: 1px dashed rgba(10, 252, 219, 0.7);
+}
+.cal-node-tooltip {
+  position: absolute;
+  transform: translate(-50%, -130%);
+  background: rgba(3, 7, 12, 0.92);
+  border: 1px solid #0afcdb;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  pointer-events: none;
+  z-index: 95;
+  box-shadow: 0 0 15px rgba(10, 252, 219, 0.4);
+  white-space: nowrap;
+}
+
+/* Notificação Toast */
+.cal-toast {
+  position: fixed;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background: #03080e;
+  border: 1.5px solid #0afcdb;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 700;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(10, 252, 219, 0.5);
+  z-index: 9999;
+  pointer-events: none;
+  animation: calToastPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes calToastPop {
+  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .slot-placeholder {
@@ -1284,8 +1629,66 @@ h1 strong, h2 strong {
             <div class="lens-reticle-v"></div>
             <span class="lens-tag">SCAN 2.5X // ARMOR</span>
           </div>
+          <!-- Retículo e Tooltip Flutuantes de Calibração -->
+          <div id="cal-crosshair-h" class="cal-crosshair-h" style="display: none;"></div>
+          <div id="cal-crosshair-v" class="cal-crosshair-v" style="display: none;"></div>
+          <div id="cal-node-tooltip" class="cal-node-tooltip" style="display: none;"></div>
         </div>
       </div>
+
+      <!-- BARRA FLUTUANTE DE ATIVAÇÃO DO MODO CALIBRADOR -->
+      <div class="chakra-calibrator-bar" id="chakra-calibrator-bar">
+        <button id="btn-toggle-calibrator" class="chakra-calibrator-trigger" type="button" title="Ativar console de calibração milimétrica dos 7 chakras">
+          <span class="cal-pulse-dot"></span>
+          <span class="cal-btn-label">🎯 MODO CALIBRADOR (AJUSTAR PONTOS)</span>
+        </button>
+      </div>
+
+      <!-- CONSOLE FLUTUANTE DE CALIBRAÇÃO (HUD) -->
+      <div class="chakra-calibrator-panel" id="chakra-calibrator-panel" style="display: none;">
+        <div class="cal-panel-header">
+          <div class="cal-panel-title">
+            <span class="cal-panel-icon">🎯</span>
+            <div>
+              <h4>CONSOLE DE CALIBRAÇÃO // 7 CHAKRAS</h4>
+              <p>Arraste os nós coloridos na foto até os pontos de luz exatos</p>
+            </div>
+          </div>
+          <button class="cal-btn-close" id="btn-close-calibrator" type="button" title="Fechar painel">✕</button>
+        </div>
+
+        <div class="cal-table-wrap">
+          <table class="cal-table" id="cal-table-nodes">
+            <thead>
+              <tr>
+                <th>Chakra</th>
+                <th>X (%)</th>
+                <th>Y (%)</th>
+                <th>Foco</th>
+              </tr>
+            </thead>
+            <tbody id="cal-table-body">
+              <!-- Preenchido dinamicamente pelo JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cal-panel-actions">
+          <button class="cal-btn-copy" id="btn-copy-calibrator" type="button">
+            <span>📋</span>
+            <strong>Copiar Coordenadas (X e Y em %)</strong>
+          </button>
+          <button class="cal-btn-reset" id="btn-reset-calibrator" type="button">
+            <span>↺</span>
+            Restaurar Padrão
+          </button>
+        </div>
+        <div class="cal-panel-tip">
+          💡 Após ajustar, clique em <strong>Copiar Coordenadas</strong> e cole no chat para gravarmos no código.
+        </div>
+      </div>
+      <!-- Toast de Notificação de Cópia -->
+      <div id="cal-toast" class="cal-toast" style="display: none;"></div>
     </div>
 
     <!-- UI Inferior do Palco 3D -->
@@ -1908,6 +2311,11 @@ h1 strong, h2 strong {
         targetScroll = (p1 * totalSpan) + manualDragOffset;
       }
 
+      // Limpa laser/chakra ativo quando estiver no carrossel 3D
+      if (typeof clearActiveChakra === 'function') {
+        clearActiveChakra();
+      }
+
       // Three.js no lugar normal
       if (carouselStage) {
         carouselStage.style.transform = 'translateX(0vw)';
@@ -1929,6 +2337,10 @@ h1 strong, h2 strong {
     // ── FASE 2: TRANSIÇÃO LATERAL CINEMÁTICA & MERGULHO (0.42 a 0.68) ──
     } else if (progress <= 0.68) {
       const p2 = (progress - 0.42) / 0.26; // 0..1
+
+      if (typeof clearActiveChakra === 'function') {
+        clearActiveChakra();
+      }
 
       // O carrossel 3D desliza fisicamente para a ESQUERDA saindo da tela
       if (carouselStage) {
@@ -1980,9 +2392,11 @@ h1 strong, h2 strong {
       if (chakraFlash) chakraFlash.style.opacity = '0';
 
       setHeaderContent('chakra');
-      if (dragHintText) dragHintText.textContent = "Clique nos 7 Chakras ou Cards para inspecionar a Engenharia & Código";
 
-      if (typeof updateChakraLaserLines === 'function') {
+      // DESCIDA SEQUENCIAL DO LASER (COROA ATÉ RAIZ) GUIADA PELO SCROLL
+      if (typeof handleChakraScrollProgression === 'function') {
+        handleChakraScrollProgression(progress);
+      } else if (typeof updateChakraLaserLines === 'function') {
         updateChakraLaserLines();
       }
     }
@@ -2242,17 +2656,31 @@ const CHAKRA_SKILLS_DATA = [
   }
 ];
 
+let currentActiveChakraIdx = -1;
+let currentActiveChakraId = null;
+let manualOverrideActive = false;
+let lastScrollProgressForChakra = 0;
+
+let isCalibrating = false;
+let activeDraggingNode = null;
+let activeDraggingChakraData = null;
+
 function buildChakraSection() {
   const content = document.getElementById('chakra-stage-content');
   const figure = document.getElementById('chakra-avatar-figure') || content;
   const svg = document.getElementById('chakra-laser-svg');
   if (!content || !svg) return;
 
-  CHAKRA_SKILLS_DATA.forEach(s => {
+  // Carrega coordenadas salvas no localStorage (se existirem)
+  loadSavedCalibratedCoords();
+
+  CHAKRA_SKILLS_DATA.forEach((s, idx) => {
     // 1. Hotspot acoplado diretamente na anatomia do avatar
     const node = document.createElement('div');
     node.className = 'chakra-node';
     node.id = `chakra-node-${s.id}`;
+    node.setAttribute('data-id', s.id);
+    node.setAttribute('data-cal-label', s.chakra.split(' ')[0]);
     node.style.color = s.color;
     node.style.top = `${s.chakraY}%`;
     node.style.left = `${s.chakraX || 50}%`;
@@ -2262,18 +2690,19 @@ function buildChakraSection() {
     `;
     node.onclick = (e) => {
       e.stopPropagation();
+      if (isCalibrating) return;
       toggleChakraCard(s.id);
     };
     figure.appendChild(node);
 
-    // 2. Linha Laser
+    // 2. Linha Laser Sólida (única e conectada apenas quando ativa)
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     path.id = `chakra-laser-${s.id}`;
     path.setAttribute('class', 'laser-beam');
     path.setAttribute('stroke', s.color);
     svg.appendChild(path);
 
-        // 3. Card Lateral com Pino de Ancoragem de Laser
+    // 3. Card Lateral com Pino de Ancoragem de Laser
     const card = document.createElement('div');
     card.className = 'skill-chakra-card';
     card.id = `chakra-card-${s.id}`;
@@ -2370,7 +2799,7 @@ function updateChakraLaserLines() {
     const y2 = anchorRect.top + (anchorRect.height / 2) - contentRect.top;
 
     // Traçado fluido com saída suave na horizontal
-    const dir = s.side === 'right' ? 1 : -1;
+    const dir = (x2 >= x1) ? 1 : -1;
     const cpX1 = x1 + (dir * Math.abs(x2 - x1) * 0.45);
     const cpX2 = x2 - (dir * Math.abs(x2 - x1) * 0.25);
 
@@ -2379,24 +2808,397 @@ function updateChakraLaserLines() {
   });
 }
 
-function toggleChakraCard(id) {
+function activateChakraById(id, shouldToggle = false) {
   const card = document.getElementById(`chakra-card-${id}`);
   const node = document.getElementById(`chakra-node-${id}`);
   const laser = document.getElementById(`chakra-laser-${id}`);
   if (!card || !node || !laser) return;
-  const isAlreadyActive = card.classList.contains('active');
 
+  const isAlreadyActive = card.classList.contains('active');
+  if (shouldToggle && isAlreadyActive) {
+    clearActiveChakra();
+    return;
+  }
+
+  // Desativa os outros para manter foco exclusivo
   document.querySelectorAll('.skill-chakra-card').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.chakra-node').forEach(n => n.classList.remove('active'));
   document.querySelectorAll('.laser-beam').forEach(l => l.classList.remove('active'));
 
-  if (!isAlreadyActive) {
-    card.classList.add('active');
-    node.classList.add('active');
-    laser.classList.add('active');
+  card.classList.add('active');
+  node.classList.add('active');
+  laser.classList.add('active');
+  currentActiveChakraId = id;
+
+  const idx = CHAKRA_SKILLS_DATA.findIndex(s => s.id === id);
+  if (idx !== -1) {
+    currentActiveChakraIdx = idx;
+    const dragHintText = document.getElementById('stage-drag-hint-text');
+    if (dragHintText) {
+      dragHintText.textContent = `[CHAKRA 0${idx + 1}/07] ${CHAKRA_SKILLS_DATA[idx].chakra} // ${CHAKRA_SKILLS_DATA[idx].name} (Role a página para navegar)`;
+    }
+    const progressThumb = document.getElementById('carousel-progress-fill');
+    if (progressThumb) {
+      progressThumb.style.width = `${((idx + 1) / 7) * 100}%`;
+    }
+    highlightCalibratorTableRow(id);
   }
 
-  setTimeout(updateChakraLaserLines, 120);
+  updateChakraLaserLines();
+}
+
+function activateChakraByIndex(index) {
+  if (index >= 0 && index < CHAKRA_SKILLS_DATA.length) {
+    activateChakraById(CHAKRA_SKILLS_DATA[index].id, false);
+  }
+}
+
+function clearActiveChakra() {
+  document.querySelectorAll('.skill-chakra-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.chakra-node').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.laser-beam').forEach(l => l.classList.remove('active'));
+  currentActiveChakraIdx = -1;
+  currentActiveChakraId = null;
+}
+
+function toggleChakraCard(id) {
+  manualOverrideActive = true;
+  activateChakraById(id, true);
+}
+
+function handleChakraScrollProgression(progress) {
+  // Se o scroll foi movido, cancela override manual para retomar a navegação contínua
+  if (Math.abs(progress - lastScrollProgressForChakra) > 0.005) {
+    manualOverrideActive = false;
+    lastScrollProgressForChakra = progress;
+  }
+
+  if (manualOverrideActive) return;
+
+  // Fase 3: progress de 0.68 a 1.00 (7 chakras mapeados em faixas uniformes)
+  const p3 = Math.max(0, Math.min(0.999, (progress - 0.68) / 0.32));
+  const chakraCount = CHAKRA_SKILLS_DATA.length;
+  const targetIdx = Math.min(chakraCount - 1, Math.floor(p3 * chakraCount));
+
+  if (targetIdx !== currentActiveChakraIdx) {
+    activateChakraByIndex(targetIdx);
+  }
+}
+
+// ── MOTOR DO MODO CALIBRADOR (AJUSTE FINO VISUAL & ARRASTE) ──
+function initChakraCalibrator() {
+  const toggleBtn = document.getElementById('btn-toggle-calibrator');
+  const panel = document.getElementById('chakra-calibrator-panel');
+  const closeBtn = document.getElementById('btn-close-calibrator');
+  const copyBtn = document.getElementById('btn-copy-calibrator');
+  const resetBtn = document.getElementById('btn-reset-calibrator');
+  const figure = document.getElementById('chakra-avatar-figure');
+  const avatarImg = document.getElementById('chakra-avatar-img');
+  const lens = document.getElementById('chakra-zoom-lens');
+  const tooltip = document.getElementById('cal-node-tooltip');
+  const crossH = document.getElementById('cal-crosshair-h');
+  const crossV = document.getElementById('cal-crosshair-v');
+  const container = document.getElementById('chakra-experience-layer');
+
+  if (!toggleBtn || !panel || !figure) return;
+
+  populateCalibratorTable();
+
+  toggleBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setCalibratorActive(!isCalibrating);
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setCalibratorActive(false);
+    });
+  }
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      copyCalibratedCoordinates();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      resetCalibratedCoordinates();
+    });
+  }
+
+  function setCalibratorActive(active) {
+    isCalibrating = active;
+    if (isCalibrating) {
+      panel.style.display = 'block';
+      toggleBtn.classList.add('active');
+      const label = toggleBtn.querySelector('.cal-btn-label');
+      if (label) label.textContent = '✕ FECHAR CALIBRADOR';
+      if (container) container.classList.add('calibrator-active');
+
+      // Trava paralaxe do avatar em (0, 0) para calibração sem flutuação
+      if (avatarImg) gsap.set(avatarImg, { x: 0, y: 0 });
+      if (lens) lens.style.display = 'none';
+
+      if (currentActiveChakraIdx === -1) {
+        activateChakraByIndex(0);
+      }
+      showCalibratorToast("Modo Calibrador ATIVO: Arraste os nós coloridos na foto.");
+    } else {
+      panel.style.display = 'none';
+      toggleBtn.classList.remove('active');
+      const label = toggleBtn.querySelector('.cal-btn-label');
+      if (label) label.textContent = '🎯 MODO CALIBRADOR (AJUSTAR PONTOS)';
+      if (container) container.classList.remove('calibrator-active');
+      if (lens) lens.style.display = '';
+      if (tooltip) tooltip.style.display = 'none';
+      if (crossH) crossH.style.display = 'none';
+      if (crossV) crossV.style.display = 'none';
+    }
+    updateChakraLaserLines();
+  }
+
+  // Registra eventos de arraste nos 7 nós anatômicos
+  CHAKRA_SKILLS_DATA.forEach(s => {
+    const node = document.getElementById(`chakra-node-${s.id}`);
+    if (!node) return;
+
+    node.addEventListener('mousedown', (e) => {
+      if (!isCalibrating) return;
+      e.preventDefault();
+      e.stopPropagation();
+      startDragging(node, s, e.clientX, e.clientY);
+    });
+
+    node.addEventListener('touchstart', (e) => {
+      if (!isCalibrating) return;
+      if (e.touches.length === 1) {
+        e.stopPropagation();
+        startDragging(node, s, e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+  });
+
+  function startDragging(node, s, clientX, clientY) {
+    activeDraggingNode = node;
+    activeDraggingChakraData = s;
+    node.classList.add('dragging');
+    activateChakraById(s.id, false);
+    updateDragGuides(clientX, clientY);
+  }
+
+  function updateDragGuides(clientX, clientY) {
+    if (!figure || !activeDraggingChakraData) return;
+    const figRect = figure.getBoundingClientRect();
+
+    let x = clientX - figRect.left;
+    let y = clientY - figRect.top;
+    let xPct = Math.max(0, Math.min(100, (x / figRect.width) * 100));
+    let yPct = Math.max(0, Math.min(100, (y / figRect.height) * 100));
+
+    // Atualiza elemento visual do nó
+    if (activeDraggingNode) {
+      activeDraggingNode.style.left = `${xPct.toFixed(2)}%`;
+      activeDraggingNode.style.top = `${yPct.toFixed(2)}%`;
+    }
+
+    // Atualiza dados na memória
+    activeDraggingChakraData.chakraX = Number(xPct.toFixed(2));
+    activeDraggingChakraData.chakraY = Number(yPct.toFixed(2));
+
+    // Linhas guias e retículo
+    if (crossH && crossV && tooltip) {
+      crossH.style.display = 'block';
+      crossH.style.top = `${yPct.toFixed(2)}%`;
+      crossV.style.display = 'block';
+      crossV.style.left = `${xPct.toFixed(2)}%`;
+
+      tooltip.style.display = 'block';
+      tooltip.style.left = `${xPct.toFixed(2)}%`;
+      tooltip.style.top = `${yPct.toFixed(2)}%`;
+      tooltip.innerHTML = `<strong>${activeDraggingChakraData.name}</strong><br>X: ${xPct.toFixed(2)}% | Y: ${yPct.toFixed(2)}%`;
+    }
+
+    // Atualiza linha na tabela do HUD
+    const cellVal = document.getElementById(`cal-coord-${activeDraggingChakraData.id}`);
+    if (cellVal) {
+      cellVal.textContent = `X: ${xPct.toFixed(2)}% | Y: ${yPct.toFixed(2)}%`;
+    }
+
+    // Recalcula linha de laser em tempo real
+    updateChakraLaserLines();
+  }
+
+  window.addEventListener('mousemove', (e) => {
+    if (!activeDraggingNode) return;
+    updateDragGuides(e.clientX, e.clientY);
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!activeDraggingNode || e.touches.length !== 1) return;
+    updateDragGuides(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
+  function stopDragging() {
+    if (activeDraggingNode) {
+      activeDraggingNode.classList.remove('dragging');
+      activeDraggingNode = null;
+      activeDraggingChakraData = null;
+      if (tooltip) tooltip.style.display = 'none';
+      if (crossH) crossH.style.display = 'none';
+      if (crossV) crossV.style.display = 'none';
+      saveCalibratedCoords();
+      updateChakraLaserLines();
+    }
+  }
+
+  window.addEventListener('mouseup', stopDragging);
+  window.addEventListener('touchend', stopDragging);
+}
+
+function populateCalibratorTable() {
+  const tbody = document.getElementById('cal-table-body');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  CHAKRA_SKILLS_DATA.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.id = `cal-row-${s.id}`;
+    tr.innerHTML = `
+      <td>
+        <div class="cal-chakra-cell">
+          <span class="cal-color-pip" style="background-color: ${s.color}; box-shadow: 0 0 6px ${s.color};"></span>
+          <span>${s.chakra.split(' ')[0]}</span>
+        </div>
+      </td>
+      <td colspan="2">
+        <span class="cal-coord-val" id="cal-coord-${s.id}">X: ${s.chakraX.toFixed(2)}% | Y: ${s.chakraY.toFixed(2)}%</span>
+      </td>
+      <td>
+        <button class="cal-btn-row-focus" type="button" onclick="activateChakraById('${s.id}')">Foco</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function highlightCalibratorTableRow(id) {
+  document.querySelectorAll('.cal-table tr').forEach(r => r.classList.remove('active-row'));
+  const row = document.getElementById(`cal-row-${id}`);
+  if (row) row.classList.add('active-row');
+}
+
+function saveCalibratedCoords() {
+  try {
+    const coords = CHAKRA_SKILLS_DATA.map(s => ({ id: s.id, chakraX: s.chakraX, chakraY: s.chakraY }));
+    localStorage.setItem('tm_chakra_calibrated_v1', JSON.stringify(coords));
+  } catch (err) {}
+}
+
+function loadSavedCalibratedCoords() {
+  try {
+    const saved = localStorage.getItem('tm_chakra_calibrated_v1');
+    if (!saved) return;
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return;
+
+    parsed.forEach(p => {
+      const item = CHAKRA_SKILLS_DATA.find(s => s.id === p.id);
+      if (item) {
+        if (typeof p.chakraX === 'number') item.chakraX = p.chakraX;
+        if (typeof p.chakraY === 'number') item.chakraY = p.chakraY;
+      }
+    });
+  } catch (err) {}
+}
+
+function resetCalibratedCoordinates() {
+  try {
+    localStorage.removeItem('tm_chakra_calibrated_v1');
+  } catch (err) {}
+
+  const defaults = {
+    "creative-dev": { chakraX: 50.0, chakraY: 7.20 },
+    "seo-geo": { chakraX: 50.0, chakraY: 11.10 },
+    "interface-design": { chakraX: 50.0, chakraY: 17.50 },
+    "fullstack-arch": { chakraX: 50.0, chakraY: 31.20 },
+    "python-data": { chakraX: 50.0, chakraY: 37.00 },
+    "agentic-ai": { chakraX: 50.0, chakraY: 43.00 },
+    "cloud-infra": { chakraX: 50.0, chakraY: 51.50 }
+  };
+
+  CHAKRA_SKILLS_DATA.forEach(s => {
+    if (defaults[s.id]) {
+      s.chakraX = defaults[s.id].chakraX;
+      s.chakraY = defaults[s.id].chakraY;
+      const node = document.getElementById(`chakra-node-${s.id}`);
+      if (node) {
+        node.style.left = `${s.chakraX}%`;
+        node.style.top = `${s.chakraY}%`;
+      }
+    }
+  });
+
+  populateCalibratorTable();
+  updateChakraLaserLines();
+  showCalibratorToast("Valores resetados para o padrão inicial.");
+}
+
+function copyCalibratedCoordinates() {
+  const data = CHAKRA_SKILLS_DATA.map(s => ({
+    id: s.id,
+    chakra: s.chakra,
+    name: s.name,
+    chakraX: Number(s.chakraX.toFixed(2)),
+    chakraY: Number(s.chakraY.toFixed(2))
+  }));
+
+  const jsonFormatted = JSON.stringify(data, null, 2);
+
+  let output = `// COORDENADAS CALIBRADAS DOS 7 CHAKRAS:\n`;
+  CHAKRA_SKILLS_DATA.forEach(s => {
+    output += `// ${s.chakra} (${s.name}): chakraX: ${s.chakraX.toFixed(2)}, chakraY: ${s.chakraY.toFixed(2)}\n`;
+  });
+  output += `\n${jsonFormatted}`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(output).then(() => {
+      showCalibratorToast("📋 Coordenadas copiadas! Cole no chat.");
+    }).catch(() => fallbackCopy(output));
+  } else {
+    fallbackCopy(output);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showCalibratorToast("📋 Coordenadas copiadas! Cole no chat.");
+  } catch (err) {
+    prompt("Copie as coordenadas abaixo:", text);
+  }
+  document.body.removeChild(ta);
+}
+
+let toastTimer = null;
+function showCalibratorToast(msg) {
+  const toast = document.getElementById('cal-toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3500);
 }
 
 // Mouse Spotlight & Parallax
@@ -2405,6 +3207,9 @@ window.addEventListener('mousemove', (e) => {
   if (spot) {
     gsap.to(spot, { x: e.clientX, y: e.clientY, duration: 0.2, ease: "power2.out" });
   }
+
+  // Não move o avatar se estiver no Modo Calibrador, garantindo máxima estabilidade
+  if (isCalibrating) return;
 
   const avatar = document.getElementById('chakra-avatar-img');
   if (avatar) {
@@ -2416,6 +3221,8 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('DOMContentLoaded', () => {
   buildChakraSection();
+  initChakraCalibrator();
+
   const avatarImg = document.getElementById('chakra-avatar-img');
   if (avatarImg) {
     if (avatarImg.complete) {
@@ -2440,6 +3247,7 @@ function initCyberScopeLoupe() {
   let isInside = false;
 
   function updateLoupe(e) {
+    if (isCalibrating) return;
     const rect = img.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
