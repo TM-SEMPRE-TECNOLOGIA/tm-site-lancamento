@@ -2516,8 +2516,8 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Sahasrara (Coroa)",
     tags: ["Three.js", "WebGL", "GLSL Shaders", "GSAP ScrollTrigger"],
     color: "#c57cff",
-    chakraY: 7.20,
-    chakraX: 50.0,
+    chakraY: 16.50,
+    chakraX: 50.28,
     side: "right",
     cardY: 4,
     cardX: 72,
@@ -2537,8 +2537,8 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Ajna (Terceiro Olho)",
     tags: ["JSON-LD", "GEO", "OpenGraph", "Core Web Vitals"],
     color: "#5197f7",
-    chakraY: 11.10,
-    chakraX: 50.0,
+    chakraY: 20.41,
+    chakraX: 49.38,
     side: "left",
     cardY: 10,
     cardX: 4,
@@ -2558,8 +2558,8 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Vishuddha (Garganta)",
     tags: ["Design Systems", "Figma", "Micro-interações", "Dark Mode OLED"],
     color: "#14b8a6",
-    chakraY: 17.50,
-    chakraX: 50.0,
+    chakraY: 24.22,
+    chakraX: 50.17,
     side: "right",
     cardY: 19,
     cardX: 72,
@@ -2579,8 +2579,8 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Anahata (Coração)",
     tags: ["Next.js 15", "React Server Components", "TypeScript", "Tailwind CSS"],
     color: "#68e468",
-    chakraY: 31.20,
-    chakraX: 50.0,
+    chakraY: 30.66,
+    chakraX: 49.49,
     side: "left",
     cardY: 29,
     cardX: 4,
@@ -2600,8 +2600,8 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Manipura (Plexo Solar)",
     tags: ["FastAPI", "Python", "Pandas", "Pipelines ETL"],
     color: "#ffe040",
-    chakraY: 37.00,
-    chakraX: 50.0,
+    chakraY: 36.52,
+    chakraX: 51.19,
     side: "right",
     cardY: 38,
     cardX: 72,
@@ -2621,8 +2621,8 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Svadhisthana (Sacro)",
     tags: ["Multi-Agents", "Gemini 3.8", "Claude Sonnet", "Engenharia de Prompts"],
     color: "#f3651b",
-    chakraY: 43.00,
-    chakraX: 50.0,
+    chakraY: 37.70,
+    chakraX: 50.51,
     side: "left",
     cardY: 48,
     cardX: 4,
@@ -2641,8 +2641,8 @@ const CHAKRA_SKILLS_DATA = [
     chakra: "Muladhara (Raiz)",
     tags: ["Docker", "Vercel", "Cloudflare", "HTTP Range Streaming"],
     color: "#d61d23",
-    chakraY: 51.50,
-    chakraX: 50.0,
+    chakraY: 41.70,
+    chakraX: 50.40,
     side: "right",
     cardY: 58,
     cardX: 72,
@@ -3094,13 +3094,13 @@ function highlightCalibratorTableRow(id) {
 function saveCalibratedCoords() {
   try {
     const coords = CHAKRA_SKILLS_DATA.map(s => ({ id: s.id, chakraX: s.chakraX, chakraY: s.chakraY }));
-    localStorage.setItem('tm_chakra_calibrated_v1', JSON.stringify(coords));
+    localStorage.setItem('tm_chakra_calibrated_v2', JSON.stringify(coords));
   } catch (err) {}
 }
 
 function loadSavedCalibratedCoords() {
   try {
-    const saved = localStorage.getItem('tm_chakra_calibrated_v1');
+    const saved = localStorage.getItem('tm_chakra_calibrated_v2');
     if (!saved) return;
     const parsed = JSON.parse(saved);
     if (!Array.isArray(parsed)) return;
@@ -3117,17 +3117,18 @@ function loadSavedCalibratedCoords() {
 
 function resetCalibratedCoordinates() {
   try {
+    localStorage.removeItem('tm_chakra_calibrated_v2');
     localStorage.removeItem('tm_chakra_calibrated_v1');
   } catch (err) {}
 
   const defaults = {
-    "creative-dev": { chakraX: 50.0, chakraY: 7.20 },
-    "seo-geo": { chakraX: 50.0, chakraY: 11.10 },
-    "interface-design": { chakraX: 50.0, chakraY: 17.50 },
-    "fullstack-arch": { chakraX: 50.0, chakraY: 31.20 },
-    "python-data": { chakraX: 50.0, chakraY: 37.00 },
-    "agentic-ai": { chakraX: 50.0, chakraY: 43.00 },
-    "cloud-infra": { chakraX: 50.0, chakraY: 51.50 }
+    "creative-dev": { chakraX: 50.28, chakraY: 16.50 },
+    "seo-geo": { chakraX: 49.38, chakraY: 20.41 },
+    "interface-design": { chakraX: 50.17, chakraY: 24.22 },
+    "fullstack-arch": { chakraX: 49.49, chakraY: 30.66 },
+    "python-data": { chakraX: 51.19, chakraY: 36.52 },
+    "agentic-ai": { chakraX: 50.51, chakraY: 37.70 },
+    "cloud-infra": { chakraX: 50.40, chakraY: 41.70 }
   };
 
   CHAKRA_SKILLS_DATA.forEach(s => {
