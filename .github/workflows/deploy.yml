@@ -1,0 +1,56 @@
+name: Deploy to Hostinger via FTP
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - feature/galaxia-stacks-secao2
+  workflow_dispatch:
+
+jobs:
+  web-deploy:
+    name: Deploy to Hostinger
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: 📂 Sync files via FTP to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: public_html/
+          protocol: ftp
+          port: 21
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/.agents/**
+            site-siqueira-campos-jr-35/**
+            site-deputado-template/**
+            central-tm/**
+            clinica-bem/**
+            dashboard-adir-2211/**
+            dashboard-siqueira-35/**
+            estrategia-politica-funil/**
+            estrategia-prospeccao-fria/**
+            modelo-politica-interactive/**
+            modelo-politico/**
+            modelo-site-politico/**
+            upolitico-clone/**
+            upolitico-clone-backup-old/**
+            template-vtsd-pro/**
+            docs/**
+            scratch_*/**
+            scratch_*
+            *.py
+            *.pdf
+            *.bak*
+            *.old*
+            vercel-proposta.json
