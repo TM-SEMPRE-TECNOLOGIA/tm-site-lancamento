@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seção 02: Background Boxes Isometric Grid // Stack & Engenharia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --bg-dark: #05070b;
+    --orange-tm: #d96526;
+    --orange-glow: rgba(217, 101, 38, 0.55);
+    --grid-border: rgba(217, 101, 38, 0.22);
+    --grid-border-highlight: rgba(217, 101, 38, 0.65);
+    --grid-cross: rgba(217, 101, 38, 0.4);
+    --cyan-accent: #0afcdb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-dark);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── BARRA SUPERIOR DE CONTROLE DA SANDBOX ── */
+  .sandbox-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(5, 7, 11, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sb-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #cbd5e1;
+  }
+  .sb-pill {
+    background: var(--orange-tm);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 10px;
+  }
+  .sb-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .sb-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .sb-btn:hover {
+    background: rgba(217, 101, 38, 0.15);
+    border-color: var(--orange-tm);
+    color: #fff;
+  }
+  .sb-btn.active {
+    background: var(--orange-tm);
+    border-color: var(--orange-tm);
+  }
+
+  /* ── CONTAINER PRINCIPAL DA SEÇÃO 02 ── */
+  .section-stack-boxes {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg-dark);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 24px 60px;
+  }
+
+  /* ── MÁSCARA RADIAL DE VINHETA CINEMATOGRÁFICA (FÓRMULA ACETERNITY) ── */
+  .boxes-vignette-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+    background: var(--bg-dark);
+    mask-image: radial-gradient(circle at 50% 52%, transparent 28%, black 88%);
+    -webkit-mask-image: radial-gradient(circle at 50% 52%, transparent 28%, black 88%);
+  }
+
+  /* ── CABEÇALHO EDITORIAL CANÔNICO DA STACK ── */
+  .stack-hero-header {
+    position: relative;
+    z-index: 30;
+    text-align: center;
+    max-width: 880px;
+    pointer-events: none;
+    margin-bottom: 24px;
+  }
+  .stack-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    color: var(--orange-tm);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stack-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--orange-tm);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--orange-tm);
+  }
+  .stack-title {
+    font-family: 'Newsreader', serif;
+    font-size: clamp(32px, 4.8vw, 56px);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+  .stack-title strong {
+    font-style: italic;
+    font-weight: 600;
+    color: var(--orange-tm);
+    text-shadow: 0 0 25px rgba(217, 101, 38, 0.4);
+  }
+  .stack-subtitle {
+    font-size: clamp(13px, 1.4vw, 16px);
+    color: #94a3b8;
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ── CHÃO ISOMÉTRICO 3D (ACETERITY BACKGROUND BOXES) ── */
+  .boxes-viewport {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 5;
+    pointer-events: auto;
+  }
+
+  .boxes-matrix-core {
+    position: absolute;
+    top: 52%;
+    left: 48%;
+    display: flex;
+    flex-direction: column;
+    transform: translate(-50%, -46%) skewX(-48deg) skewY(14deg) scale(0.92);
+    transform-origin: center center;
+    will-change: transform;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .box-row {
+    display: flex;
+    position: relative;
+    border-left: 1px solid var(--grid-border);
+  }
+
+  .box-cell {
+    position: relative;
+    width: 68px;
+    height: 68px;
+    border-right: 1px solid var(--grid-border);
+    border-top: 1px solid var(--grid-border);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 2.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  /* Retículo em cruz '+' nos vértices pares */
+  .box-crosshair {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: -8px;
+    right: -8px;
+    stroke: var(--grid-cross);
+    stroke-width: 1.2px;
+    pointer-events: none;
+    z-index: 8;
+  }
+
+  /* Células que possuem fotos de logos */
+  .box-cell.has-logo {
+    background: rgba(255, 255, 255, 0.015);
+  }
+  .box-logo-wrapper {
+    width: 82%;
+    height: 82%;
+    border-radius: 8px;
+    background: rgba(10, 14, 23, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .box-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.38;
+    filter: grayscale(25%) contrast(1.05);
+    transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+    pointer-events: none;
+  }
+
+  /* ESTADO ACESO / HOVER / TOUCH / PULSO */
+  .box-cell.active-glow {
+    transition: background-color 0.05s ease, box-shadow 0.05s ease;
+    z-index: 15;
+  }
+  .box-cell.active-glow .box-logo-wrapper {
+    background: rgba(15, 23, 42, 0.95);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.08);
+    box-shadow: 0 0 20px var(--cell-glow, var(--orange-glow));
+  }
+  .box-cell.active-glow .box-logo-img {
+    opacity: 1 !important;
+    filter: grayscale(0%) brightness(1.2) !important;
+    transform: scale(1.05);
+  }
+
+  /* ── HUD TOOLTIP FLUTUANTE TECNOLÓGICO ── */
+  #stack-hud-tooltip {
+    position: fixed;
+    z-index: 120;
+    pointer-events: none;
+    background: rgba(8, 12, 19, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--orange-tm);
+    border-radius: 8px;
+    padding: 12px 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 25px var(--orange-glow);
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0;
+    transform: translate(-50%, -120%) scale(0.95);
+    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    max-width: 320px;
+  }
+  #stack-hud-tooltip.visible {
+    opacity: 1;
+    transform: translate(-50%, -130%) scale(1);
+  }
+  .hud-badge-cat {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--orange-tm);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .hud-tech-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hud-tech-role {
+    font-size: 11px;
+    color: #cbd5e1;
+    line-height: 1.4;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ── RESPONSIVIDADE MOBILE & SIMULADOR ── */
+  @media (max-width: 768px) {
+    .stack-hero-header {
+      padding: 0 16px;
+    }
+    .stack-title {
+      font-size: 26px !important;
+      line-height: 1.25;
+    }
+    .stack-subtitle {
+      font-size: 13px !important;
+    }
+    .boxes-matrix-core {
+      top: 55% !important;
+      left: 45% !important;
+      transform: translate(-50%, -45%) skewX(-32deg) skewY(10deg) scale(0.62) !important;
+    }
+  }
+
+  .mobile-sim-frame {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mobile-sim-frame.active-mobile {
+    max-width: 400px !important;
+    margin: 60px auto !important;
+    border: 8px solid #1e293b;
+    border-radius: 36px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95);
+    overflow: hidden;
+  }
+  .mobile-sim-frame.active-mobile .stack-title {
+    font-size: 26px !important;
+    line-height: 1.25;
+  }
+  .mobile-sim-frame.active-mobile .stack-subtitle {
+    font-size: 13px !important;
+  }
+  .mobile-sim-frame.active-mobile .boxes-matrix-core {
+    top: 55% !important;
+    left: 45% !important;
+    transform: translate(-50%, -45%) skewX(-32deg) skewY(10deg) scale(0.62) !important;
+  }
+</style>
+</head>
+<body>
+
+<div id="sim-app" class="mobile-sim-frame">
+
+  <!-- BARRA DE CONTROLE DA SANDBOX -->
+  <header class="sandbox-header">
+    <div class="sb-brand">
+      <span class="sb-pill">SEÇÃO 02 // LAB</span>
+      <span>Background Boxes Isometric Grid (TM Stack)</span>
+    </div>
+    <div class="sb-actions">
+      <button class="sb-btn" id="btn-toggle-sound" type="button" title="Ligar/Desligar efeitos sonoros sintetizados">
+        <i class="fas fa-volume-high" id="sound-icon"></i>
+        <span id="sound-text">SOM: ATIVADO</span>
+      </button>
+      <button class="sb-btn" id="btn-toggle-mobile" type="button" title="Alternar visão entre Desktop Full e Mobile (390px)">
+        <i class="fas fa-mobile-screen"></i>
+        <span id="mobile-text">Ver no Mobile (390px)</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ SEÇÃO 02: ENGENHARIA & STACK (ACETERITY BACKGROUND BOXES ADAPTADO) ═══ -->
+  <section class="section-stack-boxes" id="secao-stack-boxes">
+    <div class="boxes-vignette-overlay"></div>
+
+    <!-- CABEÇALHO DA SEÇÃO (Z-INDEX SUPERIOR) -->
+    <div class="stack-hero-header">
+      <div class="stack-eyebrow">Engenharia & Stack // O Motor de Construção</div>
+      <h2 class="stack-title">Linguagens, Frameworks & <strong>Engenharia.</strong></h2>
+      <p class="stack-subtitle">
+        A infraestrutura e o ferramental de ponta que alimentam sistemas autônomos, pipelines de dados massivos, inteligência artificial agêntica e experiências tridimensionais a 60 FPS.
+      </p>
+    </div>
+
+    <!-- PALCO ISOMÉTRICO 3D COM GRID INTERATIVO -->
+    <div class="boxes-viewport" id="boxes-viewport">
+      <div class="boxes-matrix-core" id="boxes-matrix-core">
+        <!-- Grade gerada dinamicamente com 22 colunas x 14 linhas -->
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- HUD TOOLTIP FLUTUANTE -->
+<div id="stack-hud-tooltip">
+  <span class="hud-badge-cat" id="hud-cat">IA & AGENTES COGNITIVOS</span>
+  <div class="hud-tech-name" id="hud-name">Claude 3.5 Sonnet</div>
+  <div class="hud-tech-role" id="hud-role">Orquestração multiagente avançada e arquitetura cognitiva.</div>
+</div>
+
+<script>
+/**
+ * MOTOR DO COMPONENTE BACKGROUND BOXES ISOMÉTRICO TM
+ * - 60 FPS com Event Delegation
+ * - 16 Logos oficiais com fotos reais em alta resolução (assets/logos/)
+ * - Paleta alaranjada corporativa TM + tons incandescentes
+ * - Síntese de áudio Web Audio API (sci-fi clicks)
+ * - Pulsos autônomos suaves periódicos
+ */
+
+// 1. Catálogo Oficial dos 16 Frameworks & Ferramentas
+const STACK_DATA = [
+  { id: "claude", name: "Claude 3.5 Sonnet", cat: "IA & AGENTES", file: "claude.png", role: "Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.", color: "#d97706" },
+  { id: "gpt", name: "ChatGPT / GPT-4o", cat: "IA & COGNIÇÃO", file: "gpt.png", role: "Modelagem generativa, síntese e transformações de dados em linguagem natural.", color: "#10b981" },
+  { id: "hermes", name: "Nous Hermes", cat: "IA OPEN-WEIGHTS", file: "hermes.png", role: "Function calling avançado, agentes locais e autonomia de raciocínio de código aberto.", color: "#f97316" },
+  { id: "gemini", name: "Google Gemini 2.5", cat: "IA MULTIMODAL", file: "gemini.png", role: "Janela de contexto ultra-longa, análise multimodal e síntese estruturada.", color: "#38bdf8" },
+  { id: "n8n", name: "n8n Workflows", cat: "AUTOMAÇÃO & PIPELINES", file: "n8n.png", role: "Orquestração visual de webhooks, integrações de APIs e fluxos autônomos sem atrito.", color: "#ea580c" },
+  { id: "supabase", name: "Supabase BaaS", cat: "BANCO & REALTIME", file: "supabase.png", role: "PostgreSQL gerenciado, Row Level Security, Edge Functions e sincronização em tempo real.", color: "#3ecf8e" },
+  { id: "gsap", name: "GreenSock GSAP", cat: "MOTION & TIMELINES", file: "gsap.png", role: "Animações cinemáticas fluidas a 60 FPS, ScrollTrigger e transições de interface de alta precisão.", color: "#84cc16" },
+  { id: "nextjs", name: "Next.js 15", cat: "FRONTEND // ARCHITECTURE", file: "nextjs.png", role: "React Server Components, App Router, SSR em Edge e performance máxima na web.", color: "#ffffff" },
+  { id: "react", name: "React 19", cat: "UI REATIVA", file: "react.png", role: "Arquitetura modular de componentes, Server Actions e reatividade atômica.", color: "#06b6d4" },
+  { id: "typescript", name: "TypeScript 5", cat: "TIPAGEM & ESCALABILIDADE", file: "typescript.png", role: "Segurança estrita de tipos, contratos robustos entre cliente e servidor e zero bugs em runtime.", color: "#3b82f6" },
+  { id: "python", name: "Python 3.12", cat: "DATA // BACKEND", file: "python.png", role: "Engenharia de dados, crawlers analíticos, scripts de telemetria e microsserviços.", color: "#fbbf24" },
+  { id: "fastapi", name: "FastAPI", cat: "APIS ASSÍNCRONAS", file: "fastapi.png", role: "Endpoints REST assíncronos ultrarrápidos, serialização Pydantic e latência mínima.", color: "#009688" },
+  { id: "threejs", name: "Three.js / WebGL", cat: "CREATIVE 3D", file: "threejs.png", role: "Renderização 3D isométrica, shaders customizados GLSL e palcos navegáveis.", color: "#f43f5e" },
+  { id: "tailwind", name: "Tailwind CSS", cat: "DESIGN SYSTEMS", file: "tailwind.png", role: "Tokens utilitários de design, layouts responsivos ágeis e estética industrial calibrada.", color: "#0ea5e9" },
+  { id: "docker", name: "Docker & Containers", cat: "DEVOPS // INFRA", file: "docker.png", role: "Isolamento de ambientes, esteiras de deploy reproduzíveis e portabilidade total.", color: "#2563eb" },
+  { id: "postgresql", name: "PostgreSQL", cat: "DADOS RELACIONAIS", file: "postgresql.png", role: "Armazenamento confiável ACID, apuração eleitoral em tempo real e modelagem relacional estrita.", color: "#336791" }
+];
+
+// Cores Quentes Aleatórias ao Acender (Tons TM, Fogo, Âmbar e Ciano Neon)
+const WARM_GLOW_COLORS = [
+  "rgba(217, 101, 38, 0.85)",  // TM Orange
+  "rgba(249, 115, 22, 0.85)",  // Orange 500
+  "rgba(245, 158, 11, 0.85)",  // Amber 500
+  "rgba(251, 191, 36, 0.85)",  // Yellow 400
+  "rgba(234, 88, 12, 0.85)",   // Orange 600
+  "rgba(239, 68, 68, 0.85)",   // Red 500
+  "rgba(10, 252, 219, 0.85)"   // Cyan TM Neon
+];
+
+// 2. Motor de Síntese de Áudio Web Audio API (Cliques Sci-Fi)
+let audioCtx = null;
+let soundEnabled = true;
+
+function playSciFiClick(freq = 640) {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.8, audioCtx.currentTime + 0.035);
+
+    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.045);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  } catch (e) {}
+}
+
+// 3. Construção da Grade Isométrica (20 Linhas x 22 Colunas = 440 células de alta performance)
+const ROWS = 16;
+const COLS = 22;
+const matrixContainer = document.getElementById('boxes-matrix-core');
+
+// Mapeamento equilibrado das 16 tecnologias no meio do campo de visão
+const TECH_MAP = {};
+const PLACEMENTS = [
+  { r: 4, c: 6, idx: 0 },   // Claude
+  { r: 4, c: 10, idx: 1 },  // GPT
+  { r: 4, c: 14, idx: 2 },  // Hermes
+  { r: 6, c: 4, idx: 3 },   // Gemini
+  { r: 6, c: 8, idx: 4 },   // n8n
+  { r: 6, c: 12, idx: 5 },  // Supabase
+  { r: 6, c: 16, idx: 6 },  // GSAP
+  { r: 8, c: 5, idx: 7 },   // Next.js
+  { r: 8, c: 9, idx: 8 },   // React
+  { r: 8, c: 13, idx: 9 },  // TypeScript
+  { r: 8, c: 17, idx: 10 }, // Python
+  { r: 10, c: 6, idx: 11 }, // FastAPI
+  { r: 10, c: 10, idx: 12 },// Three.js
+  { r: 10, c: 14, idx: 13 },// Tailwind
+  { r: 12, c: 8, idx: 14 }, // Docker
+  { r: 12, c: 12, idx: 15 } // PostgreSQL
+];
+
+PLACEMENTS.forEach(p => {
+  TECH_MAP[`${p.r}_${p.c}`] = STACK_DATA[p.idx];
+});
+
+// SVG do retículo em cruz '+'
+const CROSS_SVG = `
+  <svg class="box-crosshair" viewBox="0 0 24 24" fill="none">
+    <path d="M12 6v12m6-6H6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+`;
+
+// Geração da Grade
+for (let i = 0; i < ROWS; i++) {
+  const rowEl = document.createElement('div');
+  rowEl.className = 'box-row';
+
+  for (let j = 0; j < COLS; j++) {
+    const cellEl = document.createElement('div');
+    cellEl.className = 'box-cell';
+    cellEl.setAttribute('data-row', i);
+    cellEl.setAttribute('data-col', j);
+
+    // Adiciona cruz nos vértices pares
+    if (i % 2 === 0 && j % 2 === 0) {
+      cellEl.innerHTML += CROSS_SVG;
+    }
+
+    // Verifica se esta célula contém um Framework
+    const tech = TECH_MAP[`${i}_${j}`];
+    if (tech) {
+      cellEl.classList.add('has-logo');
+      cellEl.setAttribute('data-tech-id', tech.id);
+      cellEl.innerHTML += `
+        <div class="box-logo-wrapper">
+          <img src="assets/logos/${tech.file}" alt="${tech.name}" class="box-logo-img" loading="lazy">
+        </div>
+      `;
+    }
+
+    rowEl.appendChild(cellEl);
+  }
+  matrixContainer.appendChild(rowEl);
+}
+
+// 4. Interatividade via Event Delegation
+const hudTooltip = document.getElementById('stack-hud-tooltip');
+const hudCat = document.getElementById('hud-cat');
+const hudName = document.getElementById('hud-name');
+const hudRole = document.getElementById('hud-role');
+
+function activateCell(cell, isUserInteraction = true) {
+  if (!cell) return;
+  const techId = cell.getAttribute('data-tech-id');
+  const tech = STACK_DATA.find(t => t.id === techId);
+
+  const glowColor = tech ? tech.color : WARM_GLOW_COLORS[Math.floor(Math.random() * WARM_GLOW_COLORS.length)];
+  cell.style.setProperty('--cell-glow', glowColor);
+  cell.style.backgroundColor = glowColor;
+  cell.style.boxShadow = `0 0 32px ${glowColor}, inset 0 0 14px rgba(255,255,255,0.4)`;
+  cell.classList.add('active-glow');
+
+  if (isUserInteraction) {
+    playSciFiClick(tech ? 820 : 600 + Math.random() * 200);
+  }
+
+  // Se tem tecnologia, posiciona o HUD Tooltip
+  if (tech && isUserInteraction) {
+    hudCat.textContent = tech.cat;
+    hudCat.style.color = tech.color;
+    hudName.textContent = tech.name;
+    hudRole.textContent = tech.role;
+
+    const rect = cell.getBoundingClientRect();
+    if (isMobile || window.innerWidth < 768) {
+      hudTooltip.style.left = '50%';
+      hudTooltip.style.top = 'auto';
+      hudTooltip.style.bottom = '24px';
+      hudTooltip.style.transform = 'translate(-50%, 0) scale(1)';
+    } else {
+      hudTooltip.style.left = `${rect.left + rect.width / 2}px`;
+      hudTooltip.style.top = `${rect.top}px`;
+      hudTooltip.style.bottom = 'auto';
+      hudTooltip.style.transform = 'translate(-50%, -130%) scale(1)';
+    }
+    hudTooltip.classList.add('visible');
+  }
+
+  // Fade out suave após 200ms
+  setTimeout(() => {
+    cell.style.backgroundColor = 'transparent';
+    cell.style.boxShadow = 'none';
+    cell.classList.remove('active-glow');
+  }, 220);
+}
+
+// Event Listeners (Mouse & Touch)
+matrixContainer.addEventListener('mouseover', (e) => {
+  const cell = e.target.closest('.box-cell');
+  if (cell) {
+    activateCell(cell, true);
+  }
+});
+
+matrixContainer.addEventListener('mouseleave', () => {
+  hudTooltip.classList.remove('visible');
+});
+
+// Suporte total a toque mobile sem travar a rolagem vertical
+matrixContainer.addEventListener('touchstart', (e) => {
+  const touch = e.touches[0];
+  const target = document.elementFromPoint(touch.clientX, touch.clientY);
+  const cell = target?.closest('.box-cell');
+  if (cell) {
+    activateCell(cell, true);
+  }
+}, { passive: true });
+
+// 5. Pulso Autônomo Suave (Mantém o chão vivo)
+setInterval(() => {
+  const allCells = document.querySelectorAll('.box-cell');
+  if (allCells.length === 0) return;
+  const randomCell = allCells[Math.floor(Math.random() * allCells.length)];
+  activateCell(randomCell, false);
+}, 750);
+
+// 6. Controles da Sandbox (Áudio & Simulador Mobile)
+const soundBtn = document.getElementById('btn-toggle-sound');
+const soundIcon = document.getElementById('sound-icon');
+const soundText = document.getElementById('sound-text');
+
+soundBtn.addEventListener('click', () => {
+  soundEnabled = !soundEnabled;
+  if (soundEnabled) {
+    soundIcon.className = 'fas fa-volume-high';
+    soundText.textContent = 'SOM: ATIVADO';
+    soundBtn.classList.remove('active');
+    playSciFiClick(750);
+  } else {
+    soundIcon.className = 'fas fa-volume-xmark';
+    soundText.textContent = 'SOM: MUTADO';
+    soundBtn.classList.add('active');
+  }
+});
+
+const mobileBtn = document.getElementById('btn-toggle-mobile');
+const simApp = document.getElementById('sim-app');
+const mobileText = document.getElementById('mobile-text');
+let isMobile = false;
+
+mobileBtn.addEventListener('click', () => {
+  isMobile = !isMobile;
+  if (isMobile) {
+    simApp.classList.add('active-mobile');
+    mobileText.textContent = 'Voltar para Desktop Full';
+    mobileBtn.classList.add('active');
+  } else {
+    simApp.classList.remove('active-mobile');
+    mobileText.textContent = 'Ver no Mobile (390px)';
+    mobileBtn.classList.remove('active');
+  }
+});
+</script>
+</body>
+</html>

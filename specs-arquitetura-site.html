@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitetura do Site & Caderno de Specs — Thiago Nascimento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root {
+    --bg-dark: #05070b;
+    --bg-surface: #0a0e17;
+    --bg-card: #0f1523;
+    --bg-card-hover: #151d30;
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+    --orange-tm: #d96526;
+    --orange-glow: rgba(217, 101, 38, 0.35);
+    --cyan-accent: #0afcdb;
+    --cyan-glow: rgba(10, 252, 219, 0.25);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --navy-deep: #0a192f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; background: var(--bg-dark); }
+  body {
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── BARRA SUPERIOR FIXA (NAV & METADATA) ── */
+  .top-meta-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(5, 7, 11, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-pill {
+    background: var(--orange-tm);
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+  .brand-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .brand-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .nav-sections-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 2px 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .nav-sections-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .nav-pill-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-pill-link:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-subtle);
+  }
+  .nav-pill-link.active {
+    color: var(--orange-tm);
+    background: rgba(217, 101, 38, 0.1);
+    border-color: rgba(217, 101, 38, 0.3);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-action-view {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-strong);
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-action-view:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
+  }
+  .btn-action-view.primary {
+    background: var(--orange-tm);
+    border-color: var(--orange-tm);
+    color: #fff;
+    font-weight: 600;
+  }
+  .btn-action-view.primary:hover {
+    box-shadow: 0 0 16px var(--orange-glow);
+  }
+
+  /* ── WRAPPER PRINCIPAL ── */
+  .layout-container {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 48px 24px 120px;
+  }
+
+  /* ── HERO DA PÁGINA DE SPECS ── */
+  .specs-hero {
+    margin-bottom: 56px;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 40px;
+  }
+  .specs-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--orange-tm);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .specs-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--orange-tm);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--orange-tm);
+  }
+  .specs-title {
+    font-family: 'Newsreader', serif;
+    font-size: clamp(34px, 4.5vw, 54px);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .specs-title em {
+    font-style: italic;
+    color: var(--orange-tm);
+  }
+  .specs-lead {
+    font-size: 16px;
+    color: var(--text-secondary);
+    max-width: 860px;
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  /* STRIP DE MÉTRICAS DA JORNADA */
+  .journey-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .journey-metric-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .j-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .j-val {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .j-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* ── SEÇÕES DO CADERNO (GRID EDITORIAL) ── */
+  .section-spec-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    margin-bottom: 48px;
+    overflow: hidden;
+    transition: border-color 0.25s;
+  }
+  .section-spec-card:hover {
+    border-color: rgba(255, 255, 255, 0.16);
+  }
+  .section-spec-card.highlight {
+    border-left: 4px solid var(--orange-tm);
+  }
+
+  .spec-card-header {
+    padding: 24px 32px;
+    background: rgba(255, 255, 255, 0.015);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .spec-num-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--orange-tm);
+    background: rgba(217, 101, 38, 0.12);
+    border: 1px solid rgba(217, 101, 38, 0.25);
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .spec-head-titles h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #fff;
+    margin-top: 4px;
+  }
+  .spec-head-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .status-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .status-tag.ready {
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #4ade80;
+  }
+  .status-tag.refining {
+    background: rgba(234, 179, 8, 0.12);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    color: #facc15;
+  }
+  .status-tag.open {
+    background: rgba(217, 101, 38, 0.15);
+    border: 1px solid rgba(217, 101, 38, 0.35);
+    color: #fb923c;
+  }
+
+  .spec-card-body {
+    padding: 32px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 32px;
+  }
+  @media (max-width: 992px) {
+    .spec-card-body { grid-template-columns: 1fr; }
+  }
+
+  /* COLUNA DA ESQUERDA: WIREFRAME & PREVIEW INTERATIVO */
+  .spec-preview-pane {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .preview-pane-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 10px;
+  }
+
+  /* WIREFRAMES ESQUEMÁTICOS CSS */
+  .wireframe-box {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    padding: 20px;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+  }
+
+  /* Wireframe: Showcase de Projetos */
+  .wf-carousel-sim {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    overflow-x: auto;
+    padding: 10px 0;
+  }
+  .wf-project-card {
+    flex: 0 0 170px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .wf-project-card:hover, .wf-project-card.active {
+    background: rgba(217, 101, 38, 0.1);
+    border-color: var(--orange-tm);
+    transform: translateY(-2px);
+  }
+  .wf-card-thumb {
+    height: 70px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--orange-tm);
+  }
+  .wf-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .wf-card-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* COLUNA DA DIREITA: SPECS TÉCNICAS E ARQUITETURA */
+  .spec-info-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .spec-block-item {
+    border-left: 2px solid var(--border-strong);
+    padding-left: 16px;
+  }
+  .spec-block-item.focus-block {
+    border-left-color: var(--orange-tm);
+  }
+  .spec-item-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .spec-item-val {
+    font-size: 14px;
+    color: #cbd5e1;
+    line-height: 1.55;
+  }
+
+  .spec-checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .spec-checklist li {
+    font-size: 13px;
+    color: #94a3b8;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .spec-checklist li i {
+    margin-top: 3px;
+    font-size: 12px;
+  }
+  .spec-checklist li.done i { color: #4ade80; }
+  .spec-checklist li.pending i { color: var(--orange-tm); }
+  .spec-checklist li.todo i { color: var(--text-muted); }
+
+  /* ── DEMONSTRAÇÃO DO MODAL DE DETALHE DE PROJETO (CASE STUDY DRAWER) ── */
+  .modal-demo-trigger-box {
+    background: rgba(10, 252, 219, 0.05);
+    border: 1px solid rgba(10, 252, 219, 0.25);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .trigger-info h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--cyan-accent);
+    margin-bottom: 4px;
+  }
+  .trigger-info p {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .btn-open-modal-demo {
+    background: var(--cyan-accent);
+    color: #030608;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .btn-open-modal-demo:hover {
+    box-shadow: 0 0 16px var(--cyan-glow);
+    transform: translateY(-1px);
+  }
+
+  /* ── DIALOG / MODAL CASE STUDY ── */
+  .case-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(3, 5, 9, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .case-modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .case-modal-container {
+    width: 100%;
+    max-width: 920px;
+    max-height: 90vh;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    box-shadow: 0 32px 80px rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.98);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .case-modal-overlay.open .case-modal-container {
+    transform: translateY(0) scale(1);
+  }
+
+  .case-modal-header {
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .modal-badge-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-category-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--orange-tm);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .modal-year-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .btn-close-modal {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .btn-close-modal:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #fff;
+  }
+
+  .case-modal-body {
+    padding: 28px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .modal-hero-cover {
+    height: 180px;
+    min-height: 180px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0a192f 0%, #1e293b 50%, #0f172a 100%);
+    border: 1px solid var(--border-subtle);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 24px;
+  }
+  .modal-hero-cover::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 75% 30%, rgba(217, 101, 38, 0.25) 0%, transparent 60%);
+  }
+  .modal-hero-text {
+    position: relative;
+    z-index: 2;
+  }
+  .modal-hero-text h3 {
+    font-family: 'Newsreader', serif;
+    font-size: 28px;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .modal-hero-text p {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .modal-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 640px) {
+    .modal-meta-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  .modal-meta-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 12px;
+  }
+  .modal-meta-item span {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+  }
+  .modal-meta-item strong {
+    font-size: 12px;
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .modal-section-block h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-section-block h4 i { color: var(--orange-tm); font-size: 12px; }
+  .modal-section-block p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .modal-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .m-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-subtle);
+    color: #cbd5e1;
+  }
+
+  .case-modal-footer {
+    padding: 16px 28px;
+    border-top: 1px solid var(--border-subtle);
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* ── SIMULADOR DE VIEWPORT MOBILE (SWITCHER) ── */
+  .mobile-sim-wrapper {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mobile-sim-wrapper.sim-active {
+    max-width: 410px !important;
+    margin: 30px auto !important;
+    border: 8px solid #1e293b;
+    border-radius: 36px;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.95), 0 0 0 2px rgba(255,255,255,0.1);
+    overflow: hidden;
+    background: #05070b;
+    padding: 0 !important;
+  }
+  .mobile-sim-wrapper.sim-active .top-meta-header {
+    border-radius: 28px 28px 0 0;
+    padding: 12px 16px;
+  }
+  .mobile-sim-wrapper.sim-active .layout-container {
+    padding: 24px 16px 80px;
+  }
+  .mobile-sim-notch {
+    display: none;
+  }
+  .mobile-sim-wrapper.sim-active .mobile-sim-notch {
+    display: block;
+    width: 120px;
+    height: 18px;
+    background: #1e293b;
+    border-radius: 0 0 12px 12px;
+    margin: 0 auto 10px;
+  }
+</style>
+</head>
+<body>
+
+<div id="sim-root" class="mobile-sim-wrapper">
+  <div class="mobile-sim-notch"></div>
+
+  <!-- TOP HEADER METADATA -->
+  <header class="top-meta-header">
+    <div class="header-brand">
+      <span class="brand-pill">TM SPEC // ROADMAP</span>
+      <div>
+        <div class="brand-title">Thiago Nascimento</div>
+        <div class="brand-subtitle">Matriz de Especificações do Site v1.0</div>
+      </div>
+    </div>
+
+    <!-- Navegação Direta de Seções -->
+    <nav class="nav-sections-bar">
+      <a href="#sec-00" class="nav-pill-link">00 · Origem</a>
+      <a href="#sec-01" class="nav-pill-link active">01 · Portfólio</a>
+      <a href="#sec-case-modal" class="nav-pill-link">Case Study</a>
+      <a href="#sec-02" class="nav-pill-link">02 · Stack (Slot)</a>
+      <a href="#sec-03" class="nav-pill-link">03 · Resultados</a>
+      <a href="#sec-04" class="nav-pill-link">04 · Perfil</a>
+      <a href="#sec-05" class="nav-pill-link">05 · Contato</a>
+    </nav>
+
+    <!-- Alternador de Visão (Desktop / Mobile Preview) -->
+    <div class="header-actions">
+      <button class="btn-action-view" id="btn-toggle-mobile-sim" type="button" title="Testar como o layout se comporta em tela de smartphone (390px)">
+        <i class="fas fa-mobile-screen"></i>
+        <span id="sim-btn-text">Ver no Mobile (390px)</span>
+      </button>
+      <button class="btn-action-view primary" onclick="openCaseModal('eleitoral')">
+        <i class="fas fa-arrow-up-right-from-square"></i>
+        <span>Testar Modal de Case</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="layout-container">
+
+    <!-- HERO DO CADERNO -->
+    <section class="specs-hero">
+      <div class="specs-eyebrow">ARQUITETURA CANÔNICA DE PROJETO // DIRETRIZES GERAIS</div>
+      <h1 class="specs-title">Mapa de Seções, Resolução <em>Mobile</em> & Matriz de Especificações.</h1>
+      <p class="specs-lead">
+        Este documento consolida a arquitetura completa do site. Use as seções abaixo para entender como cada tela se comporta no desktop e no mobile, testar o <strong>Case Study Modal</strong> acionado no clique de cada projeto e definir as especificações dos novos componentes.
+      </p>
+
+      <!-- KPI METRIC STRIP -->
+      <div class="journey-strip">
+        <div class="journey-metric-card">
+          <div class="j-label">Total de Seções</div>
+          <div class="j-val">06 Seções</div>
+          <div class="j-desc">Da narrativa de origem ao terminal de fechamento.</div>
+        </div>
+        <div class="journey-metric-card">
+          <div class="j-label">Projetos no Showcase</div>
+          <div class="j-val">08 Sistemas</div>
+          <div class="j-desc">Com páginas individuais de Case Study no clique.</div>
+        </div>
+        <div class="journey-metric-card">
+          <div class="j-label">Stack Mobile</div>
+          <div class="j-val">Snap Carousel</div>
+          <div class="j-desc">Fluidez total sem travar o scroll vertical nativo.</div>
+        </div>
+        <div class="journey-metric-card">
+          <div class="j-label">Status da Seção 02</div>
+          <div class="j-val" style="color: var(--orange-tm);">Slot Limpo</div>
+          <div class="j-desc">Pronto para receber novo componente aprovado.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 00: ORIGEM & NARRATIVA SCROLL (HOME SCRUBBING) -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <article class="section-spec-card" id="sec-00">
+      <div class="spec-card-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span class="spec-num-badge">SEÇÃO 00</span>
+          <div class="spec-head-titles">
+            <h2>Origem & Método // Narrativa Cinemática por Scroll</h2>
+          </div>
+        </div>
+        <div class="spec-head-meta">
+          <span class="status-tag ready"><i class="fas fa-check"></i> Pronto em Produção</span>
+        </div>
+      </div>
+
+      <div class="spec-card-body">
+        <div class="spec-preview-pane">
+          <div class="preview-pane-title">
+            <span>Wireframe do Componente</span>
+            <span>Desktop & Mobile</span>
+          </div>
+          <div class="wireframe-box">
+            <div style="font-family: 'Newsreader', serif; font-size: 26px; margin-bottom: 8px;">
+              Do caos ao <em>sistema.</em>
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); max-width: 320px; margin-bottom: 12px;">
+              Canvas 2D com frame scrubbing instantâneo (150 frames) respondendo ao scroll natural da página.
+            </p>
+            <div style="display: flex; gap: 6px; font-size: 10px; font-family: 'JetBrains Mono', monospace; color: var(--orange-tm);">
+              <span>[01 A DESCOBERTA]</span> → <span>[02 A VIRADA +85%]</span> → <span>[03 SISTEMAS]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-info-pane">
+          <div class="spec-block-item focus-block">
+            <div class="spec-item-label">Propósito Estratégico</div>
+            <div class="spec-item-val">
+              Gera conexão e autoridade imediata. Explica por que Thiago programa: não por vaidade acadêmica, mas pela necessidade real de transformar tarefas braçais em sistemas automatizados com ganho comprovado de +85%.
+            </div>
+          </div>
+          <div class="spec-block-item">
+            <div class="spec-item-label">Comportamento no Mobile</div>
+            <div class="spec-item-val">
+              O canvas adapta-se com `object-fit: cover` sem decodificação pesada de vídeo. O texto se acomoda à esquerda com tipografia fluida via `clamp()`.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 01: SHOWCASE DE PROJETOS & RESOLUÇÃO MOBILE -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <article class="section-spec-card highlight" id="sec-01">
+      <div class="spec-card-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span class="spec-num-badge">SEÇÃO 01</span>
+          <div class="spec-head-titles">
+            <h2>Showcase de Produtos & Sistemas // Resolução Mobile</h2>
+          </div>
+        </div>
+        <div class="spec-head-meta">
+          <span class="status-tag refining"><i class="fas fa-wrench"></i> Refinamento Mobile</span>
+        </div>
+      </div>
+
+      <div class="spec-card-body">
+        <div class="spec-preview-pane">
+          <div class="preview-pane-title">
+            <span>Simulação do Carrossel (Clique para Testar o Case Study)</span>
+            <span>8 Cards</span>
+          </div>
+
+          <!-- Cards de Demonstração Interativa -->
+          <div class="wf-carousel-sim">
+            <div class="wf-project-card active" onclick="openCaseModal('eleitoral')">
+              <div class="wf-card-thumb"><i class="fas fa-chart-pie"></i></div>
+              <div class="wf-card-title">Dashboard Eleitoral</div>
+              <div class="wf-card-sub">Next.js · 139 Cidades</div>
+            </div>
+
+            <div class="wf-project-card" onclick="openCaseModal('leads')">
+              <div class="wf-card-thumb"><i class="fas fa-address-book"></i></div>
+              <div class="wf-card-title">Caderno de Leads CRM</div>
+              <div class="wf-card-sub">FastAPI · WhatsApp API</div>
+            </div>
+
+            <div class="wf-project-card" onclick="openCaseModal('central')">
+              <div class="wf-card-thumb"><i class="fas fa-server"></i></div>
+              <div class="wf-card-title">Central Operacional TM</div>
+              <div class="wf-card-sub">Cockpit Monolítico</div>
+            </div>
+
+            <div class="wf-project-card" onclick="openCaseModal('orcamento')">
+              <div class="wf-card-thumb"><i class="fas fa-calculator"></i></div>
+              <div class="wf-card-title">Simulador Proposta</div>
+              <div class="wf-card-sub">Algoritmo Híbrido</div>
+            </div>
+          </div>
+
+          <!-- Gatilho de Demonstração do Modal -->
+          <div class="modal-demo-trigger-box">
+            <div class="trigger-info">
+              <h4><i class="fas fa-mouse-pointer"></i> Interatividade Definida no Clique</h4>
+              <p>Ao tocar em qualquer projeto, abre o <strong>Case Study Drawer</strong> com métricas reais, stack e demonstração.</p>
+            </div>
+            <button class="btn-open-modal-demo" onclick="openCaseModal('eleitoral')">Abrir Exemplo</button>
+          </div>
+        </div>
+
+        <div class="spec-info-pane">
+          <div class="spec-block-item focus-block">
+            <div class="spec-item-label">Diagnóstico do Mobile: Por que não ficou perfeito?</div>
+            <div class="spec-item-val">
+              No desktop, o Three.js cilíndrico com mouse drag é fluido. No <strong>mobile</strong>, arrastar na tela entra em conflito com o scroll vertical da página (efeito travado ou estourado).
+            </div>
+          </div>
+
+          <div class="spec-block-item">
+            <div class="spec-item-label">A Solução Canônica para Mobile</div>
+            <ul class="spec-checklist">
+              <li class="done"><i class="fas fa-check-circle"></i> <strong>Modo Deck Nativo no Mobile:</strong> Carrossel horizontal de CSS com `scroll-snap-type: x mandatory`.</li>
+              <li class="done"><i class="fas fa-check-circle"></i> <strong>Zero Latência:</strong> Sem peso de renderização 3D duplicada no touch de smartphone.</li>
+              <li class="done"><i class="fas fa-check-circle"></i> <strong>Tap Direto:</strong> Um toque no card abre o Case Study imediatamente.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- DETALHAMENTO DO CASE STUDY (A PÁGINA DO CLIQUE) -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <article class="section-spec-card" id="sec-case-modal">
+      <div class="spec-card-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span class="spec-num-badge">INTERATIVIDADE</span>
+          <div class="spec-head-titles">
+            <h2>Página de Detalhes do Projeto // O que acontece no Clique</h2>
+          </div>
+        </div>
+        <div class="spec-head-meta">
+          <span class="status-tag open"><i class="fas fa-sparkles"></i> Nova Especificação</span>
+        </div>
+      </div>
+
+      <div class="spec-card-body">
+        <div class="spec-preview-pane">
+          <div class="preview-pane-title">
+            <span>Estrutura do Case Study (Modal / Drawer)</span>
+            <span>Alta Autoridade</span>
+          </div>
+
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6;">
+            <div style="color: var(--orange-tm); font-family: 'JetBrains Mono', monospace; font-size: 11px; margin-bottom: 6px;">
+              // ANATOMIA DE CADA PROJETO
+            </div>
+            <p><strong>1. Hero do Projeto:</strong> Nome, Categoria, Ano, Badge de Status em Produção.</p>
+            <p><strong>2. Contexto & O Problema:</strong> Qual dor operacional real este software eliminou.</p>
+            <p><strong>3. Engenharia & Arquitetura:</strong> Como foi construído (Next.js, FastAPI, WebGL, APIs).</p>
+            <p><strong>4. Métrica de Impacto:</strong> Números reais (ex: 139 municípios, +85% velocidade, 100% SLA).</p>
+            <p><strong>5. Ações Rápidas:</strong> Botão para abrir o sistema em produção ou ver no GitHub.</p>
+          </div>
+        </div>
+
+        <div class="spec-info-pane">
+          <div class="spec-block-item focus-block">
+            <div class="spec-item-label">Diretriz de Experiência</div>
+            <div class="spec-item-val">
+              Não levar o usuário para fora do site abruptamente. O projeto abre como um <strong>Cockpit Drawer deslizante</strong> (desktop à direita ou modal centralizado / bottom-sheet no mobile), mantendo o usuário imerso na narrativa da sua página sem perder o scroll.
+            </div>
+          </div>
+          <div class="spec-block-item">
+            <div class="spec-item-label">Ação Disponível Agora</div>
+            <div class="spec-item-val">
+              Clique no botão verde ou no card acima para ver o protótipo real deste modal em funcionamento.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 02: ENGENHARIA & STACK // BACKGROUND BOXES ISOMÉTRICO TM -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <article class="section-spec-card highlight" id="sec-02">
+      <div class="spec-card-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span class="spec-num-badge">SEÇÃO 02</span>
+          <div class="spec-head-titles">
+            <h2>Engenharia & Stack // Background Boxes Isométrico TM</h2>
+          </div>
+        </div>
+        <div class="spec-head-meta">
+          <span class="status-tag ready"><i class="fas fa-check"></i> Sandbox Aprovada & Pronta</span>
+        </div>
+      </div>
+
+      <div class="spec-card-body">
+        <div class="spec-preview-pane">
+          <div class="preview-pane-title">
+            <span>Mapeamento dos 16 Frameworks & Ferramentas</span>
+            <span>Fotos Oficiais em Alta Resolução</span>
+          </div>
+
+          <!-- Grade Resumida de Logos -->
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/claude.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="Claude">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">Claude 3.5</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/gpt.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="ChatGPT">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">GPT-4o</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/hermes.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="Nous Hermes">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">Hermes</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/supabase.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="Supabase">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">Supabase</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/n8n.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="n8n">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">n8n</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/gsap.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="GSAP">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">GSAP</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/nextjs.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="Next.js">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">Next.js 15</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; text-align: center;">
+              <img src="assets/logos/python.png" style="height: 28px; object-fit: contain; margin-bottom: 4px;" alt="Python">
+              <div style="font-size: 10px; font-family: 'JetBrains Mono', monospace;">Python 3.12</div>
+            </div>
+          </div>
+
+          <!-- Ação para Abrir a Sandbox -->
+          <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center; background: rgba(217, 101, 38, 0.08); border: 1px solid rgba(217, 101, 38, 0.25); border-radius: 8px; padding: 14px;">
+            <div>
+              <div style="font-size: 12px; font-weight: 700; color: #fff;">Sandbox Executável Pronta</div>
+              <div style="font-size: 11px; color: var(--text-secondary);">Teste no navegador a grade isométrica alaranjada com áudio sci-fi e responsividade mobile.</div>
+            </div>
+            <a href="simulador-background-boxes-stack.html" target="_blank" class="btn-action-view primary">
+              <i class="fas fa-play"></i>
+              <span>Abrir Sandbox</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="spec-info-pane">
+          <div class="spec-block-item focus-block">
+            <div class="spec-item-label">Conceito Aprovado</div>
+            <div class="spec-item-val">
+              Chão 3D isométrico adaptado da biblioteca Aceternity UI com retículos <code>+</code> e bordas no tom alaranjado corporativo TM. Células que se acendem com luz quente ao passar o mouse ou por toques touch, com fade-out suave de 2.2s.
+            </div>
+          </div>
+
+          <div class="spec-block-item">
+            <div class="spec-item-label">Especificações Técnicas</div>
+            <ul class="spec-checklist">
+              <li class="done"><i class="fas fa-check-circle"></i> <strong>Logos em Alta Resolução:</strong> 16 fotos oficiais baixadas em <code>assets/logos/</code> (Claude, GPT, Hermes, Supabase, n8n, GSAP, etc.).</li>
+              <li class="done"><i class="fas fa-check-circle"></i> <strong>HUD Tooltip Flutuante:</strong> Pill tecnológico com categoria e uso real em produção.</li>
+              <li class="done"><i class="fas fa-check-circle"></i> <strong>Áudio Sci-Fi:</strong> Web Audio API sintetizada com cliques harmônicos respeitando o controle de som.</li>
+              <li class="done"><i class="fas fa-check-circle"></i> <strong>Mobile 100% Vertical:</strong> Rolagem vertical nativa sem qualquer travamento.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 03: IMPACTO & RESULTADOS REAIS -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <article class="section-spec-card" id="sec-03">
+      <div class="spec-card-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span class="spec-num-badge">SEÇÃO 03</span>
+          <div class="spec-head-titles">
+            <h2>Impacto, Eficiência & Resultados Comprovados</h2>
+          </div>
+        </div>
+        <div class="spec-head-meta">
+          <span class="status-tag open"><i class="fas fa-pencil"></i> Próxima na Esteira</span>
+        </div>
+      </div>
+
+      <div class="spec-card-body">
+        <div class="spec-preview-pane">
+          <div class="preview-pane-title">
+            <span>Wireframe do Grid de Métricas</span>
+            <span>Autoridade Operacional</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; text-align: center;">
+              <div style="font-size: 26px; font-weight: 800; color: var(--orange-tm);">+85%</div>
+              <div style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">REDUÇÃO DE TEMPO OPERACIONAL</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; text-align: center;">
+              <div style="font-size: 26px; font-weight: 800; color: #fff;">139</div>
+              <div style="font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">CIDADES EM TEMPO REAL</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-info-pane">
+          <div class="spec-block-item focus-block">
+            <div class="spec-item-label">Objetivo da Seção</div>
+            <div class="spec-item-val">
+              Provar que seu código não é apenas estético, mas move o ponteiro de negócios e operações reais. Transforma números em autoridade executiva.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 04: MANIFESTO & PERFIL DE THIAGO NASCIMENTO -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <article class="section-spec-card" id="sec-04">
+      <div class="spec-card-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span class="spec-num-badge">SEÇÃO 04</span>
+          <div class="spec-head-titles">
+            <h2>Manifesto, Visão Sistêmica & Biografia Técnica</h2>
+          </div>
+        </div>
+        <div class="spec-head-meta">
+          <span class="status-tag open"><i class="fas fa-pencil"></i> Próxima na Esteira</span>
+        </div>
+      </div>
+
+      <div class="spec-card-body">
+        <div class="spec-preview-pane">
+          <div class="preview-pane-title">
+            <span>Wireframe Editorial</span>
+            <span>Estilo McKinsey / Bloomberg</span>
+          </div>
+          <div class="wireframe-box" style="text-align: left; align-items: flex-start;">
+            <div style="font-family: 'Newsreader', serif; font-size: 22px; margin-bottom: 8px;">
+              "Tecnologia é o meio. O fim é a <em>autonomia da operação</em>."
+            </div>
+            <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.6;">
+              Perfil técnico de Thiago Nascimento. Origem na engenharia operacional, evolução para arquitetura de software, postura diante de Inteligência Artificial e compromisso com entregas sem intermediários.
+            </p>
+          </div>
+        </div>
+
+        <div class="spec-info-pane">
+          <div class="spec-block-item focus-block">
+            <div class="spec-item-label">Foco Narrativo</div>
+            <div class="spec-item-val">
+              Construir confiança corporativa para contratos de alto valor. Não é um currículo comum, é uma declaração de método de trabalho e rigor técnico.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- SEÇÃO 05: TERMINAL DE CONTATO & ORÇAMENTO RÁPIDO -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <article class="section-spec-card" id="sec-05">
+      <div class="spec-card-header">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <span class="spec-num-badge">SEÇÃO 05</span>
+          <div class="spec-head-titles">
+            <h2>Terminal de Contato, Orçamento Rápido & Conexão</h2>
+          </div>
+        </div>
+        <div class="spec-head-meta">
+          <span class="status-tag open"><i class="fas fa-pencil"></i> Próxima na Esteira</span>
+        </div>
+      </div>
+
+      <div class="spec-card-body">
+        <div class="spec-preview-pane">
+          <div class="preview-pane-title">
+            <span>Wireframe do Terminal</span>
+            <span>Conversão Imediata</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #4ade80;">
+              <i class="fab fa-whatsapp"></i> WhatsApp Direto com Mensagem Pré-Formatada
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--orange-tm);">
+              <i class="fas fa-file-invoice"></i> Link para Proposta Comercial Executiva TM
+            </div>
+          </div>
+        </div>
+
+        <div class="spec-info-pane">
+          <div class="spec-block-item focus-block">
+            <div class="spec-item-label">Fechamento da Jornada</div>
+            <div class="spec-item-val">
+              Zero atrito de formulários longos. Acesso direto com um clique para WhatsApp com mensagem estruturada, ou solicitação de proposta formal integrada ao template executivo.
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<!-- MODAL DE DEMONSTRAÇÃO DO CASE STUDY (A PÁGINA DO CLIQUE) -->
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
+<div class="case-modal-overlay" id="case-modal-overlay" onclick="closeCaseModal(event)">
+  <div class="case-modal-container" id="case-modal-container" onclick="event.stopPropagation()">
+    <div class="case-modal-header">
+      <div class="modal-badge-group">
+        <span class="modal-category-tag" id="modal-category">GOVTECH // DADOS & APURAÇÃO</span>
+        <span class="modal-year-tag" id="modal-year">· 2024</span>
+      </div>
+      <button class="btn-close-modal" onclick="closeCaseModal()" title="Fechar modal (ESC)">✕</button>
+    </div>
+
+    <div class="case-modal-body">
+      <div class="modal-hero-cover" id="modal-hero">
+        <div class="modal-hero-text">
+          <h3 id="modal-title">Dashboard Eleitoral Adir Gentil 2211</h3>
+          <p id="modal-sub">Mapeamento vetorial e apuração em tempo real dos 139 municípios do Tocantins</p>
+        </div>
+      </div>
+
+      <div class="modal-meta-grid">
+        <div class="modal-meta-item">
+          <span>Tempo de Carga</span>
+          <strong id="modal-metric-1">0.8s (Edge SSR)</strong>
+        </div>
+        <div class="modal-meta-item">
+          <span>Municípios</span>
+          <strong id="modal-metric-2">139 Vetoriais</strong>
+        </div>
+        <div class="modal-meta-item">
+          <span>Disponibilidade</span>
+          <strong id="modal-metric-3">100% Zero Downtime</strong>
+        </div>
+        <div class="modal-meta-item">
+          <span>Stack</span>
+          <strong id="modal-metric-4">Next.js 15 / Tailwind</strong>
+        </div>
+      </div>
+
+      <div class="modal-section-block">
+        <h4><i class="fas fa-bullseye"></i> O Desafio Operacional</h4>
+        <p id="modal-desc-problem">
+          Durante a campanha e apuração oficial, a equipe estratégica necessitava monitorar a contagem de votos município por município em tempo recorde, sem lentidão provocada pelo tráfego intenso nem travamentos de servidores legados.
+        </p>
+      </div>
+
+      <div class="modal-section-block">
+        <h4><i class="fas fa-microchip"></i> Engenharia & Solução Implementada</h4>
+        <p id="modal-desc-solution">
+          Construção de uma SPA em Next.js com renderização híbrida e mapas vetoriais SVG interativos. Implementação de cache em borda global (Edge CDN) e sincronização automatizada dos dados da Justiça Eleitoral via endpoints Python assíncronos.
+        </p>
+        <div class="modal-tags-row" id="modal-tags">
+          <span class="m-tag">Next.js 15</span>
+          <span class="m-tag">React 19</span>
+          <span class="m-tag">SVG Mapping</span>
+          <span class="m-tag">Tailwind CSS</span>
+          <span class="m-tag">Vercel Edge</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="case-modal-footer">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted);">
+        STATUS: <span style="color: #4ade80; font-weight: 700;">● EM PRODUÇÃO</span>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-action-view" onclick="closeCaseModal()">Voltar ao Showcase</button>
+        <a href="https://github.com/TM-SEMPRE-TECNOLOGIA" target="_blank" class="btn-action-view primary">
+          <i class="fab fa-github"></i>
+          <span>Ver Repositório</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // DADOS DE DEMONSTRAÇÃO DOS PROJETOS PARA O CASE STUDY MODAL
+  const CASES_DATA = {
+    eleitoral: {
+      category: "GOVTECH // DADOS & APURAÇÃO",
+      year: "2024",
+      title: "Dashboard Eleitoral Adir Gentil 2211",
+      sub: "Mapeamento vetorial e apuração em tempo real dos 139 municípios do Tocantins",
+      m1: "0.8s (Edge SSR)",
+      m2: "139 Vetoriais",
+      m3: "100% Zero Downtime",
+      m4: "Next.js 15 / React",
+      problem: "Necessidade de apuração instantânea e visualização geoespacial para tomada de decisão no comando de campanha durante as eleições de 2024.",
+      solution: "Mapa SVG interativo com 139 municípios poligonais, coloração dinâmica por densidade de votos, caching distribuído em borda e telemetria de votação.",
+      tags: ["Next.js 15", "React Server Components", "SVG Map Engine", "Tailwind CSS", "Zustand"]
+    },
+    leads: {
+      category: "SAAS // AUTOMAÇÃO DE LEADS",
+      year: "2024",
+      title: "Caderno de Leads CRM & Telemetria",
+      sub: "Automação de triagem, enriquecimento de contatos e disparo de propostas",
+      m1: "+85% Produtividade",
+      m2: "12k Leads/mês",
+      m3: "Zero Falhas",
+      m4: "FastAPI / Python",
+      problem: "Equipe comercial perdia dias planilhando leads manualmente no Excel, causando perda de timing em negociações quentes.",
+      solution: "Microsserviço em FastAPI integrado à API do WhatsApp e webhooks de campanhas pagas, com distribuição automática por vendedor e pipeline kanban.",
+      tags: ["FastAPI", "Python 3.12", "WhatsApp Cloud API", "PostgreSQL", "Pandas ETL"]
+    },
+    central: {
+      category: "INFRA // COCKPIT CORPORATIVO",
+      year: "2024",
+      title: "Central Operacional TM Monolítica",
+      sub: "Console unificado de monitoramento de servidores, logs e métricas de infra",
+      m1: "Latência < 40ms",
+      m2: "Multi-Serviços",
+      m3: "Alta Resiliência",
+      m4: "TypeScript / Node",
+      problem: "Dispersão de ferramentas de monitoramento em múltiplos dashboards lentos e fragmentados.",
+      solution: "Cockpit único com identidade industrial OLED, consumo de WebSockets em tempo real e visualização consolidada de saúde de clusters.",
+      tags: ["TypeScript", "WebSockets", "Docker", "Node.js", "OLED Cockpit UI"]
+    },
+    orcamento: {
+      category: "COMMERCE // PRECIFICAÇÃO DINÂMICA",
+      year: "2024",
+      title: "Simulador de Orçamentos & Propostas TM",
+      sub: "Cálculo algorítmico de horas, escopo e geração de propostas editoriais instantâneas",
+      m1: "Geração em 1s",
+      m2: "Layout Editorial",
+      m3: "WhatsApp Sync",
+      m4: "JavaScript / CSS",
+      problem: "Demora na elaboração de orçamentos técnicos e falta de padronização visual em apresentações para clientes de alto padrão.",
+      solution: "Motor com cálculo algorítmico baseado em regras de negócio e geração automática de PDF executivo no padrão McKinsey/Bloomberg.",
+      tags: ["Vanilla JS", "Editorial CSS System", "WhatsApp API", "Print CSS Engine"]
+    }
+  };
+
+  function openCaseModal(caseKey) {
+    const data = CASES_DATA[caseKey] || CASES_DATA.eleitoral;
+    document.getElementById('modal-category').textContent = data.category;
+    document.getElementById('modal-year').textContent = '· ' + data.year;
+    document.getElementById('modal-title').textContent = data.title;
+    document.getElementById('modal-sub').textContent = data.sub;
+    document.getElementById('modal-metric-1').textContent = data.m1;
+    document.getElementById('modal-metric-2').textContent = data.m2;
+    document.getElementById('modal-metric-3').textContent = data.m3;
+    document.getElementById('modal-metric-4').textContent = data.m4;
+    document.getElementById('modal-desc-problem').textContent = data.problem;
+    document.getElementById('modal-desc-solution').textContent = data.solution;
+
+    const tagsContainer = document.getElementById('modal-tags');
+    tagsContainer.innerHTML = data.tags.map(t => `<span class="m-tag">${t}</span>`).join('');
+
+    const overlay = document.getElementById('case-modal-overlay');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCaseModal(e) {
+    const overlay = document.getElementById('case-modal-overlay');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCaseModal();
+  });
+
+  // Alternador de Visualização Mobile (390px)
+  const simBtn = document.getElementById('btn-toggle-mobile-sim');
+  const simRoot = document.getElementById('sim-root');
+  const simBtnText = document.getElementById('sim-btn-text');
+  let isMobileSim = false;
+
+  simBtn.addEventListener('click', () => {
+    isMobileSim = !isMobileSim;
+    if (isMobileSim) {
+      simRoot.classList.add('sim-active');
+      simBtnText.textContent = 'Voltar para Desktop Full';
+      simBtn.classList.add('primary');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      simRoot.classList.remove('sim-active');
+      simBtnText.textContent = 'Ver no Mobile (390px)';
+      simBtn.classList.remove('primary');
+    }
+  });
+</script>
+</body>
+</html>
