@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
 <!-- Three.js & GSAP para Carrossel 3D -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -451,12 +451,12 @@ h1 strong, h2 strong {
   display: block;
 }
 
-/* ── PINNED SCROLL WRAPPER UNIFICADO (PORTFÓLIO 3D + MERGULHO CYBER-CHAKRA) ── */
+/* ── PINNED SCROLL WRAPPER (TRAVAMENTO DE SCROLL POR 1 CICLO COMPLETO) ── */
 #portfolio-pin-wrapper {
   position: relative;
   z-index: 3;
   width: 100%;
-  height: 960vh; /* 420vh para os 8 cards + 260vh para a transição lateral + 280vh para exploração interativa */
+  height: 360vh; /* Altura ideal para percorrer os 8 cards suavemente */
   background: transparent;
 }
 
@@ -490,22 +490,18 @@ h1 strong, h2 strong {
 /* Header & Footer do 3D Stage */
 .stage-ui-header {
   position: relative;
-  z-index: 35;
-  padding: 30px clamp(24px, 5vw, 64px) 0;
+  z-index: 10;
+  padding: 32px clamp(24px, 6vw, 80px) 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   pointer-events: none;
 }
-.stage-ui-title {
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
 .stage-ui-title h3 {
-  font-size: clamp(22px, 3.2vw, 38px);
+  font-size: clamp(24px, 4vw, 44px);
   font-weight: 300;
   letter-spacing: -0.03em;
   color: #fff;
-  line-height: 1.15;
 }
 .stage-ui-title h3 strong {
   font-weight: 800;
@@ -513,37 +509,11 @@ h1 strong, h2 strong {
 }
 .stage-ui-subtitle {
   color: var(--muted);
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: 2px;
   font-family: 'JetBrains Mono', monospace;
   text-transform: uppercase;
   margin-top: 6px;
-}
-.stage-ui-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.stage-meta-pill {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 1.5px;
-  color: #cbd5e1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 6px 14px;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-.stage-meta-pill::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--orange);
-  box-shadow: 0 0 8px var(--orange);
 }
 
 .stage-ui-footer {
@@ -587,678 +557,6 @@ h1 strong, h2 strong {
 
 
 
-/* ── SEÇÃO 02: CYBER-CHAKRA INTEGRADA AO PINNED SCROLL ── */
-.chakra-experience-container {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 20;
-  pointer-events: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 24px 60px;
-  background: radial-gradient(circle at 50% 48%, rgba(26, 18, 12, 0.45) 0%, rgba(5, 7, 15, 0.85) 60%, #05070f 95%);
-  opacity: 0;
-  transform: translateX(110vw) scale(0.85);
-  transition: opacity 0.25s ease-out;
-  will-change: transform, opacity;
-}
-.chakra-experience-container.interactive {
-  pointer-events: auto;
-}
-
-.chakra-grid-bg {
-  position: absolute;
-  inset: 0;
-  background: url('grid.svg') repeat;
-  opacity: 0.04;
-  pointer-events: none;
-}
-.chakra-scanlines-bg {
-  position: absolute;
-  inset: 0;
-  background: url('scanlines.svg') repeat;
-  opacity: 0.05;
-  pointer-events: none;
-}
-.chakra-art-ground {
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 1550px;
-  height: 460px;
-  background: url('art-bg.webp') bottom center/cover no-repeat;
-  opacity: 0.85;
-  pointer-events: none;
-  mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 35%, transparent 100%);
-}
-
-#chakra-mouse-spotlight {
-  position: absolute;
-  width: 550px;
-  height: 550px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(217, 101, 38, 0.04) 45%, transparent 70%);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-}
-
-.chakra-stage-content {
-  position: relative;
-  z-index: 25;
-  width: 100%;
-  max-width: 1400px;
-  height: clamp(520px, 70vh, 660px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-}
-
-#chakra-laser-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 8;
-}
-
-.chakra-avatar-figure {
-  position: relative;
-  height: 100%;
-  max-height: 640px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-}
-.chakra-avatar-img {
-  height: 100%;
-  max-height: 640px;
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 0 35px rgba(0,0,0,0.92)) drop-shadow(0 0 18px rgba(10, 252, 219, 0.16));
-  user-select: none;
-  display: block;
-}
-
-.chakra-node {
-  position: absolute;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  z-index: 30;
-}
-.chakra-pulse {
-  position: absolute;
-  inset: -6px;
-  border-radius: 50%;
-  border: 1.5px solid currentColor;
-  opacity: 0.5;
-  animation: nodePulse 2.4s infinite cubic-bezier(0.2, 0.8, 0.4, 1);
-}
-.chakra-core {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffffff 15%, currentColor 85%);
-  box-shadow: 0 0 14px currentColor, 0 0 28px currentColor;
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.chakra-node:hover .chakra-core,
-.chakra-node.active .chakra-core {
-  transform: scale(1.6);
-  box-shadow: 0 0 22px currentColor, 0 0 40px currentColor;
-}
-
-@keyframes nodePulse {
-  0% { transform: scale(0.7); opacity: 0.85; }
-  50% { transform: scale(1.5); opacity: 0.3; }
-  100% { transform: scale(2.2); opacity: 0; }
-}
-
-.laser-beam {
-  stroke-width: 2px;
-  fill: none;
-  opacity: 0;
-  stroke-dasharray: none;
-  pointer-events: none;
-  transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), stroke-width 0.25s ease;
-}
-.laser-beam.active {
-  stroke-width: 2.5px;
-  stroke-dasharray: none;
-  opacity: 1;
-  stroke-linecap: round;
-  filter: drop-shadow(0 0 5px currentColor) drop-shadow(0 0 14px currentColor);
-}
-
-.skill-chakra-card {
-  position: absolute;
-  width: 280px;
-  background: rgba(9, 11, 16, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 2px solid var(--card-accent, var(--orange));
-  padding: 10px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 25;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.85);
-  overflow: hidden;
-}
-.skill-chakra-card:hover {
-  border-color: var(--card-accent, var(--orange));
-  border-left-width: 4px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.95), 0 0 20px var(--card-glow, var(--orange-glow));
-  transform: translateY(-2px);
-}
-.skill-chakra-card.active {
-  border-color: var(--card-accent, var(--orange));
-  border-left-width: 4px;
-  box-shadow: 0 22px 56px rgba(0,0,0,0.98), 0 0 28px var(--card-glow, var(--orange-glow));
-  width: 340px;
-  z-index: 50;
-}
-.skill-chakra-card .card-laser-anchor {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-}
-.skill-chakra-card.active .card-laser-anchor {
-  transform: scale(1.4);
-  box-shadow: 0 0 16px var(--card-accent, #fff), 0 0 32px var(--card-accent, #fff) !important;
-}
-
-.skill-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 3px;
-}
-.skill-card-category {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: 1.2px;
-  color: var(--card-accent, var(--orange));
-  text-transform: uppercase;
-  font-weight: 700;
-}
-.skill-card-chakra {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: #64748b;
-}
-.skill-card-title {
-  font-size: 13.5px;
-  font-weight: 800;
-  color: #fff;
-  margin-bottom: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.expand-indicator {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  color: var(--card-accent, var(--orange));
-  transition: transform 0.3s;
-}
-.skill-chakra-card.active .expand-indicator {
-  transform: rotate(45deg);
-}
-.skill-card-summary {
-  font-size: 10.5px;
-  color: #94a3b8;
-  line-height: 1.35;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.skill-chakra-card.active .skill-card-summary {
-  -webkit-line-clamp: unset;
-}
-.skill-tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3.5px;
-  margin-top: 5px;
-}
-.skill-pill {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.07);
-  color: #cbd5e1;
-  font-size: 8.5px;
-  font-family: 'JetBrains Mono', monospace;
-  padding: 1.5px 5px;
-  border-radius: 3px;
-}
-
-.skill-card-expand {
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
-  overflow: hidden;
-}
-.skill-chakra-card.active .skill-card-expand {
-  max-height: 480px;
-  opacity: 1;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-.expanded-desc {
-  font-size: 12px;
-  line-height: 1.5;
-  color: #cbd5e1;
-  margin-bottom: 10px;
-}
-.expanded-spec-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-.expanded-spec-item {
-  font-size: 11px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 6px 10px;
-  border-radius: 4px;
-  line-height: 1.4;
-}
-.expanded-spec-item strong {
-  color: var(--card-accent, #38bdf8);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  display: block;
-  margin-bottom: 2px;
-}
-.card-github-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(10, 252, 219, 0.08);
-  border: 1px solid rgba(10, 252, 219, 0.25);
-  color: var(--primary);
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-.card-github-link:hover {
-  background: var(--primary);
-  color: #030608;
-}
-
-#chakra-dive-flash {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(10, 252, 219, 0.25) 0%, transparent 60%);
-  pointer-events: none;
-  opacity: 0;
-  z-index: 18;
-}
-
-/* ── MODO CALIBRADOR VISUAL (AJUSTE DOS 7 CHAKRAS) ── */
-.chakra-calibrator-bar {
-  position: absolute;
-  top: 24px;
-  right: clamp(20px, 4vw, 56px);
-  z-index: 60;
-  pointer-events: auto;
-}
-.chakra-calibrator-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(8, 12, 19, 0.92);
-  border: 1px solid rgba(10, 252, 219, 0.45);
-  color: #0afcdb;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  padding: 8px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6), 0 0 14px rgba(10, 252, 219, 0.18);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.chakra-calibrator-trigger:hover,
-.chakra-calibrator-trigger.active {
-  background: rgba(10, 252, 219, 0.18);
-  border-color: #0afcdb;
-  color: #fff;
-  box-shadow: 0 0 24px rgba(10, 252, 219, 0.55);
-  transform: translateY(-1px);
-}
-.cal-pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #0afcdb;
-  box-shadow: 0 0 8px #0afcdb;
-  animation: calDotPulse 1.8s infinite;
-}
-@keyframes calDotPulse {
-  0%, 100% { transform: scale(0.9); opacity: 0.7; }
-  50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 14px #0afcdb; }
-}
-
-.chakra-calibrator-panel {
-  position: absolute;
-  top: 70px;
-  right: clamp(20px, 4vw, 56px);
-  width: 350px;
-  max-width: calc(100vw - 40px);
-  background: rgba(6, 9, 15, 0.96);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(10, 252, 219, 0.35);
-  border-radius: 10px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(10, 252, 219, 0.15);
-  padding: 16px;
-  z-index: 70;
-  pointer-events: auto;
-  font-family: 'JetBrains Mono', monospace;
-  animation: calPanelIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes calPanelIn {
-  from { opacity: 0; transform: translateY(-10px) scale(0.96); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.cal-panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-.cal-panel-title {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.cal-panel-icon {
-  font-size: 20px;
-}
-.cal-panel-title h4 {
-  font-size: 11.5px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.8px;
-  margin: 0 0 2px 0;
-}
-.cal-panel-title p {
-  font-size: 9.5px;
-  color: #94a3b8;
-  margin: 0;
-  line-height: 1.3;
-}
-.cal-btn-close {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #94a3b8;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  transition: all 0.2s;
-}
-.cal-btn-close:hover {
-  background: rgba(239, 68, 68, 0.25);
-  border-color: #ef4444;
-  color: #fff;
-}
-
-.cal-table-wrap {
-  max-height: 210px;
-  overflow-y: auto;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.35);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-.cal-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 10px;
-  text-align: left;
-}
-.cal-table th {
-  padding: 6px 8px;
-  color: #64748b;
-  font-size: 8.5px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: sticky;
-  top: 0;
-  background: #080c14;
-}
-.cal-table td {
-  padding: 6px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: #cbd5e1;
-}
-.cal-table tr.active-row {
-  background: rgba(10, 252, 219, 0.12);
-}
-.cal-chakra-cell {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-}
-.cal-color-pip {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  display: inline-block;
-  box-shadow: 0 0 6px currentColor;
-}
-.cal-coord-val {
-  color: #0afcdb;
-  font-weight: 700;
-}
-.cal-btn-row-focus {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #94a3b8;
-  padding: 2px 6px;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 9px;
-  font-family: inherit;
-  transition: all 0.2s;
-}
-.cal-btn-row-focus:hover {
-  border-color: #0afcdb;
-  color: #0afcdb;
-}
-
-.cal-panel-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
-}
-.cal-btn-copy {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 14px;
-  background: linear-gradient(135deg, #0afcdb 0%, #00d2b4 100%);
-  border: none;
-  border-radius: 6px;
-  color: #030708;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(10, 252, 219, 0.35);
-  transition: all 0.25s;
-}
-.cal-btn-copy:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(10, 252, 219, 0.6);
-  filter: brightness(1.08);
-}
-.cal-btn-reset {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 6px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 6px;
-  color: #94a3b8;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9.5px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.cal-btn-reset:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-.cal-panel-tip {
-  font-size: 9px;
-  color: #64748b;
-  line-height: 1.4;
-  border-top: 1px dashed rgba(255, 255, 255, 0.08);
-  padding-top: 8px;
-}
-.cal-panel-tip strong {
-  color: #0afcdb;
-}
-
-/* Estado ativo do Modo Calibrador sobre a figura e os nós */
-.calibrator-active .chakra-avatar-figure {
-  cursor: crosshair;
-}
-.calibrator-active .chakra-node {
-  cursor: grab !important;
-  z-index: 60;
-}
-.calibrator-active .chakra-node::after {
-  content: attr(data-cal-label);
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.9);
-  border: 1px solid currentColor;
-  color: currentColor;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8px;
-  white-space: nowrap;
-  pointer-events: none;
-  font-weight: 700;
-  box-shadow: 0 0 10px rgba(0,0,0,0.8);
-}
-.calibrator-active .chakra-node:hover,
-.calibrator-active .chakra-node.dragging {
-  cursor: grabbing !important;
-  transform: translate(-50%, -50%) scale(1.4);
-}
-.calibrator-active .chakra-node.dragging {
-  z-index: 100;
-}
-
-/* Retículo e Tooltip Flutuante durante o arraste */
-.cal-crosshair-h {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: rgba(10, 252, 219, 0.45);
-  pointer-events: none;
-  z-index: 65;
-  border-top: 1px dashed rgba(10, 252, 219, 0.7);
-}
-.cal-crosshair-v {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 1px;
-  background: rgba(10, 252, 219, 0.45);
-  pointer-events: none;
-  z-index: 65;
-  border-left: 1px dashed rgba(10, 252, 219, 0.7);
-}
-.cal-node-tooltip {
-  position: absolute;
-  transform: translate(-50%, -130%);
-  background: rgba(3, 7, 12, 0.92);
-  border: 1px solid #0afcdb;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 700;
-  pointer-events: none;
-  z-index: 95;
-  box-shadow: 0 0 15px rgba(10, 252, 219, 0.4);
-  white-space: nowrap;
-}
-
-/* Notificação Toast */
-.cal-toast {
-  position: fixed;
-  top: 32px;
-  left: 50%;
-  transform: translateX(-50%) translateY(0);
-  background: #03080e;
-  border: 1.5px solid #0afcdb;
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 999px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11.5px;
-  font-weight: 700;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(10, 252, 219, 0.5);
-  z-index: 9999;
-  pointer-events: none;
-  animation: calToastPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes calToastPop {
-  from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
 .slot-placeholder {
   position: relative;
   z-index: 2;
@@ -1277,6 +575,345 @@ h1 strong, h2 strong {
   font-weight: 500;
   letter-spacing: 4px;
   text-transform: uppercase;
+}
+
+/* ── SEÇÃO 02: BACKGROUND BOXES ISOMÉTRICO (STACK & FRAMEWORKS TM) ── */
+.section-stack-boxes {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 24px 70px;
+  z-index: 4;
+}
+
+.boxes-vignette-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  background: var(--ink);
+  mask-image: radial-gradient(circle at 50% 52%, transparent 28%, black 88%);
+  -webkit-mask-image: radial-gradient(circle at 50% 52%, transparent 28%, black 88%);
+}
+
+.stack-hero-header {
+  position: relative;
+  z-index: 30;
+  text-align: center;
+  max-width: 880px;
+  pointer-events: none;
+  margin-bottom: 24px;
+}
+.stack-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: var(--orange);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.stack-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--orange);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--orange);
+}
+.stack-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: clamp(32px, 4.8vw, 56px);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 14px;
+}
+.stack-title strong {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--orange);
+  text-shadow: 0 0 25px rgba(217, 101, 38, 0.4);
+}
+.stack-subtitle {
+  font-size: clamp(13px, 1.4vw, 16px);
+  color: #94a3b8;
+  line-height: 1.6;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.boxes-viewport {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.boxes-matrix-core {
+  position: absolute;
+  top: 52%;
+  left: 48%;
+  display: flex;
+  flex-direction: column;
+  transform: translate(-50%, -46%) skewX(-48deg) skewY(14deg) scale(0.92);
+  transform-origin: center center;
+  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.box-row {
+  display: flex;
+  position: relative;
+  border-left: 1px solid rgba(217, 101, 38, 0.22);
+}
+
+.box-cell {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-right: 1px solid rgba(217, 101, 38, 0.22);
+  border-top: 1px solid rgba(217, 101, 38, 0.22);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 2.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.box-crosshair {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: -8px;
+  right: -8px;
+  stroke: rgba(217, 101, 38, 0.45);
+  stroke-width: 1.2px;
+  pointer-events: none;
+  z-index: 8;
+}
+
+.box-cell.has-logo {
+  background: rgba(255, 255, 255, 0.015);
+}
+.box-logo-wrapper {
+  width: 82%;
+  height: 82%;
+  border-radius: 8px;
+  background: rgba(10, 14, 23, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.box-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.38;
+  filter: grayscale(25%) contrast(1.05);
+  transition: opacity 0.25s ease, filter 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.box-cell.active-glow {
+  transition: background-color 0.05s ease, box-shadow 0.05s ease;
+  z-index: 15;
+}
+.box-cell.active-glow .box-logo-wrapper {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.08);
+  box-shadow: 0 0 20px var(--cell-glow, var(--orange-glow));
+}
+.box-cell.active-glow .box-logo-img {
+  opacity: 1 !important;
+  filter: grayscale(0%) brightness(1.2) !important;
+  transform: scale(1.05);
+}
+
+/* DOCK FIXO DE TELEMETRIA (LOCAL FIXO NA TELA // ZERO QUEBRAS) */
+.stack-telemetry-dock {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 35;
+  width: min(720px, calc(100% - 40px));
+  min-height: 64px;
+  background: rgba(8, 12, 19, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--dock-border, rgba(217, 101, 38, 0.45));
+  border-radius: 12px;
+  padding: 12px 20px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.92), 0 0 25px var(--dock-glow, rgba(217, 101, 38, 0.15));
+  display: flex;
+  align-items: center;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  pointer-events: auto;
+}
+
+.dock-idle-state {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #94a3b8;
+  gap: 12px;
+}
+.dock-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange);
+  animation: dockPulse 1.8s infinite;
+  flex-shrink: 0;
+}
+@keyframes dockPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 14px var(--orange); }
+}
+.dock-count-pill {
+  background: rgba(217, 101, 38, 0.12);
+  border: 1px solid rgba(217, 101, 38, 0.3);
+  color: var(--orange);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.dock-active-state {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: dockFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes dockFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dock-logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.dock-logo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.dock-info-content {
+  flex: 1;
+  min-width: 0;
+}
+.dock-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+.dock-cat-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.dock-tech-name {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #fff;
+}
+.dock-status-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.dock-role-desc {
+  font-size: 11.5px;
+  color: #cbd5e1;
+  line-height: 1.35;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .section-stack-boxes {
+    padding: 80px 16px 40px;
+  }
+  .stack-title {
+    font-size: 26px !important;
+    line-height: 1.25;
+  }
+  .stack-subtitle {
+    font-size: 13px !important;
+  }
+  .boxes-matrix-core {
+    top: 55% !important;
+    left: 45% !important;
+    transform: translate(-50%, -45%) skewX(-32deg) skewY(10deg) scale(0.62) !important;
+  }
+  .stack-telemetry-dock {
+    bottom: 16px;
+    padding: 10px 14px;
+    min-height: 58px;
+    border-radius: 10px;
+  }
+  .dock-role-desc {
+    white-space: normal;
+    font-size: 10.5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .dock-idle-state {
+    font-size: 9.5px;
+  }
 }
 
 /* ── FOOTER EDITORIAL ── */
@@ -1363,102 +1000,6 @@ h1 strong, h2 strong {
   .marquee-band__track { animation: none; }
   .marquee-band__dot { animation: none; }
 }
-
-/* === LENTE DE AUMENTO HOLOGRÁFICA (CYBER-SCOPE LOUPE) === */
-.chakra-avatar-figure {
-  position: relative;
-  cursor: crosshair;
-}
-
-.chakra-zoom-lens {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 190px;
-  height: 190px;
-  margin-top: -95px;
-  margin-left: -95px;
-  border-radius: 50%;
-  border: 2px solid rgba(10, 252, 219, 0.85);
-  box-shadow: 
-    0 0 30px rgba(10, 252, 219, 0.45),
-    0 0 60px rgba(234, 150, 60, 0.2),
-    inset 0 0 25px rgba(0, 0, 0, 0.9),
-    inset 0 0 12px rgba(10, 252, 219, 0.35);
-  pointer-events: none;
-  z-index: 50;
-  opacity: 0;
-  transform: scale(0.6);
-  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
-  background-image: url('thiago_armor_disassembly.jpg');
-  background-repeat: no-repeat;
-  background-color: #030408;
-}
-
-.chakra-zoom-lens::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, transparent 60%, rgba(10, 252, 219, 0.18) 82%, rgba(10, 252, 219, 0.5) 100%);
-  pointer-events: none;
-  z-index: 2;
-}
-
-.chakra-zoom-lens::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px, transparent 2px, transparent 4px);
-  pointer-events: none;
-  z-index: 3;
-}
-
-.lens-reticle-h {
-  position: absolute;
-  top: 50%;
-  left: 18%;
-  right: 18%;
-  height: 1px;
-  background: rgba(10, 252, 219, 0.5);
-  transform: translateY(-50%);
-  pointer-events: none;
-  z-index: 4;
-}
-
-.lens-reticle-v {
-  position: absolute;
-  left: 50%;
-  top: 18%;
-  bottom: 18%;
-  width: 1px;
-  background: rgba(10, 252, 219, 0.5);
-  transform: translateX(-50%);
-  pointer-events: none;
-  z-index: 4;
-}
-
-.lens-tag {
-  position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 8.5px;
-  letter-spacing: 0.16em;
-  color: #0afcdb;
-  text-transform: uppercase;
-  background: rgba(5, 7, 15, 0.9);
-  padding: 2.5px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(10, 252, 219, 0.4);
-  box-shadow: 0 0 10px rgba(10, 252, 219, 0.3);
-  pointer-events: none;
-  white-space: nowrap;
-  z-index: 5;
-}
-
 </style>
 </head>
 <body>
@@ -1594,107 +1135,22 @@ h1 strong, h2 strong {
 <!-- ═══ SEÇÃO 01: PINNED SCROLL 3D MOTION SHOWCASE ═══ -->
 <div id="portfolio-pin-wrapper">
   <section id="section-portfolio-3d">
-    <!-- UI Superior do Palco 3D Unificada -->
+    <!-- UI Superior do Palco 3D -->
     <div class="stage-ui-header">
-      <div class="stage-ui-title" id="stage-ui-title-container">
-        <div class="eyebrow" id="stage-eyebrow" style="margin-bottom: 8px;">Showcase Interativo</div>
-        <h3 id="stage-title">Produtos, Sistemas & <strong>Soluções.</strong></h3>
-        <p class="stage-ui-subtitle" id="stage-subtitle">Engenharia Digital · Automação · SaaS</p>
-      </div>
-      <div class="stage-ui-meta">
-        <span class="stage-meta-pill" id="stage-badge-pill">8 PROJETOS EM PRODUÇÃO</span>
+      <div class="stage-ui-title">
+        <div class="eyebrow" style="margin-bottom: 8px;">Showcase Interativo</div>
+        <h3>Produtos, Sistemas & <strong>Soluções.</strong></h3>
+        <p class="stage-ui-subtitle">Engenharia Digital · Automação · SaaS</p>
       </div>
     </div>
 
     <!-- Three.js Canvas Container -->
     <div id="carousel-webgl-stage"></div>
 
-    <!-- Flash Overlay de Transição -->
-    <div id="chakra-dive-flash"></div>
-
-    <!-- ═══ SEÇÃO 02: CYBER-CHAKRA EXPERIENCE (THIAGO NASCIMENTO) ═══ -->
-    <div id="chakra-experience-layer" class="chakra-experience-container">
-      <div class="chakra-grid-bg"></div>
-      <div class="chakra-scanlines-bg"></div>
-      <div class="chakra-art-ground"></div>
-      <div id="chakra-mouse-spotlight"></div>
-
-      <div class="chakra-stage-content" id="chakra-stage-content">
-        <svg id="chakra-laser-svg"></svg>
-        <div class="chakra-avatar-figure" id="chakra-avatar-figure">
-          <img src="thiago_cyber_chakra_transparent.png" alt="Thiago Nascimento" class="chakra-avatar-img" id="chakra-avatar-img">
-          <!-- LENTE DE AUMENTO HOLOGRÁFICA CYBER-SCOPE -->
-          <div class="chakra-zoom-lens" id="chakra-zoom-lens">
-            <div class="lens-reticle-h"></div>
-            <div class="lens-reticle-v"></div>
-            <span class="lens-tag">SCAN 2.5X // ARMOR</span>
-          </div>
-          <!-- Retículo e Tooltip Flutuantes de Calibração -->
-          <div id="cal-crosshair-h" class="cal-crosshair-h" style="display: none;"></div>
-          <div id="cal-crosshair-v" class="cal-crosshair-v" style="display: none;"></div>
-          <div id="cal-node-tooltip" class="cal-node-tooltip" style="display: none;"></div>
-        </div>
-      </div>
-
-      <!-- BARRA FLUTUANTE DE ATIVAÇÃO DO MODO CALIBRADOR -->
-      <div class="chakra-calibrator-bar" id="chakra-calibrator-bar">
-        <button id="btn-toggle-calibrator" class="chakra-calibrator-trigger" type="button" title="Ativar console de calibração milimétrica dos 7 chakras">
-          <span class="cal-pulse-dot"></span>
-          <span class="cal-btn-label">🎯 MODO CALIBRADOR (AJUSTAR PONTOS)</span>
-        </button>
-      </div>
-
-      <!-- CONSOLE FLUTUANTE DE CALIBRAÇÃO (HUD) -->
-      <div class="chakra-calibrator-panel" id="chakra-calibrator-panel" style="display: none;">
-        <div class="cal-panel-header">
-          <div class="cal-panel-title">
-            <span class="cal-panel-icon">🎯</span>
-            <div>
-              <h4>CONSOLE DE CALIBRAÇÃO // 7 CHAKRAS</h4>
-              <p>Arraste os nós coloridos na foto até os pontos de luz exatos</p>
-            </div>
-          </div>
-          <button class="cal-btn-close" id="btn-close-calibrator" type="button" title="Fechar painel">✕</button>
-        </div>
-
-        <div class="cal-table-wrap">
-          <table class="cal-table" id="cal-table-nodes">
-            <thead>
-              <tr>
-                <th>Chakra</th>
-                <th>X (%)</th>
-                <th>Y (%)</th>
-                <th>Foco</th>
-              </tr>
-            </thead>
-            <tbody id="cal-table-body">
-              <!-- Preenchido dinamicamente pelo JS -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="cal-panel-actions">
-          <button class="cal-btn-copy" id="btn-copy-calibrator" type="button">
-            <span>📋</span>
-            <strong>Copiar Coordenadas (X e Y em %)</strong>
-          </button>
-          <button class="cal-btn-reset" id="btn-reset-calibrator" type="button">
-            <span>↺</span>
-            Restaurar Padrão
-          </button>
-        </div>
-        <div class="cal-panel-tip">
-          💡 Após ajustar, clique em <strong>Copiar Coordenadas</strong> e cole no chat para gravarmos no código.
-        </div>
-      </div>
-      <!-- Toast de Notificação de Cópia -->
-      <div id="cal-toast" class="cal-toast" style="display: none;"></div>
-    </div>
-
     <!-- UI Inferior do Palco 3D -->
     <div class="stage-ui-footer">
       <div class="carousel-drag-hint">
-        <span class="drag-hint-text" id="stage-drag-hint-text">Role a página para navegar nos projetos</span>
+        <span class="drag-hint-text">Role a página para navegar nos projetos</span>
         <div class="carousel-progress-track">
           <div id="carousel-progress-fill" class="carousel-progress-thumb"></div>
         </div>
@@ -1704,6 +1160,53 @@ h1 strong, h2 strong {
 </div>
 
 <!-- ═══ PRÓXIMAS SEÇÕES PLANEJADAS ═══ -->
+<!-- ═══ SEÇÃO 02: ENGENHARIA & STACK (ISOMETRIC BACKGROUND BOXES) ═══ -->
+<section class="section-stack-boxes" id="secao-stack-boxes">
+  <div class="boxes-vignette-overlay"></div>
+
+  <!-- CABEÇALHO DA SEÇÃO -->
+  <div class="stack-hero-header">
+    <div class="stack-eyebrow">Engenharia & Stack // O Motor de Construção</div>
+    <h2 class="stack-title">Linguagens, Frameworks & <strong>Engenharia.</strong></h2>
+    <p class="stack-subtitle">
+      A infraestrutura e o ferramental de ponta que alimentam sistemas autônomos, pipelines de dados massivos, inteligência artificial agêntica e experiências tridimensionais a 60 FPS.
+    </p>
+  </div>
+
+  <!-- PALCO ISOMÉTRICO 3D COM GRID INTERATIVO -->
+  <div class="boxes-viewport" id="boxes-viewport">
+    <div class="boxes-matrix-core" id="boxes-matrix-core">
+      <!-- Grade gerada dinamicamente via JS com 16 logos reais -->
+    </div>
+  </div>
+
+  <!-- DOCK FIXO DE TELEMETRIA (LOCAL FIXO NA TELA // ZERO QUEBRAS) -->
+  <div class="stack-telemetry-dock" id="stack-hud-dock">
+    <div class="dock-idle-state" id="dock-idle">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="dock-pulse-dot"></span>
+        <span>// PASSE O MOUSE OU TOQUE NOS LADRILHOS PARA INSPECIONAR A STACK</span>
+      </div>
+      <span class="dock-count-pill">16 FERRAMENTAS ATIVAS</span>
+    </div>
+
+    <div class="dock-active-state" id="dock-active" style="display: none;">
+      <div class="dock-logo-box">
+        <img src="assets/logos/claude.png" id="dock-logo-img" alt="Logo">
+      </div>
+      <div class="dock-info-content">
+        <div class="dock-meta-row">
+          <span class="dock-cat-tag" id="hud-cat">IA & AGENTES</span>
+          <span class="dock-tech-name" id="hud-name">Claude 3.5 Sonnet</span>
+          <span class="dock-status-tag">PRODUÇÃO REAL</span>
+        </div>
+        <div class="dock-role-desc" id="hud-role">
+          Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 <section class="slot-placeholder" id="slot-3">
   <span class="slot-label">SEÇÃO 03 — IMPACTO & RESULTADOS REAIS</span>
 </section>
@@ -2259,159 +1762,16 @@ h1 strong, h2 strong {
     }
   }
 
-  // ══════════════════════════════════════════════════════════════════════
-  // INTEGRAÇÃO CONTÍNUA: CARROSSEL 3D -> MERGULHO LATERAL CYBER-CHAKRA
-  // ══════════════════════════════════════════════════════════════════════
-  const carouselStage = document.getElementById('carousel-webgl-stage');
-  const chakraLayer = document.getElementById('chakra-experience-layer');
-  const chakraFlash = document.getElementById('chakra-dive-flash');
-  const dragHintText = document.getElementById('stage-drag-hint-text');
-
-  const stageEyebrow = document.getElementById('stage-eyebrow');
-  const stageTitle = document.getElementById('stage-title');
-  const stageSubtitle = document.getElementById('stage-subtitle');
-  const stageBadge = document.getElementById('stage-badge-pill');
-  const titleContainer = document.getElementById('stage-ui-title-container');
-
-  let currentHeaderMode = 'showcase';
-
-  function setHeaderContent(mode) {
-    if (currentHeaderMode === mode) return;
-    currentHeaderMode = mode;
-    if (titleContainer) {
-      titleContainer.style.opacity = '0';
-      titleContainer.style.transform = 'translateY(-6px)';
-    }
-    setTimeout(() => {
-      if (mode === 'chakra') {
-        if (stageEyebrow) stageEyebrow.textContent = "Engenharia & Stack // O Motor de Construção";
-        if (stageTitle) stageTitle.innerHTML = "Linguagens, Frameworks & <strong>Engenharia.</strong>";
-        if (stageSubtitle) stageSubtitle.textContent = "7 Núcleos Anatômicos · Three.js · Python · IA · Cloud";
-        if (stageBadge) stageBadge.textContent = "7 NÚCLEOS ANATÔMICOS";
-      } else {
-        if (stageEyebrow) stageEyebrow.textContent = "Showcase Interativo";
-        if (stageTitle) stageTitle.innerHTML = "Produtos, Sistemas & <strong>Soluções.</strong>";
-        if (stageSubtitle) stageSubtitle.textContent = "Engenharia Digital · Automação · SaaS";
-        if (stageBadge) stageBadge.textContent = "8 PROJETOS EM PRODUÇÃO";
-      }
-      if (titleContainer) {
-        titleContainer.style.opacity = '1';
-        titleContainer.style.transform = 'translateY(0px)';
-      }
-    }, 180);
-  }
-
-  function updateUnifiedFlow(progress) {
-    const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
-
-    // ── FASE 1: NAVEGAÇÃO DOS 8 PROJETOS (0.00 a 0.42) ──
-    if (progress <= 0.42) {
-      const p1 = progress / 0.42; // 0..1
-      if (!isDragging) {
-        targetScroll = (p1 * totalSpan) + manualDragOffset;
-      }
-
-      // Limpa laser/chakra ativo quando estiver no carrossel 3D
-      if (typeof clearActiveChakra === 'function') {
-        clearActiveChakra();
-      }
-
-      // Three.js no lugar normal
-      if (carouselStage) {
-        carouselStage.style.transform = 'translateX(0vw)';
-        carouselStage.style.opacity = '1';
-        carouselStage.style.pointerEvents = 'auto';
-      }
-      camera.position.z = isMobile() ? 7.8 : 7.5;
-
-      // Cyber-Chakra fora da tela à direita
-      if (chakraLayer) {
-        chakraLayer.style.opacity = '0';
-        chakraLayer.style.transform = 'translateX(110vw) scale(0.85)';
-        chakraLayer.classList.remove('interactive');
-      }
-      if (chakraFlash) chakraFlash.style.opacity = '0';
-      if (dragHintText) dragHintText.textContent = "Role a página para navegar nos projetos (ou arraste)";
-      setHeaderContent('showcase');
-
-    // ── FASE 2: TRANSIÇÃO LATERAL CINEMÁTICA & MERGULHO (0.42 a 0.68) ──
-    } else if (progress <= 0.68) {
-      const p2 = (progress - 0.42) / 0.26; // 0..1
-
-      if (typeof clearActiveChakra === 'function') {
-        clearActiveChakra();
-      }
-
-      // O carrossel 3D desliza fisicamente para a ESQUERDA saindo da tela
-      if (carouselStage) {
-        carouselStage.style.transform = `translateX(${-p2 * 110}vw)`;
-        carouselStage.style.opacity = Math.max(0, 1 - p2 * 1.3);
-        carouselStage.style.pointerEvents = 'none';
-      }
-      targetScroll = totalSpan + (p2 * 6);
-
-      // Flash óptico sutil durante a passagem
-      if (chakraFlash) {
-        chakraFlash.style.opacity = Math.sin(p2 * Math.PI) * 0.6;
-      }
-
-      // A Seção 02 (Cyber-Chakra) entra da DIREITA para o CENTRO com escala suave (0.85 -> 1.0)
-      if (chakraLayer) {
-        const transX = (1 - p2) * 110; // 110vw -> 0vw
-        const scaleVal = 0.85 + (p2 * 0.15); // 0.85 -> 1.00 (confortável, proporções elegantes)
-        chakraLayer.style.opacity = Math.min(1, p2 * 1.8);
-        chakraLayer.style.transform = `translateX(${transX}vw) scale(${scaleVal})`;
-        chakraLayer.classList.remove('interactive');
-      }
-
-      if (p2 >= 0.5) {
-        setHeaderContent('chakra');
-        if (dragHintText) dragHintText.textContent = "Entrando no Motor de Construção...";
-      } else {
-        setHeaderContent('showcase');
-        if (dragHintText) dragHintText.textContent = "Deslizando para a Engenharia...";
-      }
-
-      if (typeof updateChakraLaserLines === 'function') {
-        updateChakraLaserLines();
-      }
-
-    // ── FASE 3: EXPLORAÇÃO TOTAL & INTERAÇÃO COM OS CHAKRAS (0.68 a 1.00) ──
-    } else {
-      if (carouselStage) {
-        carouselStage.style.transform = 'translateX(-110vw)';
-        carouselStage.style.opacity = '0';
-        carouselStage.style.pointerEvents = 'none';
-      }
-
-      if (chakraLayer) {
-        chakraLayer.style.opacity = '1';
-        chakraLayer.style.transform = 'translateX(0vw) scale(1.0)';
-        chakraLayer.classList.add('interactive');
-      }
-      if (chakraFlash) chakraFlash.style.opacity = '0';
-
-      setHeaderContent('chakra');
-
-      // DESCIDA SEQUENCIAL DO LASER (COROA ATÉ RAIZ) GUIADA PELO SCROLL
-      if (typeof handleChakraScrollProgression === 'function') {
-        handleChakraScrollProgression(progress);
-      } else if (typeof updateChakraLaserLines === 'function') {
-        updateChakraLaserLines();
-      }
-    }
-  }
-
   function setupInteraction() {
+    // 1. Scroll da Página sincronizado com a rotação dos 8 cards
     window.addEventListener('scroll', () => {
       if (isIntersecting) {
-        const progress = getPinScrollProgress();
-        updateUnifiedFlow(progress);
+        updateScrollTarget();
       }
     }, { passive: true });
 
+    // 2. Drag & Drop Manual (Mouse)
     container.addEventListener('mousedown', (e) => {
-      if (getPinScrollProgress() > 0.5) return; // Deixa os cliques nos chakras livres na fase 2
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
@@ -2443,9 +1803,8 @@ h1 strong, h2 strong {
       }
     });
 
-    // Touch
+    // 3. Touch Support
     container.addEventListener('touchstart', (e) => {
-      if (getPinScrollProgress() > 0.5) return;
       if (e.touches.length === 1) {
         isDragging = true;
         startX = e.touches[0].clientX;
@@ -2473,6 +1832,7 @@ h1 strong, h2 strong {
       isDragging = false;
     });
 
+    // 4. Resize
     window.addEventListener('resize', () => {
       if (!renderer || !camera) return;
       const w = container.clientWidth || window.innerWidth;
@@ -2482,14 +1842,14 @@ h1 strong, h2 strong {
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       createCards();
-      updateUnifiedFlow(getPinScrollProgress());
+      updateScrollTarget();
     });
 
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         isIntersecting = entry.isIntersecting;
         if (isIntersecting) {
-          updateUnifiedFlow(getPinScrollProgress());
+          updateScrollTarget();
         }
       });
     }, { threshold: 0.02 });
@@ -2502,802 +1862,6 @@ h1 strong, h2 strong {
 
   init();
 })();
-
-/**
- * ════════════════════════════════════════════════════════════════════
- * SEÇÃO 02: CYBER-CHAKRA LOGIC (THIAGO NASCIMENTO) - EXPANSÃO & LASERS
- * ════════════════════════════════════════════════════════════════════
- */
-const CHAKRA_SKILLS_DATA = [
-  {
-    id: "creative-dev",
-    name: "Creative Development",
-    category: "CREATIVE // 3D",
-    chakra: "Sahasrara (Coroa)",
-    tags: ["Three.js", "WebGL", "GLSL Shaders", "GSAP ScrollTrigger"],
-    color: "#c57cff",
-    chakraY: 15.40,
-    chakraX: 51.62,
-    side: "right",
-    cardY: 4,
-    cardX: 72,
-    summary: "3D WebGL, shaders de distorção líquida e narrativa cinemática interativa a 60 FPS.",
-    description: "A etapa onde ideias de design se tornam experiências tridimensionais navegáveis sem sacrificar a velocidade de carregamento em mobile.",
-    details: [
-      { label: "Domínio Principal", value: "Cenas WebGL, shaders customizados GLSL e física de inércia" },
-      { label: "Ferramentas", value: "Three.js, GSAP 3.12, Canvas 2D frame scrubbing, Web Audio API" },
-      { label: "Prova no Site", value: "Carrossel cilíndrico Jesper Landberg e transição galáctica contínua" }
-    ],
-    repo: "TM-SEMPRE-TECNOLOGIA/tm-site-lancamento"
-  },
-  {
-    id: "seo-geo",
-    name: "SEO & Generative Engine (GEO)",
-    category: "SEARCH // LLMs",
-    chakra: "Ajna (Terceiro Olho)",
-    tags: ["JSON-LD", "GEO", "OpenGraph", "Core Web Vitals"],
-    color: "#5197f7",
-    chakraY: 19.67,
-    chakraX: 51.43,
-    side: "left",
-    cardY: 10,
-    cardX: 4,
-    summary: "Otimização técnica para busca orgânica do Google e robôs de IA (Perplexity/ChatGPT).",
-    description: "Estruturação semântica de ponta, tags Schema.org profundas e geração de llms.txt para indexação precisa por agentes de IA.",
-    details: [
-      { label: "Domínio Principal", value: "Dados estruturados, Schema.org e performance Lighthouse 100" },
-      { label: "Ferramentas", value: "Lighthouse, Schema Markup Validator, OpenGraph Card Engine" },
-      { label: "Impacto Prático", value: "Indexação imediata de entidades no ecossistema Google e Perplexity" }
-    ],
-    repo: "TM-SEMPRE-TECNOLOGIA/tm-seo-geo-engine"
-  },
-  {
-    id: "interface-design",
-    name: "Interface Design & UX",
-    category: "DESIGN // TOKENS",
-    chakra: "Vishuddha (Garganta)",
-    tags: ["Design Systems", "Figma", "Micro-interações", "Dark Mode OLED"],
-    color: "#14b8a6",
-    chakraY: 24.60,
-    chakraX: 51.62,
-    side: "right",
-    cardY: 19,
-    cardX: 72,
-    summary: "Identidade visual sólida, contraste editorial (Bloomberg/FT) e hierarquia precisa.",
-    description: "Eliminação total de 'cardzinhos genéricos'. Construção de cockpits monolíticos, tipografia de alto impacto e estética industrial premium.",
-    details: [
-      { label: "Domínio Principal", value: "Layouts densos, paletas calibradas HSL, tipografia JetBrains Mono & Outfit" },
-      { label: "Ferramentas", value: "Figma, CSS Variables, Tokens Primitivos & Semânticos" },
-      { label: "Prova em Produção", value: "Console Monolítico da Central TM e Cockpit Caderno de Leads" }
-    ],
-    repo: "TM-SEMPRE-TECNOLOGIA/central-tm"
-  },
-  {
-    id: "fullstack-arch",
-    name: "Fullstack Architecture",
-    category: "ARCHITECTURE // REACT",
-    chakra: "Anahata (Coração)",
-    tags: ["Next.js 15", "React Server Components", "TypeScript", "Tailwind CSS"],
-    color: "#68e468",
-    chakraY: 31.01,
-    chakraX: 51.43,
-    side: "left",
-    cardY: 29,
-    cardX: 4,
-    summary: "Aplicações corporativas escaláveis com SSR em edge e rotas otimizadas.",
-    description: "Engenharia de software moderna com TypeScript estrito, arquitetura de componentes desacoplados e renderização ultra-rápida.",
-    details: [
-      { label: "Domínio Principal", value: "React 19 / Next.js 15 App Router, Server Actions e Edge Runtime" },
-      { label: "Ferramentas", value: "TypeScript, Tailwind CSS, Zustand, TanStack Query" },
-      { label: "Prova em Produção", value: "Dashboard Eleitoral Adir Gentil 2211 com 139 municípios vetoriais" }
-    ],
-    repo: "TM-SEMPRE-TECNOLOGIA/dashboard-adir-2211"
-  },
-  {
-    id: "python-data",
-    name: "Python & Data Engineering",
-    category: "DATA // BACKEND",
-    chakra: "Manipura (Plexo Solar)",
-    tags: ["FastAPI", "Python", "Pandas", "Pipelines ETL"],
-    color: "#ffe040",
-    chakraY: 35.78,
-    chakraX: 51.43,
-    side: "right",
-    cardY: 38,
-    cardX: 72,
-    summary: "Automação de dados complexos, apuração estatística e microsserviços ágeis.",
-    description: "Construção de pipelines de dados que transformam tarefas de dias em execuções automáticas de poucos minutos (+85% de ganho).",
-    details: [
-      { label: "Domínio Principal", value: "APIs assíncronas, manipulação de dados em massa e scripts de telemetria" },
-      { label: "Ferramentas", value: "Python 3.12, FastAPI, Pandas, OpenPyXL, SQLite/PostgreSQL" },
-      { label: "Ganho Comprovado", value: "+85% de redução de tempo em processamento e relatórios" }
-    ],
-    repo: "TM-SEMPRE-TECNOLOGIA/tmlink-core"
-  },
-  {
-    id: "agentic-ai",
-    name: "Agentic AI & Automação",
-    category: "AI // AGENTS",
-    chakra: "Svadhisthana (Sacro)",
-    tags: ["Multi-Agents", "Gemini 3.8", "Claude Sonnet", "Engenharia de Prompts"],
-    color: "#f3651b",
-    chakraY: 38.58,
-    chakraX: 51.43,
-    side: "left",
-    cardY: 48,
-    cardX: 4,
-    summary: "Orquestração de agentes autônomos e fluxos operacionais inteligentes.",
-    description: "Desenvolvimento e adaptação de skills cognitivas, ferramentas MCP e pipelines automatizados de desenvolvimento guiado por IA.",
-    details: [
-      { label: "Domínio Principal", value: "Pipelines multi-agente, automação de testes E2E e geração procedural" },
-      { label: "Ferramentas", value: "Antigravity Superpowers, Model Context Protocol (MCP), Python SDK" }
-    ],
-    repo: "TM-SEMPRE-TECNOLOGIA/caderno-leads-crm"
-  },
-  {
-    id: "cloud-infra",
-    name: "Infra, Cloud & Resiliência",
-    category: "DEVOPS // CLOUD",
-    chakra: "Muladhara (Raiz)",
-    tags: ["Docker", "Vercel", "Cloudflare", "HTTP Range Streaming"],
-    color: "#d61d23",
-    chakraY: 42.36,
-    chakraX: 51.43,
-    side: "right",
-    cardY: 58,
-    cardX: 72,
-    summary: "A base sólida que garante disponibilidade contínua e latência zero em produção.",
-    description: "Servidores configurados com suporte a streaming de vídeo HTTP Range, deploys atômicos com rollback instantâneo e CDN global.",
-    details: [
-      { label: "Domínio Principal", value: "Arquitetura serverless, roteamento HTTP Range, segurança e zero-downtime" },
-      { label: "Ferramentas", value: "Vercel CLI, Cloudflare Edge, Git Flow, Nginx/Python Range servers" }
-    ],
-    repo: "TM-SEMPRE-TECNOLOGIA/infra-core"
-  }
-];
-
-let currentActiveChakraIdx = -1;
-let currentActiveChakraId = null;
-let manualOverrideActive = false;
-let lastScrollProgressForChakra = 0;
-
-let isCalibrating = false;
-let activeDraggingNode = null;
-let activeDraggingChakraData = null;
-
-function buildChakraSection() {
-  const content = document.getElementById('chakra-stage-content');
-  const figure = document.getElementById('chakra-avatar-figure') || content;
-  const svg = document.getElementById('chakra-laser-svg');
-  if (!content || !svg) return;
-
-  // Carrega coordenadas salvas no localStorage (se existirem)
-  loadSavedCalibratedCoords();
-
-  CHAKRA_SKILLS_DATA.forEach((s, idx) => {
-    // 1. Hotspot acoplado diretamente na anatomia do avatar
-    const node = document.createElement('div');
-    node.className = 'chakra-node';
-    node.id = `chakra-node-${s.id}`;
-    node.setAttribute('data-id', s.id);
-    node.setAttribute('data-cal-label', s.chakra.split(' ')[0]);
-    node.style.color = s.color;
-    node.style.top = `${s.chakraY}%`;
-    node.style.left = `${s.chakraX || 50}%`;
-    node.innerHTML = `
-      <div class="chakra-pulse"></div>
-      <div class="chakra-core"></div>
-    `;
-    node.onclick = (e) => {
-      e.stopPropagation();
-      if (isCalibrating) return;
-      toggleChakraCard(s.id);
-    };
-    figure.appendChild(node);
-
-    // 2. Linha Laser Sólida (única e conectada apenas quando ativa)
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.id = `chakra-laser-${s.id}`;
-    path.setAttribute('class', 'laser-beam');
-    path.setAttribute('stroke', s.color);
-    svg.appendChild(path);
-
-    // 3. Card Lateral com Pino de Ancoragem de Laser
-    const card = document.createElement('div');
-    card.className = 'skill-chakra-card';
-    card.id = `chakra-card-${s.id}`;
-    card.style.setProperty('--card-accent', s.color);
-    card.style.setProperty('--card-glow', `${s.color}66`);
-    card.style.top = `${s.cardY}%`;
-    card.style.left = `${s.cardX}%`;
-
-    // Pino de luz que recebe o laser com exatidão milimétrica
-    const anchor = document.createElement('div');
-    anchor.className = 'card-laser-anchor';
-    anchor.style.position = 'absolute';
-    anchor.style.top = '24px';
-    if (s.side === 'right') {
-      anchor.style.left = '-6px';
-    } else {
-      anchor.style.right = '-6px';
-    }
-    anchor.style.width = '10px';
-    anchor.style.height = '10px';
-    anchor.style.borderRadius = '50%';
-    anchor.style.backgroundColor = s.color;
-    anchor.style.boxShadow = `0 0 12px ${s.color}, 0 0 20px ${s.color}`;
-    anchor.style.zIndex = '5';
-    anchor.style.pointerEvents = 'none';
-    card.appendChild(anchor);
-
-    let tagsHtml = s.tags.map(t => `<span class="skill-pill">${t}</span>`).join('');
-    let specsHtml = s.details.map(d => `
-      <div class="expanded-spec-item">
-        <strong>${d.label}</strong>
-        ${d.value}
-      </div>
-    `).join('');
-
-    card.innerHTML = `
-      <div class="skill-card-top">
-        <span class="skill-card-category">${s.category}</span>
-        <span class="skill-card-chakra">${s.chakra}</span>
-      </div>
-      <div class="skill-card-title">
-        <span>${s.name}</span>
-        <span class="expand-indicator">+</span>
-      </div>
-      <div class="skill-card-summary">${s.summary}</div>
-      <div class="skill-tags-row">${tagsHtml}</div>
-      
-      <div class="skill-card-expand">
-        <p class="expanded-desc">${s.description}</p>
-        <div class="expanded-spec-list">${specsHtml}</div>
-        <a href="https://github.com/${s.repo}" target="_blank" class="card-github-link">
-          <span>Repositório no GitHub</span>
-          <span>↗</span>
-        </a>
-      </div>
-    `;
-    card.onclick = (e) => {
-      if (e.target.closest('a')) return;
-      e.stopPropagation();
-      toggleChakraCard(s.id);
-    };
-    content.appendChild(card);
-  });
-
-  setTimeout(updateChakraLaserLines, 250);
-}
-
-function updateChakraLaserLines() {
-  const content = document.getElementById('chakra-stage-content');
-  const svg = document.getElementById('chakra-laser-svg');
-  if (!content || !svg) return;
-  const contentRect = content.getBoundingClientRect();
-
-  // Sincroniza dimensões e viewBox do SVG
-  svg.setAttribute('viewBox', `0 0 ${contentRect.width} ${contentRect.height}`);
-
-  CHAKRA_SKILLS_DATA.forEach(s => {
-    const nodeEl = document.getElementById(`chakra-node-${s.id}`);
-    const cardEl = document.getElementById(`chakra-card-${s.id}`);
-    const laserEl = document.getElementById(`chakra-laser-${s.id}`);
-
-    if (!nodeEl || !cardEl || !laserEl) return;
-
-    const nodeRect = nodeEl.getBoundingClientRect();
-    const anchorEl = cardEl.querySelector('.card-laser-anchor');
-    const anchorRect = anchorEl ? anchorEl.getBoundingClientRect() : cardEl.getBoundingClientRect();
-
-    // Centro do nó do chakra
-    const x1 = nodeRect.left + (nodeRect.width / 2) - contentRect.left;
-    const y1 = nodeRect.top + (nodeRect.height / 2) - contentRect.top;
-
-    // Centro exato do pino de luz de ancoragem no card
-    const x2 = anchorRect.left + (anchorRect.width / 2) - contentRect.left;
-    const y2 = anchorRect.top + (anchorRect.height / 2) - contentRect.top;
-
-    // Traçado fluido com saída suave na horizontal
-    const dir = (x2 >= x1) ? 1 : -1;
-    const cpX1 = x1 + (dir * Math.abs(x2 - x1) * 0.45);
-    const cpX2 = x2 - (dir * Math.abs(x2 - x1) * 0.25);
-
-    const d = `M ${x1} ${y1} C ${cpX1} ${y1}, ${cpX2} ${y2}, ${x2} ${y2}`;
-    laserEl.setAttribute('d', d);
-  });
-}
-
-function activateChakraById(id, shouldToggle = false) {
-  const card = document.getElementById(`chakra-card-${id}`);
-  const node = document.getElementById(`chakra-node-${id}`);
-  const laser = document.getElementById(`chakra-laser-${id}`);
-  if (!card || !node || !laser) return;
-
-  const isAlreadyActive = card.classList.contains('active');
-  if (shouldToggle && isAlreadyActive) {
-    clearActiveChakra();
-    return;
-  }
-
-  // Desativa os outros para manter foco exclusivo
-  document.querySelectorAll('.skill-chakra-card').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.chakra-node').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.laser-beam').forEach(l => l.classList.remove('active'));
-
-  card.classList.add('active');
-  node.classList.add('active');
-  laser.classList.add('active');
-  currentActiveChakraId = id;
-
-  const idx = CHAKRA_SKILLS_DATA.findIndex(s => s.id === id);
-  if (idx !== -1) {
-    currentActiveChakraIdx = idx;
-    const dragHintText = document.getElementById('stage-drag-hint-text');
-    if (dragHintText) {
-      dragHintText.textContent = `[CHAKRA 0${idx + 1}/07] ${CHAKRA_SKILLS_DATA[idx].chakra} // ${CHAKRA_SKILLS_DATA[idx].name} (Role a página para navegar)`;
-    }
-    const progressThumb = document.getElementById('carousel-progress-fill');
-    if (progressThumb) {
-      progressThumb.style.width = `${((idx + 1) / 7) * 100}%`;
-    }
-    highlightCalibratorTableRow(id);
-  }
-
-  updateChakraLaserLines();
-}
-
-function activateChakraByIndex(index) {
-  if (index >= 0 && index < CHAKRA_SKILLS_DATA.length) {
-    activateChakraById(CHAKRA_SKILLS_DATA[index].id, false);
-  }
-}
-
-function clearActiveChakra() {
-  document.querySelectorAll('.skill-chakra-card').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.chakra-node').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.laser-beam').forEach(l => l.classList.remove('active'));
-  currentActiveChakraIdx = -1;
-  currentActiveChakraId = null;
-}
-
-function toggleChakraCard(id) {
-  manualOverrideActive = true;
-  activateChakraById(id, true);
-}
-
-function handleChakraScrollProgression(progress) {
-  // Se o scroll foi movido, cancela override manual para retomar a navegação contínua
-  if (Math.abs(progress - lastScrollProgressForChakra) > 0.005) {
-    manualOverrideActive = false;
-    lastScrollProgressForChakra = progress;
-  }
-
-  if (manualOverrideActive) return;
-
-  // Fase 3: progress de 0.68 a 1.00 (7 chakras mapeados em faixas uniformes)
-  const p3 = Math.max(0, Math.min(0.999, (progress - 0.68) / 0.32));
-  const chakraCount = CHAKRA_SKILLS_DATA.length;
-  const targetIdx = Math.min(chakraCount - 1, Math.floor(p3 * chakraCount));
-
-  if (targetIdx !== currentActiveChakraIdx) {
-    activateChakraByIndex(targetIdx);
-  }
-}
-
-// ── MOTOR DO MODO CALIBRADOR (AJUSTE FINO VISUAL & ARRASTE) ──
-function initChakraCalibrator() {
-  const toggleBtn = document.getElementById('btn-toggle-calibrator');
-  const panel = document.getElementById('chakra-calibrator-panel');
-  const closeBtn = document.getElementById('btn-close-calibrator');
-  const copyBtn = document.getElementById('btn-copy-calibrator');
-  const resetBtn = document.getElementById('btn-reset-calibrator');
-  const figure = document.getElementById('chakra-avatar-figure');
-  const avatarImg = document.getElementById('chakra-avatar-img');
-  const lens = document.getElementById('chakra-zoom-lens');
-  const tooltip = document.getElementById('cal-node-tooltip');
-  const crossH = document.getElementById('cal-crosshair-h');
-  const crossV = document.getElementById('cal-crosshair-v');
-  const container = document.getElementById('chakra-experience-layer');
-
-  if (!toggleBtn || !panel || !figure) return;
-
-  populateCalibratorTable();
-
-  toggleBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    setCalibratorActive(!isCalibrating);
-  });
-
-  if (closeBtn) {
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      setCalibratorActive(false);
-    });
-  }
-
-  if (copyBtn) {
-    copyBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      copyCalibratedCoordinates();
-    });
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      resetCalibratedCoordinates();
-    });
-  }
-
-  function setCalibratorActive(active) {
-    isCalibrating = active;
-    if (isCalibrating) {
-      panel.style.display = 'block';
-      toggleBtn.classList.add('active');
-      const label = toggleBtn.querySelector('.cal-btn-label');
-      if (label) label.textContent = '✕ FECHAR CALIBRADOR';
-      if (container) container.classList.add('calibrator-active');
-
-      // Trava paralaxe do avatar em (0, 0) para calibração sem flutuação
-      if (avatarImg) gsap.set(avatarImg, { x: 0, y: 0 });
-      if (lens) lens.style.display = 'none';
-
-      if (currentActiveChakraIdx === -1) {
-        activateChakraByIndex(0);
-      }
-      showCalibratorToast("Modo Calibrador ATIVO: Arraste os nós coloridos na foto.");
-    } else {
-      panel.style.display = 'none';
-      toggleBtn.classList.remove('active');
-      const label = toggleBtn.querySelector('.cal-btn-label');
-      if (label) label.textContent = '🎯 MODO CALIBRADOR (AJUSTAR PONTOS)';
-      if (container) container.classList.remove('calibrator-active');
-      if (lens) lens.style.display = '';
-      if (tooltip) tooltip.style.display = 'none';
-      if (crossH) crossH.style.display = 'none';
-      if (crossV) crossV.style.display = 'none';
-    }
-    updateChakraLaserLines();
-  }
-
-  // Registra eventos de arraste nos 7 nós anatômicos
-  CHAKRA_SKILLS_DATA.forEach(s => {
-    const node = document.getElementById(`chakra-node-${s.id}`);
-    if (!node) return;
-
-    node.addEventListener('mousedown', (e) => {
-      if (!isCalibrating) return;
-      e.preventDefault();
-      e.stopPropagation();
-      startDragging(node, s, e.clientX, e.clientY);
-    });
-
-    node.addEventListener('touchstart', (e) => {
-      if (!isCalibrating) return;
-      if (e.touches.length === 1) {
-        e.stopPropagation();
-        startDragging(node, s, e.touches[0].clientX, e.touches[0].clientY);
-      }
-    }, { passive: false });
-  });
-
-  function startDragging(node, s, clientX, clientY) {
-    activeDraggingNode = node;
-    activeDraggingChakraData = s;
-    node.classList.add('dragging');
-    activateChakraById(s.id, false);
-    updateDragGuides(clientX, clientY);
-  }
-
-  function updateDragGuides(clientX, clientY) {
-    if (!figure || !activeDraggingChakraData) return;
-    const figRect = figure.getBoundingClientRect();
-
-    let x = clientX - figRect.left;
-    let y = clientY - figRect.top;
-    let xPct = Math.max(0, Math.min(100, (x / figRect.width) * 100));
-    let yPct = Math.max(0, Math.min(100, (y / figRect.height) * 100));
-
-    // Atualiza elemento visual do nó
-    if (activeDraggingNode) {
-      activeDraggingNode.style.left = `${xPct.toFixed(2)}%`;
-      activeDraggingNode.style.top = `${yPct.toFixed(2)}%`;
-    }
-
-    // Atualiza dados na memória
-    activeDraggingChakraData.chakraX = Number(xPct.toFixed(2));
-    activeDraggingChakraData.chakraY = Number(yPct.toFixed(2));
-
-    // Linhas guias e retículo
-    if (crossH && crossV && tooltip) {
-      crossH.style.display = 'block';
-      crossH.style.top = `${yPct.toFixed(2)}%`;
-      crossV.style.display = 'block';
-      crossV.style.left = `${xPct.toFixed(2)}%`;
-
-      tooltip.style.display = 'block';
-      tooltip.style.left = `${xPct.toFixed(2)}%`;
-      tooltip.style.top = `${yPct.toFixed(2)}%`;
-      tooltip.innerHTML = `<strong>${activeDraggingChakraData.name}</strong><br>X: ${xPct.toFixed(2)}% | Y: ${yPct.toFixed(2)}%`;
-    }
-
-    // Atualiza linha na tabela do HUD
-    const cellVal = document.getElementById(`cal-coord-${activeDraggingChakraData.id}`);
-    if (cellVal) {
-      cellVal.textContent = `X: ${xPct.toFixed(2)}% | Y: ${yPct.toFixed(2)}%`;
-    }
-
-    // Recalcula linha de laser em tempo real
-    updateChakraLaserLines();
-  }
-
-  window.addEventListener('mousemove', (e) => {
-    if (!activeDraggingNode) return;
-    updateDragGuides(e.clientX, e.clientY);
-  });
-
-  window.addEventListener('touchmove', (e) => {
-    if (!activeDraggingNode || e.touches.length !== 1) return;
-    updateDragGuides(e.touches[0].clientX, e.touches[0].clientY);
-  }, { passive: false });
-
-  function stopDragging() {
-    if (activeDraggingNode) {
-      activeDraggingNode.classList.remove('dragging');
-      activeDraggingNode = null;
-      activeDraggingChakraData = null;
-      if (tooltip) tooltip.style.display = 'none';
-      if (crossH) crossH.style.display = 'none';
-      if (crossV) crossV.style.display = 'none';
-      saveCalibratedCoords();
-      updateChakraLaserLines();
-    }
-  }
-
-  window.addEventListener('mouseup', stopDragging);
-  window.addEventListener('touchend', stopDragging);
-}
-
-function populateCalibratorTable() {
-  const tbody = document.getElementById('cal-table-body');
-  if (!tbody) return;
-  tbody.innerHTML = '';
-
-  CHAKRA_SKILLS_DATA.forEach(s => {
-    const tr = document.createElement('tr');
-    tr.id = `cal-row-${s.id}`;
-    tr.innerHTML = `
-      <td>
-        <div class="cal-chakra-cell">
-          <span class="cal-color-pip" style="background-color: ${s.color}; box-shadow: 0 0 6px ${s.color};"></span>
-          <span>${s.chakra.split(' ')[0]}</span>
-        </div>
-      </td>
-      <td colspan="2">
-        <span class="cal-coord-val" id="cal-coord-${s.id}">X: ${s.chakraX.toFixed(2)}% | Y: ${s.chakraY.toFixed(2)}%</span>
-      </td>
-      <td>
-        <button class="cal-btn-row-focus" type="button" onclick="activateChakraById('${s.id}')">Foco</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-function highlightCalibratorTableRow(id) {
-  document.querySelectorAll('.cal-table tr').forEach(r => r.classList.remove('active-row'));
-  const row = document.getElementById(`cal-row-${id}`);
-  if (row) row.classList.add('active-row');
-}
-
-function saveCalibratedCoords() {
-  try {
-    const coords = CHAKRA_SKILLS_DATA.map(s => ({ id: s.id, chakraX: s.chakraX, chakraY: s.chakraY }));
-    localStorage.setItem('tm_chakra_calibrated_v3', JSON.stringify(coords));
-  } catch (err) {}
-}
-
-function loadSavedCalibratedCoords() {
-  try {
-    const saved = localStorage.getItem('tm_chakra_calibrated_v3');
-    if (!saved) return;
-    const parsed = JSON.parse(saved);
-    if (!Array.isArray(parsed)) return;
-
-    parsed.forEach(p => {
-      const item = CHAKRA_SKILLS_DATA.find(s => s.id === p.id);
-      if (item) {
-        if (typeof p.chakraX === 'number') item.chakraX = p.chakraX;
-        if (typeof p.chakraY === 'number') item.chakraY = p.chakraY;
-      }
-    });
-  } catch (err) {}
-}
-
-function resetCalibratedCoordinates() {
-  try {
-    localStorage.removeItem('tm_chakra_calibrated_v3');
-    localStorage.removeItem('tm_chakra_calibrated_v2');
-    localStorage.removeItem('tm_chakra_calibrated_v1');
-  } catch (err) {}
-
-  const defaults = {
-    "creative-dev": { chakraX: 51.62, chakraY: 15.40 },
-    "seo-geo": { chakraX: 51.43, chakraY: 19.67 },
-    "interface-design": { chakraX: 51.62, chakraY: 24.60 },
-    "fullstack-arch": { chakraX: 51.43, chakraY: 31.01 },
-    "python-data": { chakraX: 51.43, chakraY: 35.78 },
-    "agentic-ai": { chakraX: 51.43, chakraY: 38.58 },
-    "cloud-infra": { chakraX: 51.43, chakraY: 42.36 }
-  };
-
-  CHAKRA_SKILLS_DATA.forEach(s => {
-    if (defaults[s.id]) {
-      s.chakraX = defaults[s.id].chakraX;
-      s.chakraY = defaults[s.id].chakraY;
-      const node = document.getElementById(`chakra-node-${s.id}`);
-      if (node) {
-        node.style.left = `${s.chakraX}%`;
-        node.style.top = `${s.chakraY}%`;
-      }
-    }
-  });
-
-  populateCalibratorTable();
-  updateChakraLaserLines();
-  showCalibratorToast("Valores resetados para o padrão inicial.");
-}
-
-function copyCalibratedCoordinates() {
-  const data = CHAKRA_SKILLS_DATA.map(s => ({
-    id: s.id,
-    chakra: s.chakra,
-    name: s.name,
-    chakraX: Number(s.chakraX.toFixed(2)),
-    chakraY: Number(s.chakraY.toFixed(2))
-  }));
-
-  const jsonFormatted = JSON.stringify(data, null, 2);
-
-  let output = `// COORDENADAS CALIBRADAS DOS 7 CHAKRAS:\n`;
-  CHAKRA_SKILLS_DATA.forEach(s => {
-    output += `// ${s.chakra} (${s.name}): chakraX: ${s.chakraX.toFixed(2)}, chakraY: ${s.chakraY.toFixed(2)}\n`;
-  });
-  output += `\n${jsonFormatted}`;
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(output).then(() => {
-      showCalibratorToast("📋 Coordenadas copiadas! Cole no chat.");
-    }).catch(() => fallbackCopy(output));
-  } else {
-    fallbackCopy(output);
-  }
-}
-
-function fallbackCopy(text) {
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try {
-    document.execCommand('copy');
-    showCalibratorToast("📋 Coordenadas copiadas! Cole no chat.");
-  } catch (err) {
-    prompt("Copie as coordenadas abaixo:", text);
-  }
-  document.body.removeChild(ta);
-}
-
-let toastTimer = null;
-function showCalibratorToast(msg) {
-  const toast = document.getElementById('cal-toast');
-  if (!toast) return;
-  toast.textContent = msg;
-  toast.style.display = 'block';
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => {
-    toast.style.display = 'none';
-  }, 3500);
-}
-
-// Mouse Spotlight & Parallax
-window.addEventListener('mousemove', (e) => {
-  const spot = document.getElementById('chakra-mouse-spotlight');
-  if (spot) {
-    gsap.to(spot, { x: e.clientX, y: e.clientY, duration: 0.2, ease: "power2.out" });
-  }
-
-  // Não move o avatar se estiver no Modo Calibrador, garantindo máxima estabilidade
-  if (isCalibrating) return;
-
-  const avatar = document.getElementById('chakra-avatar-img');
-  if (avatar) {
-    const dx = (e.clientX - window.innerWidth / 2) * 0.01;
-    const dy = (e.clientY - window.innerHeight / 2) * 0.01;
-    gsap.to(avatar, { x: dx, y: dy, duration: 0.4, ease: "power2.out" });
-  }
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-  buildChakraSection();
-  initChakraCalibrator();
-
-  const avatarImg = document.getElementById('chakra-avatar-img');
-  if (avatarImg) {
-    if (avatarImg.complete) {
-      setTimeout(updateChakraLaserLines, 100);
-    } else {
-      avatarImg.addEventListener('load', () => {
-        setTimeout(updateChakraLaserLines, 50);
-      });
-    }
-  }
-
-  initCyberScopeLoupe();
-
-// LENTE DE AUMENTO HOLOGRÁFICA (CYBER-SCOPE LOUPE) NO AVATAR
-function initCyberScopeLoupe() {
-  const figure = document.getElementById('chakra-avatar-figure');
-  const img = document.getElementById('chakra-avatar-img');
-  const lens = document.getElementById('chakra-zoom-lens');
-  if (!figure || !img || !lens) return;
-
-  const zoomFactor = 2.45;
-  let isInside = false;
-
-  function updateLoupe(e) {
-    if (isCalibrating) return;
-    const rect = img.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    // Verifica se o cursor está dentro da figura do avatar com margem
-    if (x >= -10 && x <= rect.width + 10 && y >= -10 && y <= rect.height + 10) {
-      if (!isInside) {
-        isInside = true;
-        lens.style.opacity = '1';
-      }
-
-      // Converte coordenadas relativas para a figure
-      const figRect = figure.getBoundingClientRect();
-      const lensX = e.clientX - figRect.left;
-      const lensY = e.clientY - figRect.top;
-
-      lens.style.transform = `translate(${lensX}px, ${lensY}px) scale(1)`;
-
-      // Mapeia porcentagens exatas de 0% a 100%
-      const clampedX = Math.max(0, Math.min(rect.width, x));
-      const clampedY = Math.max(0, Math.min(rect.height, y));
-      const pctX = (clampedX / rect.width) * 100;
-      const pctY = (clampedY / rect.height) * 100;
-
-      const bgW = rect.width * zoomFactor;
-      const bgH = rect.height * zoomFactor;
-
-      lens.style.backgroundSize = `${bgW}px ${bgH}px`;
-      lens.style.backgroundPosition = `${pctX}% ${pctY}%`;
-    } else {
-      if (isInside) {
-        isInside = false;
-        lens.style.opacity = '0';
-        lens.style.transform = `scale(0.6)`;
-      }
-    }
-  }
-
-  window.addEventListener('mousemove', updateLoupe, { passive: true });
-
-  figure.addEventListener('mouseleave', () => {
-    isInside = false;
-    lens.style.opacity = '0';
-    lens.style.transform = `scale(0.6)`;
-  });
-}
-
-});
 
 /**
  * ════════════════════════════════════════════════════════════════════
@@ -3408,6 +1972,237 @@ function toggleGlobalSound(e) {
   }, { threshold: 0.15 });
 
   observer.observe(vid);
+})();
+
+/**
+ * ════════════════════════════════════════════════════════════════════
+ * SEÇÃO 02: BACKGROUND BOXES ISOMÉTRICO (STACK & ENGENHARIA TM)
+ * - 16 Logos oficiais com fotos reais em alta resolução (assets/logos/)
+ * - Grade isométrica 3D com retículos '+' nos vértices pares
+ * - Telemetria em Dock Fixo no rodapé da seção (zero saltos/quebras)
+ * - Síntese de áudio Sci-Fi sincronizada com globalSoundActive
+ * - Interatividade via Event Delegation a 60 FPS
+ * - Pulso autônomo suave com IntersectionObserver para poupar CPU
+ * ════════════════════════════════════════════════════════════════════
+ */
+(function initStackBackgroundBoxes() {
+  const matrixContainer = document.getElementById('boxes-matrix-core');
+  const sectionEl = document.getElementById('secao-stack-boxes');
+  if (!matrixContainer || !sectionEl) return;
+
+  const STACK_DATA = [
+    { id: "claude", name: "Claude 3.5 Sonnet", cat: "IA & AGENTES", file: "claude.png", role: "Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.", color: "#d97706" },
+    { id: "gpt", name: "ChatGPT / GPT-4o", cat: "IA & COGNIÇÃO", file: "gpt.png", role: "Modelagem generativa, síntese e transformações de dados em linguagem natural.", color: "#10b981" },
+    { id: "hermes", name: "Nous Hermes", cat: "IA OPEN-WEIGHTS", file: "hermes.png", role: "Function calling avançado, agentes locais e autonomia de raciocínio de código aberto.", color: "#f97316" },
+    { id: "gemini", name: "Google Gemini 2.5", cat: "IA MULTIMODAL", file: "gemini.png", role: "Janela de contexto ultra-longa, análise multimodal e síntese estruturada.", color: "#38bdf8" },
+    { id: "n8n", name: "n8n Workflows", cat: "AUTOMAÇÃO & PIPELINES", file: "n8n.png", role: "Orquestração visual de webhooks, integrações de APIs e fluxos autônomos sem atrito.", color: "#ea580c" },
+    { id: "supabase", name: "Supabase BaaS", cat: "BANCO & REALTIME", file: "supabase.png", role: "PostgreSQL gerenciado, Row Level Security, Edge Functions e sincronização em tempo real.", color: "#3ecf8e" },
+    { id: "gsap", name: "GreenSock GSAP", cat: "MOTION & TIMELINES", file: "gsap.png", role: "Animações cinemáticas fluidas a 60 FPS, ScrollTrigger e transições de interface de alta precisão.", color: "#84cc16" },
+    { id: "nextjs", name: "Next.js 15", cat: "FRONTEND // ARCHITECTURE", file: "nextjs.png", role: "React Server Components, App Router, SSR em Edge e performance máxima na web.", color: "#ffffff" },
+    { id: "react", name: "React 19", cat: "UI REATIVA", file: "react.png", role: "Arquitetura modular de componentes, Server Actions e reatividade atômica.", color: "#06b6d4" },
+    { id: "typescript", name: "TypeScript 5", cat: "TIPAGEM & ESCALABILIDADE", file: "typescript.png", role: "Segurança estrita de tipos, contratos robustos entre cliente e servidor e zero bugs em runtime.", color: "#3b82f6" },
+    { id: "python", name: "Python 3.12", cat: "DATA // BACKEND", file: "python.png", role: "Engenharia de dados, crawlers analíticos, scripts de telemetria e microsserviços.", color: "#fbbf24" },
+    { id: "fastapi", name: "FastAPI", cat: "APIS ASSÍNCRONAS", file: "fastapi.png", role: "Endpoints REST assíncronos ultrarrápidos, serialização Pydantic e latência mínima.", color: "#009688" },
+    { id: "threejs", name: "Three.js / WebGL", cat: "CREATIVE 3D", file: "threejs.png", role: "Renderização 3D isométrica, shaders customizados GLSL e palcos navegáveis.", color: "#f43f5e" },
+    { id: "tailwind", name: "Tailwind CSS", cat: "DESIGN SYSTEMS", file: "tailwind.png", role: "Tokens utilitários de design, layouts responsivos ágeis e estética industrial calibrada.", color: "#0ea5e9" },
+    { id: "docker", name: "Docker & Containers", cat: "DEVOPS // INFRA", file: "docker.png", role: "Isolamento de ambientes, esteiras de deploy reproduzíveis e portabilidade total.", color: "#2563eb" },
+    { id: "postgresql", name: "PostgreSQL", cat: "DADOS RELACIONAIS", file: "postgresql.png", role: "Armazenamento confiável ACID, apuração eleitoral em tempo real e modelagem relacional estrita.", color: "#336791" }
+  ];
+
+  const WARM_GLOW_COLORS = [
+    "rgba(217, 101, 38, 0.85)",
+    "rgba(249, 115, 22, 0.85)",
+    "rgba(245, 158, 11, 0.85)",
+    "rgba(251, 191, 36, 0.85)",
+    "rgba(234, 88, 12, 0.85)",
+    "rgba(239, 68, 68, 0.85)",
+    "rgba(10, 252, 219, 0.85)"
+  ];
+
+  let clickAudioCtx = null;
+  function playSciFiClick(freq = 640) {
+    if (typeof globalSoundActive !== 'undefined' && !globalSoundActive) return;
+    try {
+      if (!clickAudioCtx) {
+        clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (clickAudioCtx.state === 'suspended') {
+        clickAudioCtx.resume();
+      }
+      const osc = clickAudioCtx.createOscillator();
+      const gain = clickAudioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, clickAudioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(freq * 1.8, clickAudioCtx.currentTime + 0.035);
+
+      gain.gain.setValueAtTime(0.035, clickAudioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, clickAudioCtx.currentTime + 0.045);
+
+      osc.connect(gain);
+      gain.connect(clickAudioCtx.destination);
+
+      osc.start();
+      osc.stop(clickAudioCtx.currentTime + 0.05);
+    } catch (e) {}
+  }
+
+  const ROWS = 16;
+  const COLS = 22;
+  const TECH_MAP = {};
+  const PLACEMENTS = [
+    { r: 4, c: 6, idx: 0 },   // Claude
+    { r: 4, c: 10, idx: 1 },  // GPT
+    { r: 4, c: 14, idx: 2 },  // Hermes
+    { r: 6, c: 4, idx: 3 },   // Gemini
+    { r: 6, c: 8, idx: 4 },   // n8n
+    { r: 6, c: 12, idx: 5 },  // Supabase
+    { r: 6, c: 16, idx: 6 },  // GSAP
+    { r: 8, c: 5, idx: 7 },   // Next.js
+    { r: 8, c: 9, idx: 8 },   // React
+    { r: 8, c: 13, idx: 9 },  // TypeScript
+    { r: 8, c: 17, idx: 10 }, // Python
+    { r: 10, c: 6, idx: 11 }, // FastAPI
+    { r: 10, c: 10, idx: 12 },// Three.js
+    { r: 10, c: 14, idx: 13 },// Tailwind
+    { r: 12, c: 8, idx: 14 }, // Docker
+    { r: 12, c: 12, idx: 15 } // PostgreSQL
+  ];
+
+  PLACEMENTS.forEach(p => {
+    TECH_MAP[`${p.r}_${p.c}`] = STACK_DATA[p.idx];
+  });
+
+  const CROSS_SVG = `
+    <svg class="box-crosshair" viewBox="0 0 24 24" fill="none">
+      <path d="M12 6v12m6-6H6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+
+  for (let i = 0; i < ROWS; i++) {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'box-row';
+
+    for (let j = 0; j < COLS; j++) {
+      const cellEl = document.createElement('div');
+      cellEl.className = 'box-cell';
+      cellEl.setAttribute('data-row', i);
+      cellEl.setAttribute('data-col', j);
+
+      if (i % 2 === 0 && j % 2 === 0) {
+        cellEl.innerHTML += CROSS_SVG;
+      }
+
+      const tech = TECH_MAP[`${i}_${j}`];
+      if (tech) {
+        cellEl.classList.add('has-logo');
+        cellEl.setAttribute('data-tech-id', tech.id);
+        cellEl.innerHTML += `
+          <div class="box-logo-wrapper">
+            <img src="assets/logos/${tech.file}" alt="${tech.name}" class="box-logo-img" loading="lazy">
+          </div>
+        `;
+      }
+
+      rowEl.appendChild(cellEl);
+    }
+    matrixContainer.appendChild(rowEl);
+  }
+
+  const hudDock = document.getElementById('stack-hud-dock');
+  const dockIdle = document.getElementById('dock-idle');
+  const dockActive = document.getElementById('dock-active');
+  const dockLogoImg = document.getElementById('dock-logo-img');
+  const hudCat = document.getElementById('hud-cat');
+  const hudName = document.getElementById('hud-name');
+  const hudRole = document.getElementById('hud-role');
+
+  let dockIdleTimeout = null;
+
+  function activateCell(cell, isUserInteraction = true) {
+    if (!cell) return;
+    const techId = cell.getAttribute('data-tech-id');
+    const tech = STACK_DATA.find(t => t.id === techId);
+
+    const glowColor = tech ? tech.color : WARM_GLOW_COLORS[Math.floor(Math.random() * WARM_GLOW_COLORS.length)];
+    cell.style.setProperty('--cell-glow', glowColor);
+    cell.style.backgroundColor = glowColor;
+    cell.style.boxShadow = `0 0 32px ${glowColor}, inset 0 0 14px rgba(255,255,255,0.4)`;
+    cell.classList.add('active-glow');
+
+    if (isUserInteraction) {
+      playSciFiClick(tech ? 820 : 600 + Math.random() * 200);
+    }
+
+    if (tech && isUserInteraction && hudDock && dockIdle && dockActive) {
+      if (dockIdleTimeout) clearTimeout(dockIdleTimeout);
+
+      hudCat.textContent = tech.cat;
+      hudCat.style.color = tech.color;
+      hudName.textContent = tech.name;
+      hudRole.textContent = tech.role;
+      dockLogoImg.src = `assets/logos/${tech.file}`;
+      dockLogoImg.alt = tech.name;
+
+      hudDock.style.setProperty('--dock-border', tech.color);
+      hudDock.style.setProperty('--dock-glow', `${tech.color}44`);
+
+      dockIdle.style.display = 'none';
+      dockActive.style.display = 'flex';
+
+      dockIdleTimeout = setTimeout(() => {
+        dockIdle.style.display = 'flex';
+        dockActive.style.display = 'none';
+        hudDock.style.removeProperty('--dock-border');
+        hudDock.style.removeProperty('--dock-glow');
+      }, 4500);
+    }
+
+    setTimeout(() => {
+      cell.style.backgroundColor = 'transparent';
+      cell.style.boxShadow = 'none';
+      cell.classList.remove('active-glow');
+    }, 220);
+  }
+
+  matrixContainer.addEventListener('mouseover', (e) => {
+    const cell = e.target.closest('.box-cell');
+    if (cell) {
+      activateCell(cell, true);
+    }
+  });
+
+  matrixContainer.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    const cell = target?.closest('.box-cell');
+    if (cell) {
+      activateCell(cell, true);
+    }
+  }, { passive: true });
+
+  let pulseInterval = null;
+  const isSectionVisible = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (!pulseInterval) {
+          pulseInterval = setInterval(() => {
+            const allCells = matrixContainer.querySelectorAll('.box-cell');
+            if (allCells.length === 0) return;
+            const randomCell = allCells[Math.floor(Math.random() * allCells.length)];
+            activateCell(randomCell, false);
+          }, 850);
+        }
+      } else {
+        if (pulseInterval) {
+          clearInterval(pulseInterval);
+          pulseInterval = null;
+        }
+      }
+    });
+  }, { threshold: 0.1 });
+
+  isSectionVisible.observe(sectionEl);
 })();
 </script>
 </body>

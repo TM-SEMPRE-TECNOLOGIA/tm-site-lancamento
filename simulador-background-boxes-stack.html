@@ -271,51 +271,152 @@
     transform: scale(1.05);
   }
 
-  /* ── HUD TOOLTIP FLUTUANTE TECNOLÓGICO ── */
-  #stack-hud-tooltip {
-    position: fixed;
-    z-index: 120;
-    pointer-events: none;
-    background: rgba(8, 12, 19, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid var(--orange-tm);
-    border-radius: 8px;
-    padding: 12px 18px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95), 0 0 25px var(--orange-glow);
+  /* ── DOCK FIXO DE TELEMETRIA (LOCAL FIXO NA TELA // ZERO QUEBRAS) ── */
+  .stack-telemetry-dock {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 35;
+    width: min(720px, calc(100% - 40px));
+    min-height: 64px;
+    background: rgba(8, 12, 19, 0.94);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--dock-border, rgba(217, 101, 38, 0.45));
+    border-radius: 12px;
+    padding: 12px 20px;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.92), 0 0 25px var(--dock-glow, rgba(217, 101, 38, 0.15));
+    display: flex;
+    align-items: center;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    pointer-events: auto;
+  }
+
+  .dock-idle-state {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-family: 'JetBrains Mono', monospace;
-    opacity: 0;
-    transform: translate(-50%, -120%) scale(0.95);
-    transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    max-width: 320px;
+    font-size: 11px;
+    color: #94a3b8;
+    gap: 12px;
   }
-  #stack-hud-tooltip.visible {
-    opacity: 1;
-    transform: translate(-50%, -130%) scale(1);
+  .dock-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--orange-tm);
+    box-shadow: 0 0 10px var(--orange-tm);
+    animation: dockPulse 1.8s infinite;
+    flex-shrink: 0;
   }
-  .hud-badge-cat {
-    font-size: 9px;
-    letter-spacing: 1.5px;
+  @keyframes dockPulse {
+    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 14px var(--orange-tm); }
+  }
+  .dock-count-pill {
+    background: rgba(217, 101, 38, 0.12);
+    border: 1px solid rgba(217, 101, 38, 0.3);
     color: var(--orange-tm);
-    text-transform: uppercase;
+    font-size: 9.5px;
     font-weight: 700;
-    margin-bottom: 4px;
-    display: block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
   }
-  .hud-tech-name {
-    font-size: 14px;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 4px;
+
+  .dock-active-state {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: dockFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes dockFadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .dock-logo-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  }
+  .dock-logo-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .dock-info-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .dock-meta-row {
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-bottom: 2px;
+    flex-wrap: wrap;
   }
-  .hud-tech-role {
-    font-size: 11px;
+  .dock-cat-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .dock-tech-name {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .dock-status-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    background: rgba(34, 197, 94, 0.12);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #4ade80;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .dock-role-desc {
+    font-size: 11.5px;
     color: #cbd5e1;
-    line-height: 1.4;
+    line-height: 1.35;
     font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── RESPONSIVIDADE MOBILE & SIMULADOR ── */
+  @media (max-width: 768px) {
+    .stack-telemetry-dock {
+      bottom: 16px;
+      padding: 10px 14px;
+      min-height: 58px;
+      border-radius: 10px;
+    }
+    .dock-role-desc {
+      white-space: normal;
+      font-size: 10.5px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .dock-idle-state {
+      font-size: 9.5px;
+    }
   }
 
   /* ── RESPONSIVIDADE MOBILE & SIMULADOR ── */
@@ -403,15 +504,35 @@
         <!-- Grade gerada dinamicamente com 22 colunas x 14 linhas -->
       </div>
     </div>
+
+    <!-- ── DOCK FIXO DE TELEMETRIA (LOCAL FIXO NA TELA // ZERO QUEBRAS) ── -->
+    <div class="stack-telemetry-dock" id="stack-hud-dock">
+      <div class="dock-idle-state" id="dock-idle">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="dock-pulse-dot"></span>
+          <span>// PASSE O MOUSE OU TOQUE NOS LADRILHOS PARA INSPECIONAR A STACK</span>
+        </div>
+        <span class="dock-count-pill">16 FERRAMENTAS ATIVAS</span>
+      </div>
+
+      <div class="dock-active-state" id="dock-active" style="display: none;">
+        <div class="dock-logo-box">
+          <img src="assets/logos/claude.png" id="dock-logo-img" alt="Logo">
+        </div>
+        <div class="dock-info-content">
+          <div class="dock-meta-row">
+            <span class="dock-cat-tag" id="hud-cat">IA & AGENTES</span>
+            <span class="dock-tech-name" id="hud-name">Claude 3.5 Sonnet</span>
+            <span class="dock-status-tag">PRODUÇÃO REAL</span>
+          </div>
+          <div class="dock-role-desc" id="hud-role">
+            Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-</div>
-
-<!-- HUD TOOLTIP FLUTUANTE -->
-<div id="stack-hud-tooltip">
-  <span class="hud-badge-cat" id="hud-cat">IA & AGENTES COGNITIVOS</span>
-  <div class="hud-tech-name" id="hud-name">Claude 3.5 Sonnet</div>
-  <div class="hud-tech-role" id="hud-role">Orquestração multiagente avançada e arquitetura cognitiva.</div>
 </div>
 
 <script>
@@ -556,11 +677,16 @@ for (let i = 0; i < ROWS; i++) {
   matrixContainer.appendChild(rowEl);
 }
 
-// 4. Interatividade via Event Delegation
-const hudTooltip = document.getElementById('stack-hud-tooltip');
+// 4. Interatividade via Event Delegation & Dock Fixo de Telemetria
+const hudDock = document.getElementById('stack-hud-dock');
+const dockIdle = document.getElementById('dock-idle');
+const dockActive = document.getElementById('dock-active');
+const dockLogoImg = document.getElementById('dock-logo-img');
 const hudCat = document.getElementById('hud-cat');
 const hudName = document.getElementById('hud-name');
 const hudRole = document.getElementById('hud-role');
+
+let dockIdleTimeout = null;
 
 function activateCell(cell, isUserInteraction = true) {
   if (!cell) return;
@@ -577,29 +703,33 @@ function activateCell(cell, isUserInteraction = true) {
     playSciFiClick(tech ? 820 : 600 + Math.random() * 200);
   }
 
-  // Se tem tecnologia, posiciona o HUD Tooltip
+  // Se tem tecnologia, atualiza o DOCK FIXO DE TELEMETRIA (sem ficar pulando na tela)
   if (tech && isUserInteraction) {
+    if (dockIdleTimeout) clearTimeout(dockIdleTimeout);
+
     hudCat.textContent = tech.cat;
     hudCat.style.color = tech.color;
     hudName.textContent = tech.name;
     hudRole.textContent = tech.role;
+    dockLogoImg.src = `assets/logos/${tech.file}`;
+    dockLogoImg.alt = tech.name;
 
-    const rect = cell.getBoundingClientRect();
-    if (isMobile || window.innerWidth < 768) {
-      hudTooltip.style.left = '50%';
-      hudTooltip.style.top = 'auto';
-      hudTooltip.style.bottom = '24px';
-      hudTooltip.style.transform = 'translate(-50%, 0) scale(1)';
-    } else {
-      hudTooltip.style.left = `${rect.left + rect.width / 2}px`;
-      hudTooltip.style.top = `${rect.top}px`;
-      hudTooltip.style.bottom = 'auto';
-      hudTooltip.style.transform = 'translate(-50%, -130%) scale(1)';
-    }
-    hudTooltip.classList.add('visible');
+    hudDock.style.setProperty('--dock-border', tech.color);
+    hudDock.style.setProperty('--dock-glow', `${tech.color}44`);
+
+    dockIdle.style.display = 'none';
+    dockActive.style.display = 'flex';
+
+    // Retorna ao estado de standby após 4.5 segundos de inatividade
+    dockIdleTimeout = setTimeout(() => {
+      dockIdle.style.display = 'flex';
+      dockActive.style.display = 'none';
+      hudDock.style.removeProperty('--dock-border');
+      hudDock.style.removeProperty('--dock-glow');
+    }, 4500);
   }
 
-  // Fade out suave após 200ms
+  // Fade out suave da célula após 220ms
   setTimeout(() => {
     cell.style.backgroundColor = 'transparent';
     cell.style.boxShadow = 'none';
@@ -613,10 +743,6 @@ matrixContainer.addEventListener('mouseover', (e) => {
   if (cell) {
     activateCell(cell, true);
   }
-});
-
-matrixContainer.addEventListener('mouseleave', () => {
-  hudTooltip.classList.remove('visible');
 });
 
 // Suporte total a toque mobile sem travar a rolagem vertical
