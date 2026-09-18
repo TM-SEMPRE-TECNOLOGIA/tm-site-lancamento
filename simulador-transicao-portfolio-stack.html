@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador: Transição do Grid do Chão para Frontal + Snapping das Logos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<style>
+:root {
+  --orange: #d96526;
+  --orange-glow: rgba(217, 101, 38, 0.65);
+  --ink: #05070b;
+  --line: rgba(255, 255, 255, 0.14);
+  --muted: rgba(255, 255, 255, 0.58);
+  --faint: rgba(255, 255, 255, 0.32);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--ink); scroll-behavior: smooth; }
+body {
+  background: var(--ink);
+  color: #fff;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* HUD DE CONTROLE DA SANDBOX */
+.sandbox-hud {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(8, 12, 19, 0.94);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(217, 101, 38, 0.4);
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.85);
+  white-space: nowrap;
+}
+.sandbox-hud span strong { color: var(--orange); }
+.hud-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.hud-btn:hover, .hud-btn.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  box-shadow: 0 0 12px var(--orange-glow);
+}
+
+/* PIN WRAPPER */
+#portfolio-pin-wrapper {
+  position: relative;
+  width: 100%;
+  height: 900vh;
+}
+
+#section-portfolio-3d {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--ink);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#carousel-webgl-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+  z-index: 1;
+}
+#carousel-webgl-stage.grabbing { cursor: grabbing !important; }
+
+/* CABEÇALHO DO PALCO */
+.stage-ui-header {
+  position: relative;
+  z-index: 10;
+  padding: 32px clamp(24px, 6vw, 80px) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+}
+.stage-ui-title {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.stage-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: var(--orange);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.stage-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--orange);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--orange);
+}
+.stage-main-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: clamp(26px, 4.2vw, 48px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #fff;
+  line-height: 1.15;
+}
+.stage-main-title strong {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--orange);
+  text-shadow: 0 0 25px rgba(217, 101, 38, 0.4);
+}
+.stage-ui-subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.stage-meta-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  background: rgba(217, 101, 38, 0.12);
+  border: 1px solid rgba(217, 101, 38, 0.3);
+  color: var(--orange);
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 0 16px rgba(217, 101, 38, 0.15);
+  transition: all 0.35s ease;
+}
+
+/* UI INFERIOR */
+.stage-ui-footer {
+  position: relative;
+  z-index: 10;
+  padding: 0 clamp(24px, 6vw, 80px) 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.carousel-drag-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+  transition: opacity 0.3s ease;
+}
+.drag-hint-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.carousel-progress-track {
+  width: 150px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.carousel-progress-thumb {
+  height: 100%;
+  width: 0%;
+  background: var(--orange);
+  box-shadow: 0 0 12px var(--orange-glow);
+  transition: width 0.05s linear;
+}
+
+/* FLASH OVERLAY */
+#stage-flash-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(217, 101, 38, 0.28) 0%, transparent 65%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 8;
+  transition: opacity 0.2s ease-out;
+}
+
+/* DOCK FIXO DE TELEMETRIA */
+.stack-telemetry-dock {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 35;
+  width: min(740px, calc(100% - 48px));
+  min-height: 64px;
+  background: rgba(8, 12, 19, 0.94);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--dock-border, rgba(217, 101, 38, 0.45));
+  border-radius: 12px;
+  padding: 12px 20px;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.92), 0 0 25px var(--dock-glow, rgba(217, 101, 38, 0.15));
+  display: flex;
+  align-items: center;
+  transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.25s, box-shadow 0.25s;
+  pointer-events: auto;
+  opacity: 0;
+}
+.stack-telemetry-dock.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.dock-idle-state {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #94a3b8;
+  gap: 12px;
+}
+.dock-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--orange);
+  box-shadow: 0 0 10px var(--orange);
+  animation: dockPulse 1.8s infinite;
+  flex-shrink: 0;
+}
+@keyframes dockPulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 14px var(--orange); }
+}
+.dock-count-pill {
+  background: rgba(217, 101, 38, 0.12);
+  border: 1px solid rgba(217, 101, 38, 0.3);
+  color: var(--orange);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.dock-active-state {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: dockFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes dockFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.dock-logo-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+.dock-logo-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.dock-info-content {
+  flex: 1;
+  min-width: 0;
+}
+.dock-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+  flex-wrap: wrap;
+}
+.dock-cat-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.dock-tech-name {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #fff;
+}
+.dock-status-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+.dock-role-desc {
+  font-size: 11.5px;
+  color: #cbd5e1;
+  line-height: 1.35;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* SIMULADOR MOBILE */
+.mobile-sim-frame {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.mobile-sim-frame.active-mobile {
+  max-width: 390px !important;
+  margin: 64px auto !important;
+  border: 8px solid #1e293b;
+  border-radius: 36px;
+  box-shadow: 0 25px 90px rgba(0, 0, 0, 0.95);
+  overflow: hidden;
+}
+.mobile-sim-frame.active-mobile #section-portfolio-3d {
+  height: 844px;
+}
+.mobile-sim-frame.active-mobile .stage-main-title {
+  font-size: 24px !important;
+}
+.mobile-sim-frame.active-mobile .stack-telemetry-dock {
+  width: calc(100% - 24px);
+  bottom: 16px;
+  padding: 10px 14px;
+}
+.mobile-sim-frame.active-mobile .dock-role-desc {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+@media (max-width: 768px) {
+  .stage-ui-header { padding: 24px 20px 0; }
+  .stage-ui-footer { padding: 0 20px 20px; }
+  .stage-main-title { font-size: 24px !important; }
+  .stack-telemetry-dock {
+    width: calc(100% - 32px);
+    bottom: 16px;
+    padding: 10px 14px;
+  }
+  .dock-role-desc {
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="sandbox-hud">
+  <span>FASE: <strong id="hud-phase-name">01 · PORTFÓLIO (CHÃO)</strong></span>
+  <span>PROGRESSO: <strong id="hud-prog-val">0%</strong></span>
+  <button class="hud-btn" onclick="jumpTo(0.15)">1: Cards no Chão</button>
+  <button class="hud-btn" onclick="jumpTo(0.50)">2: Rotação Fluida</button>
+  <button class="hud-btn" onclick="jumpTo(0.85)">3: Grid Frontal</button>
+  <button class="hud-btn" id="btn-sound-toggle" onclick="toggleSound()">
+    <i class="fas fa-volume-high" id="sound-icon"></i>
+    <span id="sound-txt">SOM ON</span>
+  </button>
+  <button class="hud-btn" id="btn-mobile-toggle" onclick="toggleMobile()">
+    <i class="fas fa-mobile-screen"></i>
+    <span>390px</span>
+  </button>
+</div>
+
+<div id="sim-wrapper" class="mobile-sim-frame">
+  <div id="portfolio-pin-wrapper">
+    <section id="section-portfolio-3d">
+
+      <!-- UI Superior do Palco 3D -->
+      <div class="stage-ui-header">
+        <div class="stage-ui-title" id="stage-title-container">
+          <div class="stage-eyebrow" id="stage-eyebrow">Showcase Interativo</div>
+          <h3 class="stage-main-title" id="stage-main-title">Produtos, Sistemas & <strong>Soluções.</strong></h3>
+          <p class="stage-ui-subtitle" id="stage-subtitle">Engenharia Digital · Automação · SaaS</p>
+        </div>
+        <div class="stage-ui-meta">
+          <span class="stage-meta-pill" id="stage-badge-pill">8 PROJETOS EM PRODUÇÃO</span>
+        </div>
+      </div>
+
+      <!-- Three.js Canvas Container -->
+      <div id="carousel-webgl-stage"></div>
+
+      <!-- Flash Overlay na transição -->
+      <div id="stage-flash-overlay"></div>
+
+      <!-- UI Inferior do Palco 3D (Carrossel Hint) -->
+      <div class="stage-ui-footer" id="stage-ui-footer">
+        <div class="carousel-drag-hint" id="carousel-drag-hint">
+          <span class="drag-hint-text" id="drag-hint-label">Role a página para navegar nos projetos</span>
+          <div class="carousel-progress-track">
+            <div id="carousel-progress-fill" class="carousel-progress-thumb"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCK FIXO DE TELEMETRIA -->
+      <div class="stack-telemetry-dock" id="stack-hud-dock">
+        <div class="dock-idle-state" id="dock-idle">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="dock-pulse-dot"></span>
+            <span>// PASSE O MOUSE OU TOQUE EM QUALQUER QUADRADO DO GRID</span>
+          </div>
+          <span class="dock-count-pill" id="dock-count-badge">20 FERRAMENTAS ATIVAS</span>
+        </div>
+
+        <div class="dock-active-state" id="dock-active" style="display: none;">
+          <div class="dock-logo-box">
+            <img src="assets/logos/claude.png" id="dock-logo-img" alt="Logo">
+          </div>
+          <div class="dock-info-content">
+            <div class="dock-meta-row">
+              <span class="dock-cat-tag" id="hud-cat">IA & AGENTES</span>
+              <span class="dock-tech-name" id="hud-name">Claude 3.5 Sonnet</span>
+              <span class="dock-status-tag">PRODUÇÃO REAL</span>
+            </div>
+            <div class="dock-role-desc" id="hud-role">
+              Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</div>
+
+<script>
+/**
+ * ════════════════════════════════════════════════════════════════════
+ * ENGINE THREE.JS: PISO 3D QUE SE LEVANTA PARA O BACKGROUND FRONTAL
+ * - Piso 3D de Grid helper no início
+ * - Cards desaparecem suavemente sem loop estranho
+ * - O grid inteiro gira 90° e se posiciona em vista frontal perfeitamente alinhada
+ * - Cada peça preenche exatamente um quadrado do grid
+ * - Efeito Aceternity mouse-glow em TODOS os quadrados da matriz
+ * ════════════════════════════════════════════════════════════════════
+ */
+
+// 1. Catálogo Completo das 20 Ferramentas
+const STACK_DATA = [
+  { id: "claude", name: "Claude 3.5 Sonnet", cat: "IA & AGENTES", file: "claude.png", role: "Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.", color: "#d97706" },
+  { id: "gpt", name: "ChatGPT / GPT-4o", cat: "IA & COGNIÇÃO", file: "gpt.png", role: "Modelagem generativa, síntese e transformações de dados em linguagem natural.", color: "#10b981" },
+  { id: "hermes", name: "Nous Hermes", cat: "IA OPEN-WEIGHTS", file: "hermes.png", role: "Function calling avançado, agentes locais e autonomia de raciocínio de código aberto.", color: "#f97316" },
+  { id: "gemini", name: "Google Gemini 2.5", cat: "IA MULTIMODAL", file: "gemini.png", role: "Janela de contexto ultra-longa, análise multimodal e síntese estruturada.", color: "#38bdf8" },
+  { id: "n8n", name: "n8n Workflows", cat: "AUTOMAÇÃO & PIPELINES", file: "n8n.png", role: "Orquestração visual de webhooks, integrações de APIs e fluxos autônomos sem atrito.", color: "#ea580c" },
+  { id: "supabase", name: "Supabase BaaS", cat: "BANCO & REALTIME", file: "supabase.png", role: "PostgreSQL gerenciado, Row Level Security, Edge Functions e sincronização em tempo real.", color: "#3ecf8e" },
+  { id: "gsap", name: "GreenSock GSAP", cat: "MOTION & TIMELINES", file: "gsap.png", role: "Animações cinemáticas fluidas a 60 FPS, ScrollTrigger e transições de interface de alta precisão.", color: "#84cc16" },
+  { id: "nextjs", name: "Next.js 15", cat: "FRONTEND ARCHITECTURE", file: "nextjs.png", role: "React Server Components, App Router, SSR em Edge e performance máxima na web.", color: "#ffffff" },
+  { id: "react", name: "React 19", cat: "UI REATIVA", file: "react.png", role: "Arquitetura modular de componentes, Server Actions e reatividade atômica.", color: "#06b6d4" },
+  { id: "typescript", name: "TypeScript 5", cat: "TIPAGEM & ESCALABILIDADE", file: "typescript.png", role: "Segurança estrita de tipos, contratos robustos entre cliente e servidor e zero bugs em runtime.", color: "#3b82f6" },
+  { id: "python", name: "Python 3.12", cat: "DATA & BACKEND", file: "python.png", role: "Engenharia de dados, crawlers analíticos, scripts de telemetria e microsserviços.", color: "#fbbf24" },
+  { id: "fastapi", name: "FastAPI", cat: "APIS ASSÍNCRONAS", file: "fastapi.png", role: "Endpoints REST assíncronos ultrarrápidos, serialização Pydantic e latência mínima.", color: "#009688" },
+  { id: "threejs", name: "Three.js / WebGL", cat: "CREATIVE 3D", file: "threejs.png", role: "Renderização 3D isométrica, shaders customizados GLSL e palcos navegáveis.", color: "#f43f5e" },
+  { id: "tailwind", name: "Tailwind CSS", cat: "DESIGN SYSTEMS", file: "tailwind.png", role: "Tokens utilitários de design, layouts responsivos ágeis e estética industrial calibrada.", color: "#0ea5e9" },
+  { id: "docker", name: "Docker & Containers", cat: "DEVOPS & INFRA", file: "docker.png", role: "Isolamento de ambientes, esteiras de deploy reproduzíveis e portabilidade total.", color: "#2563eb" },
+  { id: "postgresql", name: "PostgreSQL", cat: "DADOS RELACIONAIS", file: "postgresql.png", role: "Armazenamento confiável ACID, apuração eleitoral em tempo real e modelagem relacional estrita.", color: "#336791" },
+  { id: "nodejs", name: "Node.js", cat: "RUNTIME DE ALTA ESCALA", file: "nodejs.png", role: "Execução assíncrona orientada a eventos, streaming de dados e microsserviços I/O-intensive.", color: "#22c55e" },
+  { id: "redis", name: "Redis Cache", cat: "IN-MEMORY & RATE LIMIT", file: "redis.png", role: "Filas atômicas de alta performance, caching de tokens e controle de vazão de requisições.", color: "#ef4444" },
+  { id: "git", name: "Git & GitHub", cat: "VERSIONAMENTO & CI/CD", file: "git.png", role: "Controle estrito de versão, esteiras automatizadas de CI/CD e colaboração ágil de código.", color: "#f05032" },
+  { id: "vercel", name: "Vercel Edge", cat: "SERVERLESS & GLOBAL CDN", file: "vercel.png", role: "Distribuição global em Edge, Serverless Functions e deploys atômicos com latência zero.", color: "#ffffff" }
+];
+
+// 8 Projetos do Portfólio
+const PROJECTS = [
+  { id: "cat-dev", title: "Sistemas & Pipelines de Dados", category: "Fullstack Architecture", image: "assets/cards/card_1.jpg", aspect: 16 / 9 },
+  { id: "robot-spark", title: "Agentes Autônomos & Workflows", category: "Agentic AI & LLMs", image: "assets/cards/card_2.jpg", aspect: 16 / 9 },
+  { id: "duck-debug", title: "Plataformas Web de Alto Desempenho", category: "Next.js & Cloud", image: "assets/cards/card_3.jpg", aspect: 16 / 9 },
+  { id: "astronaut-chill", title: "Dashboards & Gestão em Tempo Real", category: "Operação Digital", image: "assets/cards/card_4.jpg", aspect: 16 / 9 },
+  { id: "cyber-helmet", title: "Automação de Processos Críticos", category: "Ganho de +85% Eficiência", image: "assets/cards/card_5.jpg", aspect: 16 / 9 },
+  { id: "coffee-compile", title: "Engenharia & Arquitetura Digital", category: "Reverse Engine", image: "assets/cards/card_6.jpg", aspect: 16 / 9 },
+  { id: "drone-labs", title: "Interfaces Cinemáticas & 3D Web", category: "UI/UX & WebGL", image: "assets/cards/card_7.jpg", aspect: 16 / 9 },
+  { id: "cactus-cook", title: "APIs Resilientes & Microsserviços", category: "Backend & Infraestrutura", image: "assets/cards/card_8.jpg", aspect: 16 / 9 }
+];
+
+const GLOW_PALETTE = [
+  "#d96526", "#f97316", "#f59e0b", "#fbbf24", "#ea580c", "#38bdf8", "#06b6d4", "#10b981"
+];
+
+let scene, camera, renderer;
+let carouselGroup;
+let gridMasterGroup;
+let gridHelper;
+let cardMeshes = [];
+let cellMeshes = [];
+let textureLoader = new THREE.TextureLoader();
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2(-999, -999);
+let hoveredCell = null;
+
+let currentProgress = 0;
+let targetScroll = 0;
+let currentScroll = 0;
+let scrollVelocity = 0;
+let isDragging = false;
+let startX = 0, startY = 0;
+let dragStartX = 0, dragStartY = 0;
+
+const config = {
+  cylinderRadius: 10.0,
+  cardSpacing: 5.2,
+  cardBaseHeight: 2.8,
+  floorY: -2.0,
+  damping: 0.025
+};
+
+let audioCtx = null;
+let soundEnabled = true;
+
+function playSciFiClick(freq = 640) {
+  if (!soundEnabled) return;
+  try {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.8, audioCtx.currentTime + 0.035);
+
+    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.045);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  } catch (e) {}
+}
+
+function isMobile() {
+  return window.innerWidth < 768 || document.getElementById('sim-wrapper').classList.contains('active-mobile');
+}
+
+// ── SHADERS PARA OS CARDS DO PORTFÓLIO COM CONTROLE DE OPACIDADE E ESCALA ──
+const vertexShader = `
+  uniform float uTime;
+  uniform float uVelocity;
+  uniform float uRadius;
+  uniform float uHover;
+  uniform int uIsMobile;
+  uniform float uCardScale;
+  varying vec2 vUv;
+
+  void main() {
+    vUv = uv;
+    vec3 pos = position * uCardScale;
+
+    if (uIsMobile == 1) {
+      float arc = pos.y / uRadius;
+      pos.z -= (1.0 - cos(arc)) * uRadius;
+      pos.y = sin(arc) * uRadius;
+    } else {
+      float arc = pos.x / uRadius;
+      pos.z -= (1.0 - cos(arc)) * uRadius;
+      pos.x = sin(arc) * uRadius;
+    }
+
+    float wave = sin((uIsMobile == 1 ? vUv.x : vUv.y) * 6.28 + uTime * 3.0 + (uIsMobile == 1 ? pos.y : pos.x)) * (abs(uVelocity) * 1.8 + 0.05 * uHover);
+    pos.z += wave + uHover * 0.35;
+
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+  }
+`;
+
+const fragmentShader = `
+  uniform sampler2D uTexture;
+  uniform float uVelocity;
+  uniform float uTime;
+  uniform float uHover;
+  uniform float uAspect;
+  uniform float uOpacity;
+  varying vec2 vUv;
+
+  float roundedBox(vec2 p, vec2 b, float r) {
+    vec2 q = abs(p) - b + r;
+    return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
+  }
+
+  void main() {
+    vec2 uv = vUv;
+    vec2 p = uv - vec2(0.5);
+    p.x *= uAspect;
+    vec2 halfSize = vec2(0.5 * uAspect, 0.5);
+    float dist = roundedBox(p, halfSize, 0.048);
+    float alpha = (1.0 - smoothstep(0.0, 0.005, dist)) * uOpacity;
+    if (alpha < 0.01) discard;
+
+    vec2 waveUv = uv;
+    waveUv.x += sin(uv.y * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover);
+    vec4 color = texture2D(uTexture, waveUv);
+    color.rgb += vec3(0.85, 0.4, 0.15) * abs(sin(uv.y * 8.0 + uTime * 2.0)) * (abs(uVelocity) * 1.5 + uHover * 0.25);
+
+    float vignette = smoothstep(0.85, 0.15, length(uv - vec2(0.5)));
+    color.rgb *= mix(0.88, 1.05, vignette);
+
+    float borderGlow = 1.0 - smoothstep(0.0, 0.009, abs(dist));
+    color.rgb += vec3(0.85, 0.4, 0.15) * borderGlow * (0.35 + uHover * 0.5);
+    color.rgb += uHover * 0.08;
+
+    gl_FragColor = vec4(color.rgb, alpha);
+  }
+`;
+
+function initThree() {
+  const container = document.getElementById('carousel-webgl-stage');
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || window.innerHeight;
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x05070b, 0.022);
+
+  camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 150);
+  updateCameraPos();
+
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  container.appendChild(renderer.domElement);
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.95);
+  scene.add(ambient);
+
+  const mainLight = new THREE.PointLight(0xd96526, 4.0, 45);
+  mainLight.position.set(0, 4, 8);
+  scene.add(mainLight);
+
+  // 1. Grupo do Carrossel de Projetos (X = 0)
+  carouselGroup = new THREE.Group();
+  scene.add(carouselGroup);
+  buildCarouselCards();
+
+  // 2. Grupo Mestre do Grid (Começa no Chão e Levanta para o Fundo)
+  gridMasterGroup = new THREE.Group();
+  scene.add(gridMasterGroup);
+  buildUnifiedGridMatrix();
+
+  setupEvents(container);
+  animate();
+}
+
+function updateCameraPos() {
+  if (isMobile()) {
+    camera.position.set(0, 0, 8.5);
+  } else {
+    camera.position.set(0, 0.2, 7.6);
+  }
+  camera.lookAt(0, 0, 0);
+}
+
+// Constrói os 8 Cards
+function buildCarouselCards() {
+  cardMeshes.forEach(m => carouselGroup.remove(m));
+  cardMeshes = [];
+
+  PROJECTS.forEach((proj, idx) => {
+    const width = isMobile() ? 3.4 : 4.5;
+    const height = width / (proj.aspect || 1.6);
+    const geometry = new THREE.PlaneGeometry(width, height, 32, 16);
+
+    const texture = textureLoader.load(proj.image);
+    texture.generateMipmaps = true;
+    texture.minFilter = THREE.LinearMipmapLinearFilter;
+
+    const material = new THREE.ShaderMaterial({
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uTexture: { value: texture },
+        uTime: { value: 0 },
+        uVelocity: { value: 0 },
+        uRadius: { value: isMobile() ? 14.0 : config.cylinderRadius },
+        uHover: { value: 0.0 },
+        uIsMobile: { value: isMobile() ? 1 : 0 },
+        uAspect: { value: proj.aspect || 1.6 },
+        uOpacity: { value: 1.0 },
+        uCardScale: { value: 1.0 }
+      },
+      transparent: true,
+      side: THREE.DoubleSide
+    });
+
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.userData = { id: proj.id, title: proj.title, index: idx };
+    carouselGroup.add(mesh);
+    cardMeshes.push(mesh);
+  });
+}
+
+// ── CONSTRUÇÃO DA MATRIZ UNIFICADA DE QUADRADOS DO GRID ──
+// As logos preenchem EXATAMENTE o quadrado do grid!
+function buildUnifiedGridMatrix() {
+  cellMeshes.forEach(c => gridMasterGroup.remove(c));
+  cellMeshes = [];
+
+  const mob = isMobile();
+  const cols = mob ? 8 : 16;
+  const rows = mob ? 12 : 9;
+  const cellSize = mob ? 1.05 : 1.18;
+
+  const totalWidth = cols * cellSize;
+  const totalHeight = rows * cellSize;
+  const originX = -totalWidth / 2 + cellSize / 2;
+  const originY = totalHeight / 2 - cellSize / 2;
+
+  // Posições estratégicas centrais para os 20 Frameworks
+  // Distribuição harmônica no meio da matriz
+  const techPositions = mob ? [
+    // Mobile 8 cols (cols 1..6, rows 2..9)
+    { r: 2, c: 1 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 6 },
+    { r: 3, c: 2 }, { r: 3, c: 5 },
+    { r: 4, c: 1 }, { r: 4, c: 3 }, { r: 4, c: 4 }, { r: 4, c: 6 },
+    { r: 5, c: 2 }, { r: 5, c: 5 },
+    { r: 6, c: 1 }, { r: 6, c: 3 }, { r: 6, c: 4 }, { r: 6, c: 6 },
+    { r: 7, c: 2 }, { r: 7, c: 5 },
+    { r: 8, c: 3 }, { r: 8, c: 4 }
+  ] : [
+    // Desktop 16 cols x 9 rows (cols 3..12, rows 2..6)
+    { r: 2, c: 4 }, { r: 2, c: 6 }, { r: 2, c: 8 }, { r: 2, c: 10 },
+    { r: 3, c: 3 }, { r: 3, c: 5 }, { r: 3, c: 7 }, { r: 3, c: 9 }, { r: 3, c: 11 },
+    { r: 4, c: 4 }, { r: 4, c: 6 }, { r: 4, c: 8 }, { r: 4, c: 10 },
+    { r: 5, c: 3 }, { r: 5, c: 5 }, { r: 5, c: 7 }, { r: 5, c: 9 }, { r: 5, c: 11 },
+    { r: 6, c: 6 }, { r: 6, c: 8 }
+  ];
+
+  const techMap = {};
+  techPositions.forEach((pos, idx) => {
+    if (idx < STACK_DATA.length) {
+      techMap[`${pos.r}_${pos.c}`] = STACK_DATA[idx];
+    }
+  });
+
+  const basePlaneGeo = new THREE.PlaneGeometry(cellSize, cellSize);
+  const edgeGeo = new THREE.EdgesGeometry(basePlaneGeo);
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const posX = originX + c * cellSize;
+      const posY = originY - r * cellSize;
+      const tech = techMap[`${r}_${c}`];
+
+      // Material do fundo da célula (Aceternity reactive plane)
+      const cellMat = new THREE.MeshBasicMaterial({
+        color: 0x05070b,
+        transparent: true,
+        opacity: 0.05,
+        side: THREE.DoubleSide
+      });
+
+      const cellMesh = new THREE.Mesh(basePlaneGeo, cellMat);
+      cellMesh.position.set(posX, posY, 0);
+
+      // Borda sutil alaranjada do grid (#d96526)
+      const edgeMat = new THREE.LineBasicMaterial({
+        color: tech ? new THREE.Color(tech.color) : new THREE.Color(0xd96526),
+        transparent: true,
+        opacity: tech ? 0.35 : 0.18
+      });
+      const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
+      cellMesh.add(edgeLines);
+
+      // Se for uma ferramenta da stack: a logo preenche o quadrado do grid!
+      let logoMesh = null;
+      if (tech) {
+        // Plane que preenche 78% do quadrado do grid
+        const logoGeo = new THREE.PlaneGeometry(cellSize * 0.78, cellSize * 0.78);
+        const logoTex = textureLoader.load(`assets/logos/${tech.file}`);
+        logoTex.generateMipmaps = true;
+        logoTex.minFilter = THREE.LinearMipmapLinearFilter;
+
+        const logoMat = new THREE.MeshStandardMaterial({
+          map: logoTex,
+          transparent: true,
+          roughness: 0.25,
+          metalness: 0.2,
+          emissive: new THREE.Color(tech.color),
+          emissiveIntensity: 0.12,
+          opacity: 0.55
+        });
+
+        logoMesh = new THREE.Mesh(logoGeo, logoMat);
+        logoMesh.position.z = 0.02; // levemente à frente
+        cellMesh.add(logoMesh);
+      }
+
+      cellMesh.userData = {
+        row: r,
+        col: c,
+        tech: tech || null,
+        cellMat,
+        edgeMat,
+        logoMesh,
+        baseEdgeOpacity: tech ? 0.35 : 0.18,
+        glowTimeout: null
+      };
+
+      gridMasterGroup.add(cellMesh);
+      cellMeshes.push(cellMesh);
+    }
+  }
+
+  // Define estado inicial do Grid: no chão
+  setGridStateOnFloor();
+}
+
+function setGridStateOnFloor() {
+  const mob = isMobile();
+  // Deitado horizontalmente no chão
+  gridMasterGroup.rotation.x = -Math.PI / 2;
+  gridMasterGroup.position.set(0, mob ? -3.4 : config.floorY, -3.5);
+}
+
+// ── RAYCASTER COM EFEITO ACETERNITY EM TODOS OS QUADRADOS ──
+function handlePointerMove(e) {
+  const rect = renderer.domElement.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+  // Só aciona o efeito interativo a partir do momento em que o grid começa a levantar (fase 2 e 3)
+  if (currentProgress >= 0.45) {
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(cellMeshes, false);
+
+    if (intersects.length > 0) {
+      const cell = intersects[0].object;
+      triggerCellGlow(cell, true);
+    }
+  }
+}
+
+function triggerCellGlow(cell, isUser = true) {
+  if (!cell || !cell.userData) return;
+  const u = cell.userData;
+
+  const glowHex = u.tech ? u.tech.color : GLOW_PALETTE[Math.floor(Math.random() * GLOW_PALETTE.length)];
+  const glowColor = new THREE.Color(glowHex);
+
+  // 1. Acende o fundo do quadrado instantaneamente (como no Aceternity)
+  u.cellMat.color = glowColor;
+  u.cellMat.opacity = u.tech ? 0.45 : 0.28;
+  u.edgeMat.color = glowColor;
+  u.edgeMat.opacity = 1.0;
+
+  // Se tiver logo: ilumina a logo e faz zoom
+  if (u.logoMesh) {
+    u.logoMesh.material.opacity = 1.0;
+    u.logoMesh.material.emissiveIntensity = 0.85;
+    gsap.to(cell.position, { z: 0.35, duration: 0.2, ease: "power2.out" });
+    gsap.to(cell.scale, { x: 1.12, y: 1.12, duration: 0.2, ease: "power2.out" });
+
+    if (isUser) {
+      playSciFiClick(820);
+      updateDockHUD(u.tech);
+    }
+  } else if (isUser) {
+    playSciFiClick(500 + Math.random() * 300);
+  }
+
+  // 2. Decaimento suave do brilho (Fade out gracioso)
+  if (u.glowTimeout) clearTimeout(u.glowTimeout);
+  u.glowTimeout = setTimeout(() => {
+    gsap.to(u.cellMat, { opacity: 0.05, duration: 0.9, ease: "power2.out" });
+    gsap.to(u.edgeMat, { opacity: u.baseEdgeOpacity, duration: 0.8, ease: "power2.out" });
+
+    if (u.logoMesh) {
+      gsap.to(u.logoMesh.material, { opacity: 0.55, emissiveIntensity: 0.12, duration: 0.5 });
+      gsap.to(cell.position, { z: 0.0, duration: 0.35, ease: "power2.out" });
+      gsap.to(cell.scale, { x: 1.0, y: 1.0, duration: 0.35, ease: "power2.out" });
+    }
+  }, 220);
+}
+
+// ── TELEMETRIA NO DOCK FIXO ──
+const hudDock = document.getElementById('stack-hud-dock');
+const dockIdle = document.getElementById('dock-idle');
+const dockActive = document.getElementById('dock-active');
+const dockLogoImg = document.getElementById('dock-logo-img');
+const hudCat = document.getElementById('hud-cat');
+const hudName = document.getElementById('hud-name');
+const hudRole = document.getElementById('hud-role');
+let dockResetTimer = null;
+
+function updateDockHUD(tech) {
+  if (!hudDock || !dockIdle || !dockActive) return;
+  if (dockResetTimer) clearTimeout(dockResetTimer);
+
+  hudCat.textContent = tech.cat;
+  hudCat.style.color = tech.color;
+  hudName.textContent = tech.name;
+  hudRole.textContent = tech.role;
+  dockLogoImg.src = `assets/logos/${tech.file}`;
+  dockLogoImg.alt = tech.name;
+
+  hudDock.style.setProperty('--dock-border', tech.color);
+  hudDock.style.setProperty('--dock-glow', `${tech.color}44`);
+
+  dockIdle.style.display = 'none';
+  dockActive.style.display = 'flex';
+
+  dockResetTimer = setTimeout(() => {
+    dockIdle.style.display = 'flex';
+    dockActive.style.display = 'none';
+    hudDock.style.removeProperty('--dock-border');
+    hudDock.style.removeProperty('--dock-glow');
+  }, 4500);
+}
+
+// ── FLUXO DE SCROLL UNIFICADO (PISO -> LEVANTAMENTO DO GRID -> VISTA FRONTAL) ──
+const stageTitleContainer = document.getElementById('stage-title-container');
+const stageEyebrow = document.getElementById('stage-eyebrow');
+const stageMainTitle = document.getElementById('stage-main-title');
+const stageSubtitle = document.getElementById('stage-subtitle');
+const stageBadgePill = document.getElementById('stage-badge-pill');
+const stageFlash = document.getElementById('stage-flash-overlay');
+const dragHint = document.getElementById('carousel-drag-hint');
+const hudPhaseName = document.getElementById('hud-phase-name');
+const hudProgVal = document.getElementById('hud-prog-val');
+
+function updateUnifiedFlow(progress) {
+  currentProgress = progress;
+  hudProgVal.textContent = Math.round(progress * 100) + '%';
+
+  const mob = isMobile();
+  const floorY = mob ? -3.4 : config.floorY;
+  const floorZ = -3.5;
+  const totalCardsSpan = cardMeshes.length * (mob ? 3.2 : config.cardSpacing);
+
+  // ── FASE 1: NAVEGAÇÃO DOS CARDS COM O GRID NO CHÃO (0.00 a 0.38) ──
+  if (progress <= 0.38) {
+    hudPhaseName.textContent = "01 · PORTFÓLIO (GRID NO CHÃO)";
+    hudPhaseName.style.color = "var(--orange)";
+
+    const p1 = progress / 0.38;
+    if (!isDragging) {
+      targetScroll = p1 * totalCardsSpan * 0.82; // percorre os 8 cards sem repetições
+    }
+
+    // Cards 100% visíveis
+    cardMeshes.forEach(mesh => {
+      if (mesh.material.uniforms) {
+        mesh.material.uniforms.uOpacity.value = 1.0;
+        mesh.material.uniforms.uCardScale.value = 1.0;
+      }
+    });
+    carouselGroup.visible = true;
+
+    // Grid deitado no chão com logos ocultas/sutis para não poluir o chão sob os cards
+    gridMasterGroup.rotation.x = -Math.PI / 2;
+    gridMasterGroup.position.set(0, floorY, floorZ);
+
+    cellMeshes.forEach(c => {
+      if (c.userData.logoMesh) {
+        c.userData.logoMesh.material.opacity = 0.0;
+      }
+    });
+
+    setHeaderContent('portfolio');
+    dragHint.style.opacity = '1';
+    hudDock.classList.remove('visible');
+    stageFlash.style.opacity = '0';
+
+  // ── FASE 2: OS CARDS DESAPARECEM E O GRID SE LEVANTA DO CHÃO PARA O FUNDO (0.38 a 0.65) ──
+  } else if (progress <= 0.65) {
+    hudPhaseName.textContent = "02 · GRID LEVANTANDO PARA O FUNDO";
+    hudPhaseName.style.color = "#38bdf8";
+
+    const p2 = (progress - 0.38) / 0.27; // 0..1
+
+    // 1. Os cards desaparecem suavemente sem loop estranho
+    const cardOpacity = Math.max(0, 1.0 - p2 * 2.2);
+    const cardScale = Math.max(0.65, 1.0 - p2 * 0.35);
+    cardMeshes.forEach(mesh => {
+      if (mesh.material.uniforms) {
+        mesh.material.uniforms.uOpacity.value = cardOpacity;
+        mesh.material.uniforms.uCardScale.value = cardScale;
+      }
+    });
+    carouselGroup.visible = (cardOpacity > 0.01);
+
+    // 2. O grid faz a transição fluida: gira de -90° para 0° (vista frontal!)
+    // e sobe de floorY para 0.0 (centro exato da tela)
+    const rotX = (-Math.PI / 2) * (1.0 - p2); // de -PI/2 -> 0
+    const posY = floorY * (1.0 - p2);        // de floorY -> 0
+    const posZ = floorZ + p2 * (-floorZ - 0.2); // de -3.5 -> -0.2
+
+    gridMasterGroup.rotation.x = rotX;
+    gridMasterGroup.position.set(0, posY, posZ);
+
+    // As logos emergem com o levantamento do grid
+    const logoAlpha = Math.min(0.75, p2 * 1.2);
+    cellMeshes.forEach(c => {
+      if (c.userData.logoMesh) {
+        c.userData.logoMesh.material.opacity = logoAlpha;
+      }
+    });
+
+    // Flash cinematográfico alaranjado sutil
+    const flashVal = Math.sin(p2 * Math.PI) * 0.45;
+    stageFlash.style.opacity = flashVal.toFixed(2);
+
+    if (p2 > 0.5) {
+      setHeaderContent('stack');
+      dragHint.style.opacity = '0';
+      hudDock.classList.add('visible');
+    } else {
+      setHeaderContent('portfolio');
+      dragHint.style.opacity = String(1 - p2 * 2);
+      hudDock.classList.remove('visible');
+    }
+
+  // ── FASE 3: GRID EM VISTA FRONTAL COM AS LOGOS PREENCHENDO CADA QUADRADO (0.65 a 1.00) ──
+  } else {
+    hudPhaseName.textContent = "03 · GRID FRONTAL + PEÇAS SNAPPED";
+    hudPhaseName.style.color = "#4ade80";
+
+    // Cards completamente ocultos (zero loops)
+    carouselGroup.visible = false;
+
+    // Grid 100% frontal e centralizado
+    gridMasterGroup.rotation.x = 0;
+    gridMasterGroup.position.set(0, 0, -0.2);
+
+    cellMeshes.forEach(c => {
+      if (c.userData.logoMesh && hoveredCell !== c) {
+        c.userData.logoMesh.material.opacity = 0.75;
+      }
+    });
+
+    setHeaderContent('stack');
+    dragHint.style.opacity = '0';
+    hudDock.classList.add('visible');
+    stageFlash.style.opacity = '0';
+  }
+}
+
+let activeHeaderMode = 'portfolio';
+function setHeaderContent(mode) {
+  if (activeHeaderMode === mode) return;
+  activeHeaderMode = mode;
+
+  stageTitleContainer.style.opacity = '0';
+  stageTitleContainer.style.transform = 'translateY(-6px)';
+
+  setTimeout(() => {
+    if (mode === 'portfolio') {
+      stageEyebrow.textContent = 'Showcase Interativo';
+      stageMainTitle.innerHTML = 'Produtos, Sistemas & <strong>Soluções.</strong>';
+      stageSubtitle.textContent = 'Engenharia Digital · Automação · SaaS';
+      stageBadgePill.textContent = '8 PROJETOS EM PRODUÇÃO';
+    } else {
+      stageEyebrow.textContent = 'Engenharia & Stack // O Motor de Construção';
+      stageMainTitle.innerHTML = 'Linguagens, Frameworks & <strong>Engenharia.</strong>';
+      stageSubtitle.textContent = 'A infraestrutura que alimenta sistemas autônomos e 3D a 60 FPS';
+      stageBadgePill.textContent = '20 FERRAMENTAS ATIVAS';
+    }
+    stageTitleContainer.style.opacity = '1';
+    stageTitleContainer.style.transform = 'translateY(0)';
+  }, 180);
+}
+
+// ── LOOP DE ANIMAÇÃO ──
+let clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const time = clock.getElapsedTime();
+
+  scrollVelocity = (targetScroll - currentScroll) * 0.08;
+  currentScroll += scrollVelocity;
+
+  // Atualiza cards do carrossel quando ativos
+  if (carouselGroup && carouselGroup.visible) {
+    const mob = isMobile();
+    const totalSpan = cardMeshes.length * (mob ? 3.2 : config.cardSpacing);
+
+    cardMeshes.forEach((mesh, i) => {
+      let offset = (i * (mob ? 3.2 : config.cardSpacing) - currentScroll);
+      if (mob) {
+        mesh.position.y = -offset;
+        mesh.position.x = 0;
+        const arc = -offset / 14.0;
+        mesh.position.z = -((1.0 - Math.cos(arc)) * 14.0);
+        mesh.rotation.x = -arc;
+      } else {
+        mesh.position.x = offset;
+        mesh.position.y = 0;
+        const arc = offset / config.cylinderRadius;
+        mesh.position.z = -((1.0 - Math.cos(arc)) * config.cylinderRadius);
+        mesh.rotation.y = -arc;
+      }
+
+      if (mesh.material.uniforms) {
+        mesh.material.uniforms.uTime.value = time;
+        mesh.material.uniforms.uVelocity.value = scrollVelocity;
+      }
+    });
+
+    const fillBar = document.getElementById('carousel-progress-fill');
+    if (fillBar) {
+      const norm = Math.min(1, Math.max(0, currentScroll / (totalSpan * 0.85)));
+      fillBar.style.width = (norm * 100).toFixed(1) + '%';
+    }
+  }
+
+  // Pulso ambiente aleatório na matriz para mantê-la viva (como no componente Aceternity)
+  if (currentProgress >= 0.55 && Math.random() < 0.035) {
+    const randomCell = cellMeshes[Math.floor(Math.random() * cellMeshes.length)];
+    if (randomCell) triggerCellGlow(randomCell, false);
+  }
+
+  renderer.render(scene, camera);
+}
+
+// ── EVENTOS E CONTROLES ──
+function setupEvents(container) {
+  function onScroll() {
+    const wrapper = document.getElementById('portfolio-pin-wrapper');
+    const rect = wrapper.getBoundingClientRect();
+    const totalDist = wrapper.offsetHeight - window.innerHeight;
+    if (totalDist <= 0) return;
+    const progress = Math.max(0, Math.min(1, -rect.top / totalDist));
+    updateUnifiedFlow(progress);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  window.addEventListener('mousemove', handlePointerMove, { passive: true });
+
+  container.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    dragStartX = targetScroll;
+    dragStartY = targetScroll;
+    container.classList.add('grabbing');
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - startX;
+    targetScroll = dragStartX - deltaX * 0.015;
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (isDragging) {
+      isDragging = false;
+      container.classList.remove('grabbing');
+    }
+  });
+
+  // Touch Support
+  container.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      dragStartX = targetScroll;
+      dragStartY = targetScroll;
+      handlePointerMove(e.touches[0]);
+    }
+  }, { passive: true });
+
+  container.addEventListener('touchmove', (e) => {
+    if (isDragging && e.touches.length === 1) {
+      const deltaX = e.touches[0].clientX - startX;
+      targetScroll = dragStartX - deltaX * 0.015;
+      handlePointerMove(e.touches[0]);
+    }
+  }, { passive: true });
+
+  container.addEventListener('touchend', () => {
+    isDragging = false;
+  });
+
+  window.addEventListener('resize', onWindowResize);
+}
+
+function onWindowResize() {
+  const container = document.getElementById('carousel-webgl-stage');
+  const w = container.clientWidth || window.innerWidth;
+  const h = container.clientHeight || window.innerHeight;
+  camera.aspect = w / h;
+  updateCameraPos();
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h);
+  buildUnifiedGridMatrix();
+  updateUnifiedFlow(currentProgress);
+}
+
+function jumpTo(val) {
+  const wrapper = document.getElementById('portfolio-pin-wrapper');
+  const totalDist = wrapper.offsetHeight - window.innerHeight;
+  const scrollTarget = wrapper.offsetTop + (val * totalDist);
+  window.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+}
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const icon = document.getElementById('sound-icon');
+  const txt = document.getElementById('sound-txt');
+  const btn = document.getElementById('btn-sound-toggle');
+  if (soundEnabled) {
+    icon.className = 'fas fa-volume-high';
+    txt.textContent = 'SOM ON';
+    btn.classList.remove('active');
+    playSciFiClick(750);
+  } else {
+    icon.className = 'fas fa-volume-xmark';
+    txt.textContent = 'SOM MUDO';
+    btn.classList.add('active');
+  }
+}
+
+function toggleMobile() {
+  const wrap = document.getElementById('sim-wrapper');
+  const btn = document.getElementById('btn-mobile-toggle');
+  const isMob = wrap.classList.toggle('active-mobile');
+  btn.classList.toggle('active', isMob);
+  setTimeout(onWindowResize, 100);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initThree();
+  setTimeout(() => updateUnifiedFlow(0), 100);
+});
+</script>
+</body>
+</html>

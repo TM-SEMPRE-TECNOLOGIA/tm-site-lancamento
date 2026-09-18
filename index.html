@@ -456,7 +456,7 @@ h1 strong, h2 strong {
   position: relative;
   z-index: 3;
   width: 100%;
-  height: 360vh; /* Altura ideal para percorrer os 8 cards suavemente */
+  height: 960vh; /* 420vh cards + 260vh transição lateral no grid + 280vh stack interativa */
   background: transparent;
 }
 
@@ -487,7 +487,7 @@ h1 strong, h2 strong {
   cursor: grabbing !important;
 }
 
-/* Header & Footer do 3D Stage */
+/* Header & Footer do 3D Stage com Crossfade Editorial */
 .stage-ui-header {
   position: relative;
   z-index: 10;
@@ -497,15 +497,43 @@ h1 strong, h2 strong {
   align-items: flex-start;
   pointer-events: none;
 }
-.stage-ui-title h3 {
-  font-size: clamp(24px, 4vw, 44px);
-  font-weight: 300;
-  letter-spacing: -0.03em;
-  color: #fff;
+.stage-ui-title {
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
-.stage-ui-title h3 strong {
-  font-weight: 800;
+.stage-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2.5px;
   color: var(--orange);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.stage-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--orange);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--orange);
+}
+.stage-main-title {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: clamp(26px, 4.2vw, 48px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: #fff;
+  line-height: 1.15;
+}
+.stage-main-title strong {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--orange);
+  text-shadow: 0 0 25px rgba(217, 101, 38, 0.4);
 }
 .stage-ui-subtitle {
   color: var(--muted);
@@ -516,10 +544,25 @@ h1 strong, h2 strong {
   margin-top: 6px;
 }
 
+.stage-meta-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  background: rgba(217, 101, 38, 0.12);
+  border: 1px solid rgba(217, 101, 38, 0.3);
+  color: var(--orange);
+  padding: 6px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 0 16px rgba(217, 101, 38, 0.15);
+  transition: all 0.35s ease;
+}
+
 .stage-ui-footer {
   position: relative;
   z-index: 10;
-  padding: 0 clamp(24px, 6vw, 80px) 36px;
+  padding: 0 clamp(24px, 6vw, 80px) 32px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -532,6 +575,7 @@ h1 strong, h2 strong {
   align-items: center;
   gap: 8px;
   margin: 0 auto;
+  transition: opacity 0.3s ease;
 }
 .drag-hint-text {
   font-family: 'JetBrains Mono', monospace;
@@ -555,7 +599,16 @@ h1 strong, h2 strong {
   transition: width 0.05s linear;
 }
 
-
+/* Flash óptico sutil na passagem lateral */
+#stage-flash-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(217, 101, 38, 0.22) 0%, transparent 65%);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 8;
+  transition: opacity 0.2s ease-out;
+}
 
 .slot-placeholder {
   position: relative;
@@ -759,9 +812,9 @@ h1 strong, h2 strong {
   position: absolute;
   bottom: 28px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(20px);
   z-index: 35;
-  width: min(720px, calc(100% - 40px));
+  width: min(740px, calc(100% - 48px));
   min-height: 64px;
   background: rgba(8, 12, 19, 0.94);
   backdrop-filter: blur(24px);
@@ -772,8 +825,13 @@ h1 strong, h2 strong {
   box-shadow: 0 16px 50px rgba(0, 0, 0, 0.92), 0 0 25px var(--dock-glow, rgba(217, 101, 38, 0.15));
   display: flex;
   align-items: center;
-  transition: border-color 0.25s, box-shadow 0.25s;
+  transition: opacity 0.4s ease, transform 0.4s ease, border-color 0.25s, box-shadow 0.25s;
   pointer-events: auto;
+  opacity: 0;
+}
+.stack-telemetry-dock.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 .dock-idle-state {
@@ -1132,81 +1190,65 @@ h1 strong, h2 strong {
   </div>
 </section>
 
-<!-- ═══ SEÇÃO 01: PINNED SCROLL 3D MOTION SHOWCASE ═══ -->
+<!-- ═══ SEÇÃO UNIFICADA: PORTFÓLIO 3D + TRANSIÇÃO LATERAL NO GRID + STACK DE ENGENHARIA ═══ -->
 <div id="portfolio-pin-wrapper">
   <section id="section-portfolio-3d">
     <!-- UI Superior do Palco 3D -->
     <div class="stage-ui-header">
-      <div class="stage-ui-title">
-        <div class="eyebrow" style="margin-bottom: 8px;">Showcase Interativo</div>
-        <h3>Produtos, Sistemas & <strong>Soluções.</strong></h3>
-        <p class="stage-ui-subtitle">Engenharia Digital · Automação · SaaS</p>
+      <div class="stage-ui-title" id="stage-title-container">
+        <div class="stage-eyebrow" id="stage-eyebrow">Showcase Interativo</div>
+        <h3 class="stage-main-title" id="stage-main-title">Produtos, Sistemas & <strong>Soluções.</strong></h3>
+        <p class="stage-ui-subtitle" id="stage-subtitle">Engenharia Digital · Automação · SaaS</p>
+      </div>
+      <div class="stage-ui-meta">
+        <span class="stage-meta-pill" id="stage-badge-pill">8 PROJETOS EM PRODUÇÃO</span>
       </div>
     </div>
 
     <!-- Three.js Canvas Container -->
     <div id="carousel-webgl-stage"></div>
 
-    <!-- UI Inferior do Palco 3D -->
-    <div class="stage-ui-footer">
-      <div class="carousel-drag-hint">
-        <span class="drag-hint-text">Role a página para navegar nos projetos</span>
+    <!-- Flash Overlay na passagem lateral -->
+    <div id="stage-flash-overlay"></div>
+
+    <!-- UI Inferior do Palco 3D (Carrossel Hint) -->
+    <div class="stage-ui-footer" id="stage-ui-footer">
+      <div class="carousel-drag-hint" id="carousel-drag-hint">
+        <span class="drag-hint-text" id="drag-hint-label">Role a página para navegar nos projetos</span>
         <div class="carousel-progress-track">
           <div id="carousel-progress-fill" class="carousel-progress-thumb"></div>
         </div>
       </div>
     </div>
+
+    <!-- DOCK FIXO DE TELEMETRIA (FIXO NA BASE DO PALCO // ZERO QUEBRAS) -->
+    <div class="stack-telemetry-dock" id="stack-hud-dock">
+      <div class="dock-idle-state" id="dock-idle">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="dock-pulse-dot"></span>
+          <span>// PASSE O MOUSE OU TOQUE NOS LADRILHOS PARA INSPECIONAR A STACK</span>
+        </div>
+        <span class="dock-count-pill" id="dock-count-badge">20 FERRAMENTAS ATIVAS</span>
+      </div>
+
+      <div class="dock-active-state" id="dock-active" style="display: none;">
+        <div class="dock-logo-box">
+          <img src="assets/logos/claude.png" id="dock-logo-img" alt="Logo">
+        </div>
+        <div class="dock-info-content">
+          <div class="dock-meta-row">
+            <span class="dock-cat-tag" id="hud-cat">IA & AGENTES</span>
+            <span class="dock-tech-name" id="hud-name">Claude 3.5 Sonnet</span>
+            <span class="dock-status-tag">PRODUÇÃO REAL</span>
+          </div>
+          <div class="dock-role-desc" id="hud-role">
+            Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </div>
-
-<!-- ═══ PRÓXIMAS SEÇÕES PLANEJADAS ═══ -->
-<!-- ═══ SEÇÃO 02: ENGENHARIA & STACK (ISOMETRIC BACKGROUND BOXES) ═══ -->
-<section class="section-stack-boxes" id="secao-stack-boxes">
-  <div class="boxes-vignette-overlay"></div>
-
-  <!-- CABEÇALHO DA SEÇÃO -->
-  <div class="stack-hero-header">
-    <div class="stack-eyebrow">Engenharia & Stack // O Motor de Construção</div>
-    <h2 class="stack-title">Linguagens, Frameworks & <strong>Engenharia.</strong></h2>
-    <p class="stack-subtitle">
-      A infraestrutura e o ferramental de ponta que alimentam sistemas autônomos, pipelines de dados massivos, inteligência artificial agêntica e experiências tridimensionais a 60 FPS.
-    </p>
-  </div>
-
-  <!-- PALCO ISOMÉTRICO 3D COM GRID INTERATIVO -->
-  <div class="boxes-viewport" id="boxes-viewport">
-    <div class="boxes-matrix-core" id="boxes-matrix-core">
-      <!-- Grade gerada dinamicamente via JS com 16 logos reais -->
-    </div>
-  </div>
-
-  <!-- DOCK FIXO DE TELEMETRIA (LOCAL FIXO NA TELA // ZERO QUEBRAS) -->
-  <div class="stack-telemetry-dock" id="stack-hud-dock">
-    <div class="dock-idle-state" id="dock-idle">
-      <div style="display: flex; align-items: center; gap: 10px;">
-        <span class="dock-pulse-dot"></span>
-        <span>// PASSE O MOUSE OU TOQUE NOS LADRILHOS PARA INSPECIONAR A STACK</span>
-      </div>
-      <span class="dock-count-pill">16 FERRAMENTAS ATIVAS</span>
-    </div>
-
-    <div class="dock-active-state" id="dock-active" style="display: none;">
-      <div class="dock-logo-box">
-        <img src="assets/logos/claude.png" id="dock-logo-img" alt="Logo">
-      </div>
-      <div class="dock-info-content">
-        <div class="dock-meta-row">
-          <span class="dock-cat-tag" id="hud-cat">IA & AGENTES</span>
-          <span class="dock-tech-name" id="hud-name">Claude 3.5 Sonnet</span>
-          <span class="dock-status-tag">PRODUÇÃO REAL</span>
-        </div>
-        <div class="dock-role-desc" id="hud-role">
-          Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 <section class="slot-placeholder" id="slot-3">
   <span class="slot-label">SEÇÃO 03 — IMPACTO & RESULTADOS REAIS</span>
 </section>
@@ -1351,14 +1393,46 @@ h1 strong, h2 strong {
 
 /**
  * ════════════════════════════════════════════════════════════════════
- * THREE.JS 3D CYLINDRICAL MOTION CAROUSEL (EXACT JESPER CLONE ENGINE)
+ * ENGINE THREE.JS UNIFICADA: PORTFÓLIO 3D -> TRANSIÇÃO LATERAL -> STACK NO MESMO GRID
+ * - 1 Única Cena WebGL contínua
+ * - 1 Mesmo Piso 3D (THREE.GridHelper 140x140) estendido sem qualquer corte
+ * - 20 Ladrilhos 3D com fotos reais em alta resolução (assets/logos/*.png)
+ * - Raycaster a 60 FPS para Hover e Toque nos ladrilhos
+ * - Câmera cinemática: nível dos olhos nos cards -> elevação isométrica na stack
+ * - Dock Fixo de Telemetria com transição de entrada suave
+ * - Síntese de áudio Sci-Fi sincronizada com o botão global de som
  * ════════════════════════════════════════════════════════════════════
  */
-(function init3DCarousel() {
+(function initUnified3DExperience() {
   const container = document.getElementById('carousel-webgl-stage');
   const progressBar = document.getElementById('carousel-progress-fill');
   if (!container || typeof THREE === 'undefined') return;
 
+  // 1. Catálogo Completo das 20 Ferramentas & Frameworks Oficiais
+  const STACK_DATA = [
+    { id: "claude", name: "Claude 3.5 Sonnet", cat: "IA & AGENTES", file: "claude.png", role: "Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.", color: "#d97706" },
+    { id: "gpt", name: "ChatGPT / GPT-4o", cat: "IA & COGNIÇÃO", file: "gpt.png", role: "Modelagem generativa, síntese e transformações de dados em linguagem natural.", color: "#10b981" },
+    { id: "hermes", name: "Nous Hermes", cat: "IA OPEN-WEIGHTS", file: "hermes.png", role: "Function calling avançado, agentes locais e autonomia de raciocínio de código aberto.", color: "#f97316" },
+    { id: "gemini", name: "Google Gemini 2.5", cat: "IA MULTIMODAL", file: "gemini.png", role: "Janela de contexto ultra-longa, análise multimodal e síntese estruturada.", color: "#38bdf8" },
+    { id: "n8n", name: "n8n Workflows", cat: "AUTOMAÇÃO & PIPELINES", file: "n8n.png", role: "Orquestração visual de webhooks, integrações de APIs e fluxos autônomos sem atrito.", color: "#ea580c" },
+    { id: "supabase", name: "Supabase BaaS", cat: "BANCO & REALTIME", file: "supabase.png", role: "PostgreSQL gerenciado, Row Level Security, Edge Functions e sincronização em tempo real.", color: "#3ecf8e" },
+    { id: "gsap", name: "GreenSock GSAP", cat: "MOTION & TIMELINES", file: "gsap.png", role: "Animações cinemáticas fluidas a 60 FPS, ScrollTrigger e transições de interface de alta precisão.", color: "#84cc16" },
+    { id: "nextjs", name: "Next.js 15", cat: "FRONTEND ARCHITECTURE", file: "nextjs.png", role: "React Server Components, App Router, SSR em Edge e performance máxima na web.", color: "#ffffff" },
+    { id: "react", name: "React 19", cat: "UI REATIVA", file: "react.png", role: "Arquitetura modular de componentes, Server Actions e reatividade atômica.", color: "#06b6d4" },
+    { id: "typescript", name: "TypeScript 5", cat: "TIPAGEM & ESCALABILIDADE", file: "typescript.png", role: "Segurança estrita de tipos, contratos robustos entre cliente e servidor e zero bugs em runtime.", color: "#3b82f6" },
+    { id: "python", name: "Python 3.12", cat: "DATA & BACKEND", file: "python.png", role: "Engenharia de dados, crawlers analíticos, scripts de telemetria e microsserviços.", color: "#fbbf24" },
+    { id: "fastapi", name: "FastAPI", cat: "APIS ASSÍNCRONAS", file: "fastapi.png", role: "Endpoints REST assíncronos ultrarrápidos, serialização Pydantic e latência mínima.", color: "#009688" },
+    { id: "threejs", name: "Three.js / WebGL", cat: "CREATIVE 3D", file: "threejs.png", role: "Renderização 3D isométrica, shaders customizados GLSL e palcos navegáveis.", color: "#f43f5e" },
+    { id: "tailwind", name: "Tailwind CSS", cat: "DESIGN SYSTEMS", file: "tailwind.png", role: "Tokens utilitários de design, layouts responsivos ágeis e estética industrial calibrada.", color: "#0ea5e9" },
+    { id: "docker", name: "Docker & Containers", cat: "DEVOPS & INFRA", file: "docker.png", role: "Isolamento de ambientes, esteiras de deploy reproduzíveis e portabilidade total.", color: "#2563eb" },
+    { id: "postgresql", name: "PostgreSQL", cat: "DADOS RELACIONAIS", file: "postgresql.png", role: "Armazenamento confiável ACID, apuração eleitoral em tempo real e modelagem relacional estrita.", color: "#336791" },
+    { id: "nodejs", name: "Node.js", cat: "RUNTIME DE ALTA ESCALA", file: "nodejs.png", role: "Execução assíncrona orientada a eventos, streaming de dados e microsserviços I/O-intensive.", color: "#22c55e" },
+    { id: "redis", name: "Redis Cache", cat: "IN-MEMORY & RATE LIMIT", file: "redis.png", role: "Filas atômicas de alta performance, caching de tokens e controle de vazão de requisições.", color: "#ef4444" },
+    { id: "git", name: "Git & GitHub", cat: "VERSIONAMENTO & CI/CD", file: "git.png", role: "Controle estrito de versão, esteiras automatizadas de CI/CD e colaboração ágil de código.", color: "#f05032" },
+    { id: "vercel", name: "Vercel Edge", cat: "SERVERLESS & GLOBAL CDN", file: "vercel.png", role: "Distribuição global em Edge, Serverless Functions e deploys atômicos com latência zero.", color: "#ffffff" }
+  ];
+
+  // 8 Projetos do Portfólio
   const PROJECTS = [
     { id: "cat-dev", title: "Sistemas & Pipelines de Dados", category: "Fullstack Architecture", image: "assets/cards/card_1.jpg", aspect: 16 / 9 },
     { id: "robot-spark", title: "Agentes Autônomos & Workflows", category: "Agentic AI & LLMs", image: "assets/cards/card_2.jpg", aspect: 16 / 9 },
@@ -1370,52 +1444,84 @@ h1 strong, h2 strong {
     { id: "cactus-cook", title: "APIs Resilientes & Microsserviços", category: "Backend & Infraestrutura", image: "assets/cards/card_8.jpg", aspect: 16 / 9 }
   ];
 
+  const GLOW_PALETTE = [
+    "#d96526", "#f97316", "#f59e0b", "#fbbf24", "#ea580c", "#38bdf8", "#06b6d4", "#10b981"
+  ];
+
   let scene, camera, renderer;
+  let carouselGroup;
+  let gridMasterGroup;
   let cardMeshes = [];
-  let gridHelper;
+  let cellMeshes = [];
   let textureLoader = new THREE.TextureLoader();
 
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2(-999, -999);
+  let hoveredCell = null;
+
+  let currentProgress = 0;
   let targetScroll = 0;
   let currentScroll = 0;
   let scrollVelocity = 0;
   let isDragging = false;
-  let startX = 0;
-  let startY = 0;
-  let dragStartX = 0;
-  let dragStartY = 0;
-  let isIntersecting = false;
+  let startX = 0, startY = 0;
+  let dragStartX = 0, dragStartY = 0;
+  let isIntersecting = true;
 
-  // Efeito Padrão de Alta Definição
   const config = {
     cylinderRadius: 10.0,
     cardSpacing: 5.2,
-    damping: 0.020,
-    shaderType: 0, // 0: Kinetic Wave / Liquid Distortion
-    intensity: 0.8, // 80%
-    showGrid: true,
     cardBaseHeight: 2.8,
+    floorY: -2.0,
+    damping: 0.025
   };
 
+  let audioCtx = null;
+  function playSciFiClick(freq = 640) {
+    if (typeof globalSoundActive !== 'undefined' && !globalSoundActive) return;
+    try {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(freq * 1.8, audioCtx.currentTime + 0.035);
+
+      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.045);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.05);
+    } catch (e) {}
+  }
+
+  function isMobile() {
+    return window.innerWidth < 768;
+  }
+
+  // Shaders para os cards do portfólio com controle de opacidade e escala
   const vertexShader = `
     uniform float uTime;
     uniform float uVelocity;
     uniform float uRadius;
-    uniform int uShaderType;
-    uniform float uIntensity;
     uniform float uHover;
     uniform int uIsMobile;
-
+    uniform float uCardScale;
     varying vec2 vUv;
-    varying vec3 vNormal;
-    varying float vDistortion;
 
     void main() {
       vUv = uv;
-      vNormal = normal;
+      vec3 pos = position * uCardScale;
 
-      vec3 pos = position;
-
-      // 1. Curvatura Cilíndrica profunda
       if (uIsMobile == 1) {
         float arc = pos.y / uRadius;
         pos.z -= (1.0 - cos(arc)) * uRadius;
@@ -1426,19 +1532,9 @@ h1 strong, h2 strong {
         pos.x = sin(arc) * uRadius;
       }
 
-      float distVal = 0.0;
+      float wave = sin((uIsMobile == 1 ? vUv.x : vUv.y) * 6.28 + uTime * 3.0 + (uIsMobile == 1 ? pos.y : pos.x)) * (abs(uVelocity) * 1.8 + 0.05 * uHover);
+      pos.z += wave + uHover * 0.35;
 
-      // 2. Deformações por Shader Mode (Kinetic Wave)
-      if (uShaderType == 0) {
-        float wave = sin((uIsMobile == 1 ? vUv.x : vUv.y) * 6.28 + uTime * 3.0 + (uIsMobile == 1 ? pos.y : pos.x)) * (abs(uVelocity) * 1.8 + 0.05 * uHover) * uIntensity;
-        pos.z += wave;
-        distVal = wave;
-      }
-
-      // Hover scale suave
-      pos.z += uHover * 0.35;
-
-      vDistortion = distVal;
       gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
     }
   `;
@@ -1447,16 +1543,11 @@ h1 strong, h2 strong {
     uniform sampler2D uTexture;
     uniform float uVelocity;
     uniform float uTime;
-    uniform int uShaderType;
-    uniform float uIntensity;
     uniform float uHover;
     uniform float uAspect;
-
+    uniform float uOpacity;
     varying vec2 vUv;
-    varying vec3 vNormal;
-    varying float vDistortion;
 
-    // SDF para cantos arredondados perfeitos
     float roundedBox(vec2 p, vec2 b, float r) {
       vec2 q = abs(p) - b + r;
       return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
@@ -1464,60 +1555,39 @@ h1 strong, h2 strong {
 
     void main() {
       vec2 uv = vUv;
-
-      // 1. Cálculo de Cantos Arredondados com Anti-aliasing
       vec2 p = uv - vec2(0.5);
       p.x *= uAspect;
       vec2 halfSize = vec2(0.5 * uAspect, 0.5);
-      float cornerRadius = 0.048;
-      float dist = roundedBox(p, halfSize, cornerRadius);
-      
-      float alpha = 1.0 - smoothstep(0.0, 0.005, dist);
-      if (alpha < 0.02) discard;
+      float dist = roundedBox(p, halfSize, 0.048);
+      float alpha = (1.0 - smoothstep(0.0, 0.005, dist)) * uOpacity;
+      if (alpha < 0.01) discard;
 
-      vec4 color = vec4(1.0);
+      vec2 waveUv = uv;
+      waveUv.x += sin(uv.y * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover);
+      vec4 color = texture2D(uTexture, waveUv);
+      color.rgb += vec3(0.85, 0.4, 0.15) * abs(sin(uv.y * 8.0 + uTime * 2.0)) * (abs(uVelocity) * 1.5 + uHover * 0.25);
 
-      if (uShaderType == 0) {
-        // Kinetic Wave + Liquid Distortion
-        vec2 waveUv = uv;
-        waveUv.x += sin(uv.y * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
-        waveUv.y += cos(uv.x * 12.0 + uTime * 4.0) * (abs(uVelocity) * 0.08 + 0.015 * uHover) * uIntensity;
-        color = texture2D(uTexture, waveUv);
-        color.rgb += vec3(0.85, 0.4, 0.15) * abs(sin(uv.y * 8.0 + uTime * 2.0)) * (abs(uVelocity) * 1.5 + uHover * 0.25) * uIntensity;
-      } else {
-        color = texture2D(uTexture, uv);
-      }
-
-      // Vinheta de borda e contraste editorial
       float vignette = smoothstep(0.85, 0.15, length(uv - vec2(0.5)));
       color.rgb *= mix(0.88, 1.05, vignette);
 
-      // Borda luminosa alaranjada sutil (#d96526)
       float borderGlow = 1.0 - smoothstep(0.0, 0.009, abs(dist));
       color.rgb += vec3(0.85, 0.4, 0.15) * borderGlow * (0.35 + uHover * 0.5);
-
-      // Hover highlight
       color.rgb += uHover * 0.08;
 
       gl_FragColor = vec4(color.rgb, alpha);
     }
   `;
 
-  function isMobile() {
-    return window.innerWidth < 768;
-  }
-
   function init() {
     scene = new THREE.Scene();
     scene.background = null;
-    scene.fog = new THREE.FogExp2(0x05070b, 0.028);
+    scene.fog = new THREE.FogExp2(0x05070b, 0.022);
 
     const w = container.clientWidth || window.innerWidth;
     const h = container.clientHeight || window.innerHeight;
 
-    const aspect = w / h;
-    camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
-    updateCameraPosition();
+    camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 150);
+    updateCameraPos();
 
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(w, h);
@@ -1525,59 +1595,48 @@ h1 strong, h2 strong {
     renderer.outputEncoding = THREE.sRGBEncoding;
     container.appendChild(renderer.domElement);
 
-    createGridFloor();
-    createCards();
+    const ambient = new THREE.AmbientLight(0xffffff, 0.95);
+    scene.add(ambient);
+
+    const mainLight = new THREE.PointLight(0xd96526, 4.0, 45);
+    mainLight.position.set(0, 4, 8);
+    scene.add(mainLight);
+
+    // 1. Grupo do Carrossel de Projetos
+    carouselGroup = new THREE.Group();
+    scene.add(carouselGroup);
+    buildCarouselCards();
+
+    // 2. Grupo Mestre do Grid (Começa no Chão e Levanta para o Fundo)
+    gridMasterGroup = new THREE.Group();
+    scene.add(gridMasterGroup);
+    buildUnifiedGridMatrix();
+
     setupInteraction();
     animate();
   }
 
-  function updateCameraPosition() {
+  function updateCameraPos() {
     if (isMobile()) {
-      camera.position.set(0, 0, 7.8);
-      camera.lookAt(0, 0, 0);
+      camera.position.set(0, 0, 8.5);
     } else {
-      camera.position.set(0, 0.2, 7.5);
-      camera.lookAt(0, 0, 0);
+      camera.position.set(0, 0.2, 7.6);
     }
+    camera.lookAt(0, 0, 0);
   }
 
-  function createGridFloor() {
-    const size = 60;
-    const divisions = 60;
-    gridHelper = new THREE.GridHelper(size, divisions, 0xd96526, 0x4a1e0b);
-    gridHelper.material.opacity = 0.65;
-    gridHelper.material.transparent = true;
-    gridHelper.position.y = isMobile() ? -3.5 : -1.8;
-    gridHelper.position.z = -5;
-    scene.add(gridHelper);
-  }
-
-  function getCardDimensions(proj) {
-    if (isMobile()) {
-      const width = 3.6;
-      const height = width / (proj.aspect || 1.6);
-      return { width, height };
-    } else {
-      const height = config.cardBaseHeight;
-      const width = height * (proj.aspect || 1.6);
-      return { width, height };
-    }
-  }
-
-  function createCards() {
-    cardMeshes.forEach(m => scene.remove(m));
+  function buildCarouselCards() {
+    cardMeshes.forEach(m => carouselGroup.remove(m));
     cardMeshes = [];
 
     PROJECTS.forEach((proj, idx) => {
-      const { width, height } = getCardDimensions(proj);
-      const cardAspect = proj.aspect || (width / height);
-
+      const width = isMobile() ? 3.4 : 4.5;
+      const height = width / (proj.aspect || 1.6);
       const geometry = new THREE.PlaneGeometry(width, height, 32, 16);
 
-      const texture = textureLoader.load(proj.image, (tex) => {
-        tex.generateMipmaps = true;
-        tex.minFilter = THREE.LinearMipmapLinearFilter;
-      });
+      const texture = textureLoader.load(proj.image);
+      texture.generateMipmaps = true;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
 
       const material = new THREE.ShaderMaterial({
         vertexShader,
@@ -1587,88 +1646,359 @@ h1 strong, h2 strong {
           uTime: { value: 0 },
           uVelocity: { value: 0 },
           uRadius: { value: isMobile() ? 14.0 : config.cylinderRadius },
-          uShaderType: { value: config.shaderType },
-          uIntensity: { value: config.intensity },
           uHover: { value: 0.0 },
           uIsMobile: { value: isMobile() ? 1 : 0 },
-          uAspect: { value: cardAspect },
+          uAspect: { value: proj.aspect || 1.6 },
+          uOpacity: { value: 1.0 },
+          uCardScale: { value: 1.0 }
         },
         transparent: true,
-        side: THREE.DoubleSide,
+        side: THREE.DoubleSide
       });
 
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.userData = { id: proj.id, title: proj.title, index: idx, baseWidth: width, baseHeight: height };
-      scene.add(mesh);
+      mesh.userData = { id: proj.id, title: proj.title, index: idx };
+      carouselGroup.add(mesh);
       cardMeshes.push(mesh);
     });
   }
 
-  function updateCardPositions() {
-    const totalCards = cardMeshes.length;
-    const mobile = isMobile();
+  function buildUnifiedGridMatrix() {
+    cellMeshes.forEach(c => gridMasterGroup.remove(c));
+    cellMeshes = [];
 
-    if (mobile) {
-      const spacing = 3.2;
-      const totalHeight = totalCards * spacing;
-      const radius = 14.0;
+    const mob = isMobile();
+    const cols = mob ? 8 : 16;
+    const rows = mob ? 12 : 9;
+    const cellSize = mob ? 1.05 : 1.18;
 
-      cardMeshes.forEach((mesh, i) => {
-        let yOffset = -(i * spacing - currentScroll) % totalHeight;
-        if (yOffset < -totalHeight / 2) yOffset += totalHeight;
-        if (yOffset > totalHeight / 2) yOffset -= totalHeight;
+    const totalWidth = cols * cellSize;
+    const totalHeight = rows * cellSize;
+    const originX = -totalWidth / 2 + cellSize / 2;
+    const originY = totalHeight / 2 - cellSize / 2;
 
-        mesh.position.x = 0;
-        mesh.position.y = yOffset;
+    const techPositions = mob ? [
+      { r: 2, c: 1 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 6 },
+      { r: 3, c: 2 }, { r: 3, c: 5 },
+      { r: 4, c: 1 }, { r: 4, c: 3 }, { r: 4, c: 4 }, { r: 4, c: 6 },
+      { r: 5, c: 2 }, { r: 5, c: 5 },
+      { r: 6, c: 1 }, { r: 6, c: 3 }, { r: 6, c: 4 }, { r: 6, c: 6 },
+      { r: 7, c: 2 }, { r: 7, c: 5 },
+      { r: 8, c: 3 }, { r: 8, c: 4 }
+    ] : [
+      { r: 2, c: 4 }, { r: 2, c: 6 }, { r: 2, c: 8 }, { r: 2, c: 10 },
+      { r: 3, c: 3 }, { r: 3, c: 5 }, { r: 3, c: 7 }, { r: 3, c: 9 }, { r: 3, c: 11 },
+      { r: 4, c: 4 }, { r: 4, c: 6 }, { r: 4, c: 8 }, { r: 4, c: 10 },
+      { r: 5, c: 3 }, { r: 5, c: 5 }, { r: 5, c: 7 }, { r: 5, c: 9 }, { r: 5, c: 11 },
+      { r: 6, c: 6 }, { r: 6, c: 8 }
+    ];
 
-        const arc = yOffset / radius;
-        mesh.position.z = -((1.0 - Math.cos(arc)) * radius);
-        mesh.rotation.x = -arc;
-        mesh.rotation.y = 0;
-
-        if (mesh.material.uniforms) {
-          mesh.material.uniforms.uVelocity.value = scrollVelocity;
-          mesh.material.uniforms.uRadius.value = radius;
-          mesh.material.uniforms.uShaderType.value = config.shaderType;
-          mesh.material.uniforms.uIntensity.value = config.intensity;
-          mesh.material.uniforms.uIsMobile.value = 1;
-        }
-      });
-
-      if (progressBar) {
-        const norm = Math.abs(currentScroll % totalHeight) / totalHeight;
-        progressBar.style.width = (norm * 100).toFixed(1) + '%';
+    const techMap = {};
+    techPositions.forEach((pos, idx) => {
+      if (idx < STACK_DATA.length) {
+        techMap[`${pos.r}_${pos.c}`] = STACK_DATA[idx];
       }
-    } else {
-      const totalWidth = totalCards * config.cardSpacing;
+    });
 
-      cardMeshes.forEach((mesh, i) => {
-        let xOffset = (i * config.cardSpacing - currentScroll) % totalWidth;
-        if (xOffset < -totalWidth / 2) xOffset += totalWidth;
-        if (xOffset > totalWidth / 2) xOffset -= totalWidth;
+    const basePlaneGeo = new THREE.PlaneGeometry(cellSize, cellSize);
+    const edgeGeo = new THREE.EdgesGeometry(basePlaneGeo);
 
-        mesh.position.x = xOffset;
-        mesh.position.y = 0;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const posX = originX + c * cellSize;
+        const posY = originY - r * cellSize;
+        const tech = techMap[`${r}_${c}`];
 
-        const arc = xOffset / config.cylinderRadius;
-        mesh.position.z = -((1.0 - Math.cos(arc)) * config.cylinderRadius);
-        mesh.rotation.x = 0;
-        mesh.rotation.y = -arc;
+        const cellMat = new THREE.MeshBasicMaterial({
+          color: 0x05070b,
+          transparent: true,
+          opacity: 0.05,
+          side: THREE.DoubleSide
+        });
 
-        if (mesh.material.uniforms) {
-          mesh.material.uniforms.uVelocity.value = scrollVelocity;
-          mesh.material.uniforms.uRadius.value = config.cylinderRadius;
-          mesh.material.uniforms.uShaderType.value = config.shaderType;
-          mesh.material.uniforms.uIntensity.value = config.intensity;
-          mesh.material.uniforms.uIsMobile.value = 0;
+        const cellMesh = new THREE.Mesh(basePlaneGeo, cellMat);
+        cellMesh.position.set(posX, posY, 0);
+
+        const edgeMat = new THREE.LineBasicMaterial({
+          color: tech ? new THREE.Color(tech.color) : new THREE.Color(0xd96526),
+          transparent: true,
+          opacity: tech ? 0.35 : 0.18
+        });
+        const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
+        cellMesh.add(edgeLines);
+
+        let logoMesh = null;
+        if (tech) {
+          const logoGeo = new THREE.PlaneGeometry(cellSize * 0.78, cellSize * 0.78);
+          const logoTex = textureLoader.load(`assets/logos/${tech.file}?v=2`);
+          logoTex.generateMipmaps = true;
+          logoTex.minFilter = THREE.LinearMipmapLinearFilter;
+
+          const logoMat = new THREE.MeshStandardMaterial({
+            map: logoTex,
+            transparent: true,
+            roughness: 0.25,
+            metalness: 0.2,
+            emissive: new THREE.Color(tech.color),
+            emissiveIntensity: 0.12,
+            opacity: 0.0
+          });
+
+          logoMesh = new THREE.Mesh(logoGeo, logoMat);
+          logoMesh.position.z = 0.02;
+          cellMesh.add(logoMesh);
         }
-      });
 
-      if (progressBar) {
-        const norm = Math.abs(currentScroll % totalWidth) / totalWidth;
-        progressBar.style.width = (norm * 100).toFixed(1) + '%';
+        cellMesh.userData = {
+          row: r,
+          col: c,
+          tech: tech || null,
+          cellMat,
+          edgeMat,
+          logoMesh,
+          baseEdgeOpacity: tech ? 0.35 : 0.18,
+          glowTimeout: null
+        };
+
+        gridMasterGroup.add(cellMesh);
+        cellMeshes.push(cellMesh);
       }
     }
+
+    setGridStateOnFloor();
+  }
+
+  function setGridStateOnFloor() {
+    const mob = isMobile();
+    gridMasterGroup.rotation.x = -Math.PI / 2;
+    gridMasterGroup.position.set(0, mob ? -3.4 : config.floorY, -3.5);
+  }
+
+  function handlePointerMove(e) {
+    if (!renderer) return;
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+    if (currentProgress >= 0.42) {
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(cellMeshes, false);
+
+      if (intersects.length > 0) {
+        const cell = intersects[0].object;
+        triggerCellGlow(cell, true);
+      }
+    }
+  }
+
+  function triggerCellGlow(cell, isUser = true) {
+    if (!cell || !cell.userData) return;
+    const u = cell.userData;
+
+    const glowHex = u.tech ? u.tech.color : GLOW_PALETTE[Math.floor(Math.random() * GLOW_PALETTE.length)];
+    const glowColor = new THREE.Color(glowHex);
+
+    u.cellMat.color = glowColor;
+    u.cellMat.opacity = u.tech ? 0.45 : 0.28;
+    u.edgeMat.color = glowColor;
+    u.edgeMat.opacity = 1.0;
+
+    if (u.logoMesh) {
+      u.logoMesh.material.opacity = 1.0;
+      u.logoMesh.material.emissiveIntensity = 0.85;
+      gsap.to(cell.position, { z: 0.35, duration: 0.2, ease: "power2.out" });
+      gsap.to(cell.scale, { x: 1.12, y: 1.12, duration: 0.2, ease: "power2.out" });
+
+      if (isUser) {
+        playSciFiClick(820);
+        updateDockHUD(u.tech);
+      }
+    } else if (isUser) {
+      playSciFiClick(500 + Math.random() * 300);
+    }
+
+    if (u.glowTimeout) clearTimeout(u.glowTimeout);
+    u.glowTimeout = setTimeout(() => {
+      gsap.to(u.cellMat, { opacity: 0.05, duration: 0.9, ease: "power2.out" });
+      gsap.to(u.edgeMat, { opacity: u.baseEdgeOpacity, duration: 0.8, ease: "power2.out" });
+
+      if (u.logoMesh) {
+        gsap.to(u.logoMesh.material, { opacity: 0.75, emissiveIntensity: 0.12, duration: 0.5 });
+        gsap.to(cell.position, { z: 0.0, duration: 0.35, ease: "power2.out" });
+        gsap.to(cell.scale, { x: 1.0, y: 1.0, duration: 0.35, ease: "power2.out" });
+      }
+    }, 220);
+  }
+
+  const hudDock = document.getElementById('stack-hud-dock');
+  const dockIdle = document.getElementById('dock-idle');
+  const dockActive = document.getElementById('dock-active');
+  const dockLogoImg = document.getElementById('dock-logo-img');
+  const hudCat = document.getElementById('hud-cat');
+  const hudName = document.getElementById('hud-name');
+  const hudRole = document.getElementById('hud-role');
+  let dockResetTimer = null;
+
+  function updateDockHUD(tech) {
+    if (!hudDock || !dockIdle || !dockActive) return;
+    if (dockResetTimer) clearTimeout(dockResetTimer);
+
+    hudCat.textContent = tech.cat;
+    hudCat.style.color = tech.color;
+    hudName.textContent = tech.name;
+    hudRole.textContent = tech.role;
+    dockLogoImg.src = `assets/logos/${tech.file}`;
+    dockLogoImg.alt = tech.name;
+
+    hudDock.style.setProperty('--dock-border', tech.color);
+    hudDock.style.setProperty('--dock-glow', `${tech.color}44`);
+
+    dockIdle.style.display = 'none';
+    dockActive.style.display = 'flex';
+
+    dockResetTimer = setTimeout(() => {
+      dockIdle.style.display = 'flex';
+      dockActive.style.display = 'none';
+      hudDock.style.removeProperty('--dock-border');
+      hudDock.style.removeProperty('--dock-glow');
+    }, 4500);
+  }
+
+  const stageTitleContainer = document.getElementById('stage-title-container');
+  const stageEyebrow = document.getElementById('stage-eyebrow');
+  const stageMainTitle = document.getElementById('stage-main-title');
+  const stageSubtitle = document.getElementById('stage-subtitle');
+  const stageBadgePill = document.getElementById('stage-badge-pill');
+  const stageFlash = document.getElementById('stage-flash-overlay');
+  const dragHint = document.getElementById('carousel-drag-hint');
+
+  function updateUnifiedFlow(progress) {
+    currentProgress = progress;
+
+    const mob = isMobile();
+    const floorY = mob ? -3.4 : config.floorY;
+    const floorZ = -3.5;
+    const totalCardsSpan = cardMeshes.length * (mob ? 3.2 : config.cardSpacing);
+
+    // FASE 1: CARROSSEL DE PROJETOS COM O GRID NO CHÃO (0.00 a 0.38)
+    if (progress <= 0.38) {
+      const p1 = progress / 0.38;
+      if (!isDragging) {
+        targetScroll = p1 * totalCardsSpan * 0.82;
+      }
+
+      cardMeshes.forEach(mesh => {
+        if (mesh.material.uniforms) {
+          mesh.material.uniforms.uOpacity.value = 1.0;
+          mesh.material.uniforms.uCardScale.value = 1.0;
+        }
+      });
+      carouselGroup.visible = true;
+
+      gridMasterGroup.rotation.x = -Math.PI / 2;
+      gridMasterGroup.position.set(0, floorY, floorZ);
+
+      cellMeshes.forEach(c => {
+        if (c.userData.logoMesh) {
+          c.userData.logoMesh.material.opacity = 0.0;
+        }
+      });
+
+      setHeaderContent('portfolio');
+      if (dragHint) dragHint.style.opacity = '1';
+      if (hudDock) hudDock.classList.remove('visible');
+      if (stageFlash) stageFlash.style.opacity = '0';
+
+    // FASE 2: TRANSIÇÃO FLUIDA - CARDS DESAPARECEM E GRID LEVANTA (0.38 a 0.65)
+    } else if (progress <= 0.65) {
+      const p2 = (progress - 0.38) / 0.27;
+
+      const cardOpacity = Math.max(0, 1.0 - p2 * 2.2);
+      const cardScale = Math.max(0.65, 1.0 - p2 * 0.35);
+      cardMeshes.forEach(mesh => {
+        if (mesh.material.uniforms) {
+          mesh.material.uniforms.uOpacity.value = cardOpacity;
+          mesh.material.uniforms.uCardScale.value = cardScale;
+        }
+      });
+      carouselGroup.visible = (cardOpacity > 0.01);
+
+      const rotX = (-Math.PI / 2) * (1.0 - p2);
+      const posY = floorY * (1.0 - p2);
+      const posZ = floorZ + p2 * (-floorZ - 0.2);
+
+      gridMasterGroup.rotation.x = rotX;
+      gridMasterGroup.position.set(0, posY, posZ);
+
+      const logoAlpha = Math.min(0.75, p2 * 1.2);
+      cellMeshes.forEach(c => {
+        if (c.userData.logoMesh) {
+          c.userData.logoMesh.material.opacity = logoAlpha;
+        }
+      });
+
+      if (stageFlash) {
+        const flashVal = Math.sin(p2 * Math.PI) * 0.45;
+        stageFlash.style.opacity = flashVal.toFixed(2);
+      }
+
+      if (p2 > 0.5) {
+        setHeaderContent('stack');
+        if (dragHint) dragHint.style.opacity = '0';
+        if (hudDock) hudDock.classList.add('visible');
+      } else {
+        setHeaderContent('portfolio');
+        if (dragHint) dragHint.style.opacity = String(1 - p2 * 2);
+        if (hudDock) hudDock.classList.remove('visible');
+      }
+
+    // FASE 3: GRID 100% FRONTAL COM PEÇAS SNAPPED DENTRO DOS QUADRADOS (0.65 a 1.00)
+    } else {
+      carouselGroup.visible = false;
+
+      gridMasterGroup.rotation.x = 0;
+      gridMasterGroup.position.set(0, 0, -0.2);
+
+      cellMeshes.forEach(c => {
+        if (c.userData.logoMesh && hoveredCell !== c) {
+          c.userData.logoMesh.material.opacity = 0.75;
+        }
+      });
+
+      setHeaderContent('stack');
+      if (dragHint) dragHint.style.opacity = '0';
+      if (hudDock) hudDock.classList.add('visible');
+      if (stageFlash) stageFlash.style.opacity = '0';
+    }
+  }
+
+  let activeHeaderMode = 'portfolio';
+  function setHeaderContent(mode) {
+    if (activeHeaderMode === mode) return;
+    activeHeaderMode = mode;
+
+    if (stageTitleContainer) {
+      stageTitleContainer.style.opacity = '0';
+      stageTitleContainer.style.transform = 'translateY(-6px)';
+    }
+
+    setTimeout(() => {
+      if (mode === 'portfolio') {
+        if (stageEyebrow) stageEyebrow.textContent = 'Showcase Interativo';
+        if (stageMainTitle) stageMainTitle.innerHTML = 'Produtos, Sistemas & <strong>Soluções.</strong>';
+        if (stageSubtitle) stageSubtitle.textContent = 'Engenharia Digital · Automação · SaaS';
+        if (stageBadgePill) stageBadgePill.textContent = '8 PROJETOS EM PRODUÇÃO';
+      } else {
+        if (stageEyebrow) stageEyebrow.textContent = 'Engenharia & Stack // O Motor de Construção';
+        if (stageMainTitle) stageMainTitle.innerHTML = 'Linguagens, Frameworks & <strong>Engenharia.</strong>';
+        if (stageSubtitle) stageSubtitle.textContent = 'A infraestrutura que alimenta sistemas autônomos e 3D a 60 FPS';
+        if (stageBadgePill) stageBadgePill.textContent = '20 FERRAMENTAS ATIVAS';
+      }
+      if (stageTitleContainer) {
+        stageTitleContainer.style.opacity = '1';
+        stageTitleContainer.style.transform = 'translateY(0)';
+      }
+    }, 180);
   }
 
   let clock = new THREE.Clock();
@@ -1677,70 +2007,50 @@ h1 strong, h2 strong {
     requestAnimationFrame(animate);
     if (!isIntersecting) return;
 
-    const elapsedTime = clock.getElapsedTime();
+    const time = clock.getElapsedTime();
 
-    const diff = targetScroll - currentScroll;
-    currentScroll += diff * config.damping;
-    scrollVelocity = diff * config.damping;
+    scrollVelocity = (targetScroll - currentScroll) * 0.08;
+    currentScroll += scrollVelocity;
 
-    updateCardPositions();
+    if (carouselGroup && carouselGroup.visible) {
+      const mob = isMobile();
+      const totalSpan = cardMeshes.length * (mob ? 3.2 : config.cardSpacing);
 
-    cardMeshes.forEach(mesh => {
-      if (mesh.material.uniforms) {
-        mesh.material.uniforms.uTime.value = elapsedTime;
+      cardMeshes.forEach((mesh, i) => {
+        let offset = (i * (mob ? 3.2 : config.cardSpacing) - currentScroll);
+        if (mob) {
+          mesh.position.y = -offset;
+          mesh.position.x = 0;
+          const arc = -offset / 14.0;
+          mesh.position.z = -((1.0 - Math.cos(arc)) * 14.0);
+          mesh.rotation.x = -arc;
+        } else {
+          mesh.position.x = offset;
+          mesh.position.y = 0;
+          const arc = offset / config.cylinderRadius;
+          mesh.position.z = -((1.0 - Math.cos(arc)) * config.cylinderRadius);
+          mesh.rotation.y = -arc;
+        }
+
+        if (mesh.material.uniforms) {
+          mesh.material.uniforms.uTime.value = time;
+          mesh.material.uniforms.uVelocity.value = scrollVelocity;
+        }
+      });
+
+      if (progressBar) {
+        const norm = Math.min(1, Math.max(0, currentScroll / (totalSpan * 0.82)));
+        progressBar.style.width = (norm * 100).toFixed(1) + '%';
       }
-    });
+    }
+
+    if (currentProgress >= 0.55 && Math.random() < 0.035) {
+      const randomCell = cellMeshes[Math.floor(Math.random() * cellMeshes.length)];
+      if (randomCell) triggerCellGlow(randomCell, false);
+    }
 
     renderer.render(scene, camera);
   }
-
-  // Raycaster para Hover nos Cards
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
-  let hoveredMesh = null;
-
-  function handleRaycastHover(e) {
-    const rect = container.getBoundingClientRect();
-    mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(cardMeshes);
-
-    if (intersects.length > 0) {
-      const mesh = intersects[0].object;
-      if (hoveredMesh !== mesh) {
-        if (hoveredMesh) resetMeshHover(hoveredMesh);
-        hoveredMesh = mesh;
-        animateMeshHover(mesh, 1.0);
-      }
-    } else {
-      if (hoveredMesh) {
-        resetMeshHover(hoveredMesh);
-        hoveredMesh = null;
-      }
-    }
-  }
-
-  function animateMeshHover(mesh, val) {
-    if (!mesh || !mesh.material.uniforms) return;
-    gsap.to(mesh.material.uniforms.uHover, {
-      value: val,
-      duration: 0.35,
-      ease: "power2.out"
-    });
-  }
-
-  function resetMeshHover(mesh) {
-    if (!mesh || !mesh.material.uniforms) return;
-    gsap.to(mesh.material.uniforms.uHover, {
-      value: 0.0,
-      duration: 0.35,
-      ease: "power2.out"
-    });
-  }
-
-  let manualDragOffset = 0;
 
   function getPinScrollProgress() {
     const pinWrapper = document.getElementById('portfolio-pin-wrapper');
@@ -1752,25 +2062,15 @@ h1 strong, h2 strong {
     return progress;
   }
 
-  function updateScrollTarget() {
-    const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
-    const pinProgress = getPinScrollProgress();
-    
-    // Se o usuário não está arrastando manualmente, o scroll da página guia o carrossel
-    if (!isDragging) {
-      targetScroll = (pinProgress * totalSpan) + manualDragOffset;
-    }
-  }
-
   function setupInteraction() {
-    // 1. Scroll da Página sincronizado com a rotação dos 8 cards
     window.addEventListener('scroll', () => {
       if (isIntersecting) {
-        updateScrollTarget();
+        updateUnifiedFlow(getPinScrollProgress());
       }
     }, { passive: true });
 
-    // 2. Drag & Drop Manual (Mouse)
+    window.addEventListener('mousemove', handlePointerMove, { passive: true });
+
     container.addEventListener('mousedown', (e) => {
       isDragging = true;
       startX = e.clientX;
@@ -1781,19 +2081,9 @@ h1 strong, h2 strong {
     });
 
     window.addEventListener('mousemove', (e) => {
-      if (!isDragging) {
-        handleRaycastHover(e);
-        return;
-      }
-      if (isMobile()) {
-        const deltaY = e.clientY - startY;
-        targetScroll = dragStartY + deltaY * 0.015;
-      } else {
-        const deltaX = e.clientX - startX;
-        targetScroll = dragStartX - deltaX * 0.015;
-      }
-      const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
-      manualDragOffset = targetScroll - (getPinScrollProgress() * totalSpan);
+      if (!isDragging) return;
+      const deltaX = e.clientX - startX;
+      targetScroll = dragStartX - deltaX * 0.015;
     });
 
     window.addEventListener('mouseup', () => {
@@ -1803,7 +2093,6 @@ h1 strong, h2 strong {
       }
     });
 
-    // 3. Touch Support
     container.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
         isDragging = true;
@@ -1811,45 +2100,39 @@ h1 strong, h2 strong {
         startY = e.touches[0].clientY;
         dragStartX = targetScroll;
         dragStartY = targetScroll;
+        handlePointerMove(e.touches[0]);
       }
     }, { passive: true });
 
-    window.addEventListener('touchmove', (e) => {
+    container.addEventListener('touchmove', (e) => {
       if (isDragging && e.touches.length === 1) {
-        if (isMobile()) {
-          const deltaY = e.touches[0].clientY - startY;
-          targetScroll = dragStartY + deltaY * 0.015;
-        } else {
-          const deltaX = e.touches[0].clientX - startX;
-          targetScroll = dragStartX - deltaX * 0.015;
-        }
-        const totalSpan = cardMeshes.length * (isMobile() ? 3.2 : config.cardSpacing);
-        manualDragOffset = targetScroll - (getPinScrollProgress() * totalSpan);
+        const deltaX = e.touches[0].clientX - startX;
+        targetScroll = dragStartX - deltaX * 0.015;
+        handlePointerMove(e.touches[0]);
       }
     }, { passive: true });
 
-    window.addEventListener('touchend', () => {
+    container.addEventListener('touchend', () => {
       isDragging = false;
     });
 
-    // 4. Resize
     window.addEventListener('resize', () => {
       if (!renderer || !camera) return;
       const w = container.clientWidth || window.innerWidth;
       const h = container.clientHeight || window.innerHeight;
       camera.aspect = w / h;
-      updateCameraPosition();
+      updateCameraPos();
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
-      createCards();
-      updateScrollTarget();
+      buildUnifiedGridMatrix();
+      updateUnifiedFlow(getPinScrollProgress());
     });
 
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         isIntersecting = entry.isIntersecting;
         if (isIntersecting) {
-          updateScrollTarget();
+          updateUnifiedFlow(getPinScrollProgress());
         }
       });
     }, { threshold: 0.02 });
@@ -1861,6 +2144,7 @@ h1 strong, h2 strong {
   }
 
   init();
+  setTimeout(() => updateUnifiedFlow(getPinScrollProgress()), 100);
 })();
 
 /**
@@ -1974,236 +2258,7 @@ function toggleGlobalSound(e) {
   observer.observe(vid);
 })();
 
-/**
- * ════════════════════════════════════════════════════════════════════
- * SEÇÃO 02: BACKGROUND BOXES ISOMÉTRICO (STACK & ENGENHARIA TM)
- * - 16 Logos oficiais com fotos reais em alta resolução (assets/logos/)
- * - Grade isométrica 3D com retículos '+' nos vértices pares
- * - Telemetria em Dock Fixo no rodapé da seção (zero saltos/quebras)
- * - Síntese de áudio Sci-Fi sincronizada com globalSoundActive
- * - Interatividade via Event Delegation a 60 FPS
- * - Pulso autônomo suave com IntersectionObserver para poupar CPU
- * ════════════════════════════════════════════════════════════════════
- */
-(function initStackBackgroundBoxes() {
-  const matrixContainer = document.getElementById('boxes-matrix-core');
-  const sectionEl = document.getElementById('secao-stack-boxes');
-  if (!matrixContainer || !sectionEl) return;
-
-  const STACK_DATA = [
-    { id: "claude", name: "Claude 3.5 Sonnet", cat: "IA & AGENTES", file: "claude.png", role: "Raciocínio cognitivo profundo, orquestração de subagentes e engenharia de software.", color: "#d97706" },
-    { id: "gpt", name: "ChatGPT / GPT-4o", cat: "IA & COGNIÇÃO", file: "gpt.png", role: "Modelagem generativa, síntese e transformações de dados em linguagem natural.", color: "#10b981" },
-    { id: "hermes", name: "Nous Hermes", cat: "IA OPEN-WEIGHTS", file: "hermes.png", role: "Function calling avançado, agentes locais e autonomia de raciocínio de código aberto.", color: "#f97316" },
-    { id: "gemini", name: "Google Gemini 2.5", cat: "IA MULTIMODAL", file: "gemini.png", role: "Janela de contexto ultra-longa, análise multimodal e síntese estruturada.", color: "#38bdf8" },
-    { id: "n8n", name: "n8n Workflows", cat: "AUTOMAÇÃO & PIPELINES", file: "n8n.png", role: "Orquestração visual de webhooks, integrações de APIs e fluxos autônomos sem atrito.", color: "#ea580c" },
-    { id: "supabase", name: "Supabase BaaS", cat: "BANCO & REALTIME", file: "supabase.png", role: "PostgreSQL gerenciado, Row Level Security, Edge Functions e sincronização em tempo real.", color: "#3ecf8e" },
-    { id: "gsap", name: "GreenSock GSAP", cat: "MOTION & TIMELINES", file: "gsap.png", role: "Animações cinemáticas fluidas a 60 FPS, ScrollTrigger e transições de interface de alta precisão.", color: "#84cc16" },
-    { id: "nextjs", name: "Next.js 15", cat: "FRONTEND // ARCHITECTURE", file: "nextjs.png", role: "React Server Components, App Router, SSR em Edge e performance máxima na web.", color: "#ffffff" },
-    { id: "react", name: "React 19", cat: "UI REATIVA", file: "react.png", role: "Arquitetura modular de componentes, Server Actions e reatividade atômica.", color: "#06b6d4" },
-    { id: "typescript", name: "TypeScript 5", cat: "TIPAGEM & ESCALABILIDADE", file: "typescript.png", role: "Segurança estrita de tipos, contratos robustos entre cliente e servidor e zero bugs em runtime.", color: "#3b82f6" },
-    { id: "python", name: "Python 3.12", cat: "DATA // BACKEND", file: "python.png", role: "Engenharia de dados, crawlers analíticos, scripts de telemetria e microsserviços.", color: "#fbbf24" },
-    { id: "fastapi", name: "FastAPI", cat: "APIS ASSÍNCRONAS", file: "fastapi.png", role: "Endpoints REST assíncronos ultrarrápidos, serialização Pydantic e latência mínima.", color: "#009688" },
-    { id: "threejs", name: "Three.js / WebGL", cat: "CREATIVE 3D", file: "threejs.png", role: "Renderização 3D isométrica, shaders customizados GLSL e palcos navegáveis.", color: "#f43f5e" },
-    { id: "tailwind", name: "Tailwind CSS", cat: "DESIGN SYSTEMS", file: "tailwind.png", role: "Tokens utilitários de design, layouts responsivos ágeis e estética industrial calibrada.", color: "#0ea5e9" },
-    { id: "docker", name: "Docker & Containers", cat: "DEVOPS // INFRA", file: "docker.png", role: "Isolamento de ambientes, esteiras de deploy reproduzíveis e portabilidade total.", color: "#2563eb" },
-    { id: "postgresql", name: "PostgreSQL", cat: "DADOS RELACIONAIS", file: "postgresql.png", role: "Armazenamento confiável ACID, apuração eleitoral em tempo real e modelagem relacional estrita.", color: "#336791" }
-  ];
-
-  const WARM_GLOW_COLORS = [
-    "rgba(217, 101, 38, 0.85)",
-    "rgba(249, 115, 22, 0.85)",
-    "rgba(245, 158, 11, 0.85)",
-    "rgba(251, 191, 36, 0.85)",
-    "rgba(234, 88, 12, 0.85)",
-    "rgba(239, 68, 68, 0.85)",
-    "rgba(10, 252, 219, 0.85)"
-  ];
-
-  let clickAudioCtx = null;
-  function playSciFiClick(freq = 640) {
-    if (typeof globalSoundActive !== 'undefined' && !globalSoundActive) return;
-    try {
-      if (!clickAudioCtx) {
-        clickAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (clickAudioCtx.state === 'suspended') {
-        clickAudioCtx.resume();
-      }
-      const osc = clickAudioCtx.createOscillator();
-      const gain = clickAudioCtx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, clickAudioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(freq * 1.8, clickAudioCtx.currentTime + 0.035);
-
-      gain.gain.setValueAtTime(0.035, clickAudioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, clickAudioCtx.currentTime + 0.045);
-
-      osc.connect(gain);
-      gain.connect(clickAudioCtx.destination);
-
-      osc.start();
-      osc.stop(clickAudioCtx.currentTime + 0.05);
-    } catch (e) {}
-  }
-
-  const ROWS = 16;
-  const COLS = 22;
-  const TECH_MAP = {};
-  const PLACEMENTS = [
-    { r: 4, c: 6, idx: 0 },   // Claude
-    { r: 4, c: 10, idx: 1 },  // GPT
-    { r: 4, c: 14, idx: 2 },  // Hermes
-    { r: 6, c: 4, idx: 3 },   // Gemini
-    { r: 6, c: 8, idx: 4 },   // n8n
-    { r: 6, c: 12, idx: 5 },  // Supabase
-    { r: 6, c: 16, idx: 6 },  // GSAP
-    { r: 8, c: 5, idx: 7 },   // Next.js
-    { r: 8, c: 9, idx: 8 },   // React
-    { r: 8, c: 13, idx: 9 },  // TypeScript
-    { r: 8, c: 17, idx: 10 }, // Python
-    { r: 10, c: 6, idx: 11 }, // FastAPI
-    { r: 10, c: 10, idx: 12 },// Three.js
-    { r: 10, c: 14, idx: 13 },// Tailwind
-    { r: 12, c: 8, idx: 14 }, // Docker
-    { r: 12, c: 12, idx: 15 } // PostgreSQL
-  ];
-
-  PLACEMENTS.forEach(p => {
-    TECH_MAP[`${p.r}_${p.c}`] = STACK_DATA[p.idx];
-  });
-
-  const CROSS_SVG = `
-    <svg class="box-crosshair" viewBox="0 0 24 24" fill="none">
-      <path d="M12 6v12m6-6H6" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  `;
-
-  for (let i = 0; i < ROWS; i++) {
-    const rowEl = document.createElement('div');
-    rowEl.className = 'box-row';
-
-    for (let j = 0; j < COLS; j++) {
-      const cellEl = document.createElement('div');
-      cellEl.className = 'box-cell';
-      cellEl.setAttribute('data-row', i);
-      cellEl.setAttribute('data-col', j);
-
-      if (i % 2 === 0 && j % 2 === 0) {
-        cellEl.innerHTML += CROSS_SVG;
-      }
-
-      const tech = TECH_MAP[`${i}_${j}`];
-      if (tech) {
-        cellEl.classList.add('has-logo');
-        cellEl.setAttribute('data-tech-id', tech.id);
-        cellEl.innerHTML += `
-          <div class="box-logo-wrapper">
-            <img src="assets/logos/${tech.file}" alt="${tech.name}" class="box-logo-img" loading="lazy">
-          </div>
-        `;
-      }
-
-      rowEl.appendChild(cellEl);
-    }
-    matrixContainer.appendChild(rowEl);
-  }
-
-  const hudDock = document.getElementById('stack-hud-dock');
-  const dockIdle = document.getElementById('dock-idle');
-  const dockActive = document.getElementById('dock-active');
-  const dockLogoImg = document.getElementById('dock-logo-img');
-  const hudCat = document.getElementById('hud-cat');
-  const hudName = document.getElementById('hud-name');
-  const hudRole = document.getElementById('hud-role');
-
-  let dockIdleTimeout = null;
-
-  function activateCell(cell, isUserInteraction = true) {
-    if (!cell) return;
-    const techId = cell.getAttribute('data-tech-id');
-    const tech = STACK_DATA.find(t => t.id === techId);
-
-    const glowColor = tech ? tech.color : WARM_GLOW_COLORS[Math.floor(Math.random() * WARM_GLOW_COLORS.length)];
-    cell.style.setProperty('--cell-glow', glowColor);
-    cell.style.backgroundColor = glowColor;
-    cell.style.boxShadow = `0 0 32px ${glowColor}, inset 0 0 14px rgba(255,255,255,0.4)`;
-    cell.classList.add('active-glow');
-
-    if (isUserInteraction) {
-      playSciFiClick(tech ? 820 : 600 + Math.random() * 200);
-    }
-
-    if (tech && isUserInteraction && hudDock && dockIdle && dockActive) {
-      if (dockIdleTimeout) clearTimeout(dockIdleTimeout);
-
-      hudCat.textContent = tech.cat;
-      hudCat.style.color = tech.color;
-      hudName.textContent = tech.name;
-      hudRole.textContent = tech.role;
-      dockLogoImg.src = `assets/logos/${tech.file}`;
-      dockLogoImg.alt = tech.name;
-
-      hudDock.style.setProperty('--dock-border', tech.color);
-      hudDock.style.setProperty('--dock-glow', `${tech.color}44`);
-
-      dockIdle.style.display = 'none';
-      dockActive.style.display = 'flex';
-
-      dockIdleTimeout = setTimeout(() => {
-        dockIdle.style.display = 'flex';
-        dockActive.style.display = 'none';
-        hudDock.style.removeProperty('--dock-border');
-        hudDock.style.removeProperty('--dock-glow');
-      }, 4500);
-    }
-
-    setTimeout(() => {
-      cell.style.backgroundColor = 'transparent';
-      cell.style.boxShadow = 'none';
-      cell.classList.remove('active-glow');
-    }, 220);
-  }
-
-  matrixContainer.addEventListener('mouseover', (e) => {
-    const cell = e.target.closest('.box-cell');
-    if (cell) {
-      activateCell(cell, true);
-    }
-  });
-
-  matrixContainer.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    const target = document.elementFromPoint(touch.clientX, touch.clientY);
-    const cell = target?.closest('.box-cell');
-    if (cell) {
-      activateCell(cell, true);
-    }
-  }, { passive: true });
-
-  let pulseInterval = null;
-  const isSectionVisible = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        if (!pulseInterval) {
-          pulseInterval = setInterval(() => {
-            const allCells = matrixContainer.querySelectorAll('.box-cell');
-            if (allCells.length === 0) return;
-            const randomCell = allCells[Math.floor(Math.random() * allCells.length)];
-            activateCell(randomCell, false);
-          }, 850);
-        }
-      } else {
-        if (pulseInterval) {
-          clearInterval(pulseInterval);
-          pulseInterval = null;
-        }
-      }
-    });
-  }, { threshold: 0.1 });
-
-  isSectionVisible.observe(sectionEl);
-})();
+// (A Seção 02 Stack & Frameworks agora é renderizada diretamente na mesma cena WebGL unificada via initUnified3DExperience)
 </script>
 </body>
 </html>
