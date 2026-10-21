@@ -1,0 +1,7 @@
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  <pattern id="holographic" width="20" height="20" patternUnits="userSpaceOnUse">
+    <line x1="0" y1="0" x2="20" y2="20" stroke="white" stroke-width="0.5" />
+    <line x1="20" y1="0" x2="0" y2="20" stroke="white" stroke-width="0.5" />
+  </pattern>
+  <rect width="100" height="100" fill="url(#holographic)" />
+</svg>

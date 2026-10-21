@@ -1598,7 +1598,7 @@ h1 strong, h2 strong {
     const ambient = new THREE.AmbientLight(0xffffff, 0.95);
     scene.add(ambient);
 
-    const mainLight = new THREE.PointLight(0xd96526, 4.0, 45);
+    const mainLight = new THREE.PointLight(0xd96526, 3.5, 45);
     mainLight.position.set(0, 4, 8);
     scene.add(mainLight);
 
@@ -1618,11 +1618,11 @@ h1 strong, h2 strong {
 
   function updateCameraPos() {
     if (isMobile()) {
-      camera.position.set(0, 0, 8.5);
+      camera.position.set(0, -0.6, 12.8);
     } else {
-      camera.position.set(0, 0.2, 7.6);
+      camera.position.set(0, -0.1, 9.8);
     }
-    camera.lookAt(0, 0, 0);
+    camera.lookAt(0, isMobile() ? -0.55 : -0.25, 0);
   }
 
   function buildCarouselCards() {
@@ -1668,9 +1668,9 @@ h1 strong, h2 strong {
     cellMeshes = [];
 
     const mob = isMobile();
-    const cols = mob ? 8 : 16;
-    const rows = mob ? 12 : 9;
-    const cellSize = mob ? 1.05 : 1.18;
+    const cols = mob ? 6 : 12;
+    const rows = mob ? 9 : 7;
+    const cellSize = mob ? 0.76 : 0.82;
 
     const totalWidth = cols * cellSize;
     const totalHeight = rows * cellSize;
@@ -1678,19 +1678,19 @@ h1 strong, h2 strong {
     const originY = totalHeight / 2 - cellSize / 2;
 
     const techPositions = mob ? [
-      { r: 2, c: 1 }, { r: 2, c: 3 }, { r: 2, c: 4 }, { r: 2, c: 6 },
-      { r: 3, c: 2 }, { r: 3, c: 5 },
-      { r: 4, c: 1 }, { r: 4, c: 3 }, { r: 4, c: 4 }, { r: 4, c: 6 },
-      { r: 5, c: 2 }, { r: 5, c: 5 },
-      { r: 6, c: 1 }, { r: 6, c: 3 }, { r: 6, c: 4 }, { r: 6, c: 6 },
-      { r: 7, c: 2 }, { r: 7, c: 5 },
-      { r: 8, c: 3 }, { r: 8, c: 4 }
+      { r: 1, c: 1 }, { r: 1, c: 2 }, { r: 1, c: 4 },
+      { r: 2, c: 1 }, { r: 2, c: 3 }, { r: 2, c: 4 },
+      { r: 3, c: 1 }, { r: 3, c: 2 }, { r: 3, c: 4 },
+      { r: 4, c: 1 }, { r: 4, c: 3 }, { r: 4, c: 4 },
+      { r: 5, c: 1 }, { r: 5, c: 2 }, { r: 5, c: 4 },
+      { r: 6, c: 1 }, { r: 6, c: 3 }, { r: 6, c: 4 },
+      { r: 7, c: 2 }, { r: 7, c: 3 }
     ] : [
-      { r: 2, c: 4 }, { r: 2, c: 6 }, { r: 2, c: 8 }, { r: 2, c: 10 },
-      { r: 3, c: 3 }, { r: 3, c: 5 }, { r: 3, c: 7 }, { r: 3, c: 9 }, { r: 3, c: 11 },
-      { r: 4, c: 4 }, { r: 4, c: 6 }, { r: 4, c: 8 }, { r: 4, c: 10 },
-      { r: 5, c: 3 }, { r: 5, c: 5 }, { r: 5, c: 7 }, { r: 5, c: 9 }, { r: 5, c: 11 },
-      { r: 6, c: 6 }, { r: 6, c: 8 }
+      { r: 1, c: 2 }, { r: 1, c: 4 }, { r: 1, c: 7 }, { r: 1, c: 9 },
+      { r: 2, c: 1 }, { r: 2, c: 3 }, { r: 2, c: 5 }, { r: 2, c: 8 }, { r: 2, c: 10 },
+      { r: 3, c: 2 }, { r: 3, c: 4 }, { r: 3, c: 7 }, { r: 3, c: 9 },
+      { r: 4, c: 1 }, { r: 4, c: 3 }, { r: 4, c: 5 }, { r: 4, c: 8 }, { r: 4, c: 10 },
+      { r: 5, c: 4 }, { r: 5, c: 7 }
     ];
 
     const techMap = {};
@@ -1709,38 +1709,38 @@ h1 strong, h2 strong {
         const posY = originY - r * cellSize;
         const tech = techMap[`${r}_${c}`];
 
+        // Fundo do ladrilho com cor sólida pura sem reflexos especulares
+        const baseColor = tech ? 0x0c1322 : 0x050913;
         const cellMat = new THREE.MeshBasicMaterial({
-          color: 0x05070b,
-          transparent: true,
-          opacity: 0.05,
+          color: baseColor,
           side: THREE.DoubleSide
         });
 
         const cellMesh = new THREE.Mesh(basePlaneGeo, cellMat);
         cellMesh.position.set(posX, posY, 0);
 
+        // Borda sólida com a cor oficial da tecnologia para itens da stack
+        const edgeColor = tech ? new THREE.Color(tech.color) : new THREE.Color(0x182438);
         const edgeMat = new THREE.LineBasicMaterial({
-          color: tech ? new THREE.Color(tech.color) : new THREE.Color(0xd96526),
-          transparent: true,
-          opacity: tech ? 0.35 : 0.18
+          color: edgeColor,
+          transparent: false,
+          opacity: 1.0,
+          linewidth: tech ? 2 : 1
         });
         const edgeLines = new THREE.LineSegments(edgeGeo, edgeMat);
         cellMesh.add(edgeLines);
 
         let logoMesh = null;
         if (tech) {
-          const logoGeo = new THREE.PlaneGeometry(cellSize * 0.78, cellSize * 0.78);
-          const logoTex = textureLoader.load(`assets/logos/${tech.file}?v=2`);
+          const logoGeo = new THREE.PlaneGeometry(cellSize * 0.72, cellSize * 0.72);
+          const logoTex = textureLoader.load(`assets/logos/${tech.file}?v=5`);
           logoTex.generateMipmaps = true;
           logoTex.minFilter = THREE.LinearMipmapLinearFilter;
 
-          const logoMat = new THREE.MeshStandardMaterial({
+          // Logo com cores 100% sólidas e fiéis ao vetor original
+          const logoMat = new THREE.MeshBasicMaterial({
             map: logoTex,
             transparent: true,
-            roughness: 0.25,
-            metalness: 0.2,
-            emissive: new THREE.Color(tech.color),
-            emissiveIntensity: 0.12,
             opacity: 0.0
           });
 
@@ -1756,7 +1756,8 @@ h1 strong, h2 strong {
           cellMat,
           edgeMat,
           logoMesh,
-          baseEdgeOpacity: tech ? 0.35 : 0.18,
+          baseColor,
+          baseEdgeColor: edgeColor,
           glowTimeout: null
         };
 
@@ -1798,36 +1799,43 @@ h1 strong, h2 strong {
     const glowHex = u.tech ? u.tech.color : GLOW_PALETTE[Math.floor(Math.random() * GLOW_PALETTE.length)];
     const glowColor = new THREE.Color(glowHex);
 
+    // Cor sólida vibrante no mouse trail / hover
     u.cellMat.color = glowColor;
-    u.cellMat.opacity = u.tech ? 0.45 : 0.28;
     u.edgeMat.color = glowColor;
-    u.edgeMat.opacity = 1.0;
 
     if (u.logoMesh) {
       u.logoMesh.material.opacity = 1.0;
-      u.logoMesh.material.emissiveIntensity = 0.85;
-      gsap.to(cell.position, { z: 0.35, duration: 0.2, ease: "power2.out" });
-      gsap.to(cell.scale, { x: 1.12, y: 1.12, duration: 0.2, ease: "power2.out" });
+      gsap.to(cell.position, { z: 0.38, duration: 0.18, ease: "power2.out" });
+      gsap.to(cell.scale, { x: 1.10, y: 1.10, duration: 0.18, ease: "power2.out" });
 
       if (isUser) {
         playSciFiClick(820);
         updateDockHUD(u.tech);
       }
-    } else if (isUser) {
-      playSciFiClick(500 + Math.random() * 300);
+    } else {
+      gsap.to(cell.position, { z: 0.12, duration: 0.15, ease: "power2.out" });
+      gsap.to(cell.scale, { x: 1.04, y: 1.04, duration: 0.15, ease: "power2.out" });
+      if (isUser) {
+        playSciFiClick(500 + Math.random() * 300);
+      }
     }
 
     if (u.glowTimeout) clearTimeout(u.glowTimeout);
     u.glowTimeout = setTimeout(() => {
-      gsap.to(u.cellMat, { opacity: 0.05, duration: 0.9, ease: "power2.out" });
-      gsap.to(u.edgeMat, { opacity: u.baseEdgeOpacity, duration: 0.8, ease: "power2.out" });
+      const restoreColor = new THREE.Color(u.baseColor);
+      const restoreEdge = new THREE.Color(u.baseEdgeColor);
+
+      gsap.to(u.cellMat.color, { r: restoreColor.r, g: restoreColor.g, b: restoreColor.b, duration: 0.7, ease: "power2.out" });
+      gsap.to(u.edgeMat.color, { r: restoreEdge.r, g: restoreEdge.g, b: restoreEdge.b, duration: 0.7, ease: "power2.out" });
 
       if (u.logoMesh) {
-        gsap.to(u.logoMesh.material, { opacity: 0.75, emissiveIntensity: 0.12, duration: 0.5 });
         gsap.to(cell.position, { z: 0.0, duration: 0.35, ease: "power2.out" });
         gsap.to(cell.scale, { x: 1.0, y: 1.0, duration: 0.35, ease: "power2.out" });
+      } else {
+        gsap.to(cell.position, { z: 0.0, duration: 0.3, ease: "power2.out" });
+        gsap.to(cell.scale, { x: 1.0, y: 1.0, duration: 0.3, ease: "power2.out" });
       }
-    }, 220);
+    }, 240);
   }
 
   const hudDock = document.getElementById('stack-hud-dock');
@@ -1924,13 +1932,14 @@ h1 strong, h2 strong {
       carouselGroup.visible = (cardOpacity > 0.01);
 
       const rotX = (-Math.PI / 2) * (1.0 - p2);
-      const posY = floorY * (1.0 - p2);
-      const posZ = floorZ + p2 * (-floorZ - 0.2);
+      const targetY = mob ? -0.42 : -0.48;
+      const posY = floorY * (1.0 - p2) + targetY * p2;
+      const posZ = floorZ * (1.0 - p2);
 
       gridMasterGroup.rotation.x = rotX;
       gridMasterGroup.position.set(0, posY, posZ);
 
-      const logoAlpha = Math.min(0.75, p2 * 1.2);
+      const logoAlpha = Math.min(1.0, p2 * 1.5);
       cellMeshes.forEach(c => {
         if (c.userData.logoMesh) {
           c.userData.logoMesh.material.opacity = logoAlpha;
@@ -1957,11 +1966,11 @@ h1 strong, h2 strong {
       carouselGroup.visible = false;
 
       gridMasterGroup.rotation.x = 0;
-      gridMasterGroup.position.set(0, 0, -0.2);
+      gridMasterGroup.position.set(0, mob ? -0.42 : -0.48, 0);
 
       cellMeshes.forEach(c => {
         if (c.userData.logoMesh && hoveredCell !== c) {
-          c.userData.logoMesh.material.opacity = 0.75;
+          c.userData.logoMesh.material.opacity = 1.0;
         }
       });
 

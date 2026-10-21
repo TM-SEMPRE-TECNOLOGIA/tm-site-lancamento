@@ -2,3 +2,10 @@ cloudflared.exe
 serve.py
 search_results.json
 .vercel
+
+# Ambientes e segredos
+.env
+.env.*
+!.env.example
+node_modules/
+.agents/

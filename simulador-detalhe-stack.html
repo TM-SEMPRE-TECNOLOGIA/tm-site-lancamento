@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Inspeção: Resumo de Stack & Prova GitHub</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #d96526;
+    --orange-glow: rgba(217, 101, 38, 0.5);
+    --dark: #05070b;
+    --panel-bg: rgba(10, 14, 22, 0.94);
+    --border: rgba(255, 255, 255, 0.12);
+    --accent-blue: #38bdf8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--dark);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+  #webgl-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  /* Seletor de Opções no Topo */
+  .top-selector {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 10px;
+    background: rgba(10, 14, 20, 0.92);
+    backdrop-filter: blur(16px);
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+  }
+  .btn-mode {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #94a3b8;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .btn-mode:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
+  .btn-mode.active {
+    background: var(--orange);
+    color: #fff;
+    box-shadow: 0 0 18px var(--orange-glow);
+  }
+
+  /* Instrução Central */
+  .hint-trigger {
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    background: rgba(217, 101, 38, 0.15);
+    border: 1px solid var(--orange);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    color: #fed7aa;
+    pointer-events: none;
+    letter-spacing: 0.5px;
+    animation: pulseHint 2s infinite ease-in-out;
+  }
+  @keyframes pulseHint {
+    0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+    50% { opacity: 1; transform: translateX(-50%) scale(1.03); }
+  }
+
+  /* ══════════════════════════════════════════════════════════════ */
+  /* OPÇÃO A: DRAWER / HUD LATERAL RETRÁTIL (ESTILO CONSOLE SCI-FI) */
+  /* ══════════════════════════════════════════════════════════════ */
+  .drawer-container {
+    position: absolute;
+    top: 0;
+    right: -480px;
+    width: 440px;
+    height: 100vh;
+    z-index: 80;
+    background: var(--panel-bg);
+    backdrop-filter: blur(24px);
+    border-left: 1px solid var(--border);
+    box-shadow: -20px 0 60px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    padding: 40px 32px;
+    transition: right 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .drawer-container.open { right: 0; }
+  .drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .btn-close {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: #94a3b8;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .btn-close:hover { background: var(--orange); color: #fff; }
+
+  /* ══════════════════════════════════════════════════════════════ */
+  /* OPÇÃO B: MODAL CENTRALIZADO COM BLUR HIGH-DENSITY */
+  /* ══════════════════════════════════════════════════════════════ */
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 85;
+    background: rgba(3, 5, 9, 0.7);
+    backdrop-filter: blur(18px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-box {
+    width: 520px;
+    max-width: 90vw;
+    background: #0b0f19;
+    border: 1px solid rgba(217, 101, 38, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.9), 0 0 40px rgba(217, 101, 38, 0.15);
+    padding: 36px;
+    transform: scale(0.92) translateY(20px);
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .modal-overlay.open .modal-box {
+    transform: scale(1) translateY(0);
+  }
+
+  /* ══════════════════════════════════════════════════════════════ */
+  /* ELEMENTOS COMPARTILHADOS DE UI DOS DETALHES DA STACK */
+  /* ══════════════════════════════════════════════════════════════ */
+  .badge-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--orange);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--orange);
+  }
+  .stack-name {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 12px;
+  }
+  .stack-category {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .spec-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .spec-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 12px 14px;
+    border-radius: 6px;
+  }
+  .spec-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .spec-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e2e8f0;
+  }
+
+  /* Bloco de Prova do GitHub */
+  .github-proof-card {
+    background: #040d21;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 8px;
+    padding: 18px;
+    margin-top: 18px;
+    position: relative;
+    overflow: hidden;
+  }
+  .github-proof-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-blue);
+  }
+  .gh-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .gh-repo-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gh-desc {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .btn-repo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #38bdf8;
+    padding: 8px 14px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-repo-link:hover {
+    background: #38bdf8;
+    color: #05070b;
+  }
+
+  /* HUD Explicativo no Rodapé Esquerdo */
+  .hud-mode-explainer {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    z-index: 40;
+    background: rgba(10, 14, 20, 0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: 6px;
+    max-width: 360px;
+    pointer-events: none;
+  }
+  .hud-mode-explainer h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--orange);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .hud-mode-explainer p {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Mode Switcher -->
+<div class="top-selector">
+  <button class="btn-mode active" onclick="switchOption('A')">Opção A: Drawer / HUD Lateral (Console)</button>
+  <button class="btn-mode" onclick="switchOption('B')">Opção B: Modal Centralizado (Glass)</button>
+  <button class="btn-mode" onclick="switchOption('C')">Opção C: Card Holográfico 3D (No Espaço)</button>
+</div>
+
+<div class="hint-trigger" id="hint-text">
+  ⚡ CLIQUE EM QUALQUER ESFERA / STACK PARA INSPECIONAR
+</div>
+
+<!-- OPÇÃO A: DRAWER LATERAL -->
+<div class="drawer-container" id="drawer-panel">
+  <div class="drawer-header">
+    <div>
+      <div class="badge-tag"><span class="badge-dot"></span> <span id="dr-tag">Core Engine</span></div>
+      <h2 class="stack-name" id="dr-name">Next.js 15</h2>
+    </div>
+    <button class="btn-close" onclick="closeAll()">✕</button>
+  </div>
+  
+  <p class="stack-category" id="dr-desc">
+    Arquitetura React Server Components (RSC), renderização híbrida em Edge Runtime e otimização de streaming em tempo real com baixa latência.
+  </p>
+
+  <div class="spec-grid">
+    <div class="spec-card">
+      <div class="spec-lbl">Proficiência</div>
+      <div class="spec-val" id="dr-level">Sênior / Arquitetura</div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-lbl">Em Produção</div>
+      <div class="spec-val" id="dr-time">+4 Anos</div>
+    </div>
+  </div>
+
+  <div class="github-proof-card">
+    <div class="gh-header">
+      <div class="gh-repo-name">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span id="dr-repo-title">TM-SEMPRE/adirgentil2211</span>
+      </div>
+    </div>
+    <p class="gh-desc" id="dr-repo-desc">
+      Portal eleitoral de alta performance com simulador de urna, SSR dinâmico e telemetria de engajamento em tempo real.
+    </p>
+    <a href="#" class="btn-repo-link" target="_blank">
+      <span>Explorar Repositório no GitHub</span> →
+    </a>
+  </div>
+</div>
+
+<!-- OPÇÃO B: MODAL CENTRALIZADO -->
+<div class="modal-overlay" id="modal-panel" onclick="if(event.target === this) closeAll()">
+  <div class="modal-box">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+      <div>
+        <div class="badge-tag"><span class="badge-dot"></span> <span id="mo-tag">Core Engine</span></div>
+        <h2 class="stack-name" id="mo-name" style="margin-bottom: 0;">Next.js 15</h2>
+      </div>
+      <button class="btn-close" onclick="closeAll()">✕</button>
+    </div>
+
+    <p class="stack-category" id="mo-desc">
+      Arquitetura React Server Components (RSC), renderização híbrida em Edge Runtime e otimização de streaming em tempo real com baixa latência.
+    </p>
+
+    <div class="spec-grid">
+      <div class="spec-card">
+        <div class="spec-lbl">Proficiência</div>
+        <div class="spec-val" id="mo-level">Sênior / Arquitetura</div>
+      </div>
+      <div class="spec-card">
+        <div class="spec-lbl">Em Produção</div>
+        <div class="spec-val" id="mo-time">+4 Anos</div>
+      </div>
+    </div>
+
+    <div class="github-proof-card">
+      <div class="gh-header">
+        <div class="gh-repo-name">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span id="mo-repo-title">TM-SEMPRE/adirgentil2211</span>
+        </div>
+      </div>
+      <p class="gh-desc" id="mo-repo-desc">
+        Portal eleitoral de alta performance com simulador de urna, SSR dinâmico e telemetria de engajamento em tempo real.
+      </p>
+      <a href="#" class="btn-repo-link" target="_blank">
+        <span>Explorar Repositório no GitHub</span> →
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Rodapé Explicativo -->
+<div class="hud-mode-explainer">
+  <h4 id="explainer-title">Opção A: Drawer Lateral (Console)</h4>
+  <p id="explainer-text">
+    Mantém a cena 3D viva e girando ao lado. A câmera faz um pan sutil para a esquerda e o console técnico se abre à direita com as evidências do GitHub.
+  </p>
+</div>
+
+<canvas id="webgl-canvas"></canvas>
+
+<script>
+let currentOption = 'A';
+let scene, camera, renderer, raycaster, mouse;
+let galaxyGroup, holoCardMesh;
+let nodes = [];
+
+const STACKS_DATA = [
+  { name: "Next.js 15", tag: "Frontend & SSR", level: "Sênior / Arquitetura", time: "+4 Anos", color: 0xffffff, desc: "React Server Components (RSC), rotas dinâmicas, cache distribuído e renderização com latência mínima em edge.", repo: "TM-SEMPRE/adirgentil2211", repoDesc: "Portal completo com 11 páginas integradas, simulador de urna e telemetria eleitoral ao vivo." },
+  { name: "Python / FastAPI", tag: "Backend & IA", level: "Avançado", time: "+5 Anos", color: 0x38bdf8, desc: "APIs assíncronas de alta concorrência, automação de dados com Pandas/OpenPyXL e orquestração de scripts com telemetria.", repo: "TM-SEMPRE/central-tm-hub", repoDesc: "Console monolítico industrial de gerenciamento e telemetria de portas locais no Windows." },
+  { name: "Three.js & WebGL", tag: "3D & Shaders", level: "Especialista", time: "+3 Anos", color: 0xd96526, desc: "Criação de palcos 3D com cilindros em GLSL, shaders de distorção líquida (Kinetic Wave) e sincronização com scroll pinning.", repo: "TM-SEMPRE/tm-site-lancamento", repoDesc: "Engine de clone 3D Jesper Landberg com 8 projetos cilíndricos e distorção em tempo real." },
+  { name: "Docker & Cloud", tag: "DevOps & Deploy", level: "Intermediário/Sênior", time: "+3 Anos", color: 0x0284c7, desc: "Containers isolados, pipeline CI/CD no GitHub Actions, deploys na Vercel e orquestração de microserviços.", repo: "TM-SEMPRE/infra-pipelines", repoDesc: "Templates declarativos e pipelines de build para produção com zero-downtime." },
+  { name: "Agentic AI / LLMs", tag: "Automação Inteligente", level: "Avançado", time: "+2 Anos", color: 0xa855f7, desc: "Engenharia de prompts estruturados, integrações com Gemini/Claude/GPT, ferramentas de automação e multi-agentes.", repo: "TM-SEMPRE/caderno-leads-crm", repoDesc: "CRM de prospecção inteligente com auditores automáticos de gaps em perfis locais." },
+  { name: "PostgreSQL & SQLite", tag: "Bancos de Dados", level: "Sênior", time: "+6 Anos", color: 0x22c55e, desc: "Modelagem relacional de alta eficiência, queries analíticas, índices de performance e persistência transacional.", repo: "TM-SEMPRE/dashboard-eleitoral-db", repoDesc: "Mapeamento dos 139 municípios do Tocantins com índices de eleitorado apto e CPA." }
+];
+
+function init() {
+  const canvas = document.getElementById('webgl-canvas');
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x05070b, 0.04);
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0, 0, 9);
+
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  raycaster = new THREE.Raycaster();
+  mouse = new THREE.Vector2();
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
+  scene.add(ambient);
+  const orangeLight = new THREE.PointLight(0xd96526, 3, 30);
+  orangeLight.position.set(0, 3, 5);
+  scene.add(orangeLight);
+
+  buildGalaxy();
+  buildHoloCard();
+
+  window.addEventListener('resize', onResize);
+  window.addEventListener('click', onClick);
+
+  animate();
+}
+
+function buildGalaxy() {
+  galaxyGroup = new THREE.Group();
+  scene.add(galaxyGroup);
+
+  // Núcleo
+  const core = new THREE.Mesh(
+    new THREE.IcosahedronGeometry(1.0, 2),
+    new THREE.MeshBasicMaterial({ color: 0xd96526, wireframe: true })
+  );
+  galaxyGroup.add(core);
+
+  // Anéis e Nós Orbitais
+  const rings = [2.5, 4.2];
+  rings.forEach(r => {
+    const ringMesh = new THREE.Mesh(
+      new THREE.RingGeometry(r - 0.02, r + 0.02, 64),
+      new THREE.MeshBasicMaterial({ color: 0xd96526, side: THREE.DoubleSide, opacity: 0.2, transparent: true })
+    );
+    ringMesh.rotation.x = Math.PI / 2.2;
+    galaxyGroup.add(ringMesh);
+  });
+
+  STACKS_DATA.forEach((st, i) => {
+    const r = rings[i % rings.length];
+    const angle = (i / STACKS_DATA.length) * Math.PI * 2;
+    
+    // Nó
+    const nodeMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(0.35, 16, 16),
+      new THREE.MeshBasicMaterial({ color: st.color })
+    );
+    nodeMesh.userData = { ...st, angle, radius: r, speed: 0.006 + (i * 0.001) };
+    
+    // Wireframe em volta do nó
+    const cage = new THREE.Mesh(
+      new THREE.BoxGeometry(0.8, 0.8, 0.8),
+      new THREE.MeshBasicMaterial({ color: st.color, wireframe: true, opacity: 0.4, transparent: true })
+    );
+    nodeMesh.add(cage);
+
+    galaxyGroup.add(nodeMesh);
+    nodes.push(nodeMesh);
+  });
+}
+
+function buildHoloCard() {
+  // Card 3D para a Opção C
+  const geo = new THREE.PlaneGeometry(3.6, 2.4);
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0x0a1122,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.95
+  });
+  holoCardMesh = new THREE.Mesh(geo, mat);
+  holoCardMesh.visible = false;
+  holoCardMesh.position.set(0, 0, 3);
+  
+  const border = new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color: 0x38bdf8 })
+  );
+  holoCardMesh.add(border);
+  scene.add(holoCardMesh);
+}
+
+function switchOption(opt) {
+  currentOption = opt;
+  document.querySelectorAll('.btn-mode').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(`Opção ${opt}`));
+  });
+
+  closeAll();
+
+  const title = document.getElementById('explainer-title');
+  const text = document.getElementById('explainer-text');
+
+  if (opt === 'A') {
+    title.textContent = "Opção A: Drawer Lateral (Console Técnico)";
+    text.textContent = "Mantém a cena 3D viva e girando ao lado. A câmera faz um pan sutil para a esquerda e o console técnico se abre à direita com as evidências do GitHub.";
+  } else if (opt === 'B') {
+    title.textContent = "Opção B: Modal Centralizado (Glassmorphism)";
+    text.textContent = "Foca 100% da atenção do usuário no meio da tela com fundo desfocado em alto contraste. O universo 3D pausa momentaneamente ao fundo.";
+  } else if (opt === 'C') {
+    title.textContent = "Opção C: Card Holográfico 3D (No Espaço Tridimensional)";
+    text.textContent = "O nó selecionado se projeta diretamente para a frente da câmera no próprio espaço 3D, girando e exibindo uma placa técnica flutuante em WebGL.";
+  }
+}
+
+function onClick(e) {
+  // Evitar clique nos botões
+  if (e.target.closest('.top-selector') || e.target.closest('.drawer-container') || e.target.closest('.modal-box')) return;
+
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(nodes);
+
+  if (intersects.length > 0) {
+    const selected = intersects[0].object.userData;
+    openStackDetail(selected);
+  }
+}
+
+function openStackDetail(data) {
+  if (currentOption === 'A') {
+    // Preenche Drawer
+    document.getElementById('dr-tag').textContent = data.tag;
+    document.getElementById('dr-name').textContent = data.name;
+    document.getElementById('dr-desc').textContent = data.desc;
+    document.getElementById('dr-level').textContent = data.level;
+    document.getElementById('dr-time').textContent = data.time;
+    document.getElementById('dr-repo-title').textContent = data.repo;
+    document.getElementById('dr-repo-desc').textContent = data.repoDesc;
+
+    document.getElementById('drawer-panel').classList.add('open');
+    gsap.to(camera.position, { x: -1.4, duration: 0.5, ease: "power2.out" });
+
+  } else if (currentOption === 'B') {
+    // Preenche Modal
+    document.getElementById('mo-tag').textContent = data.tag;
+    document.getElementById('mo-name').textContent = data.name;
+    document.getElementById('mo-desc').textContent = data.desc;
+    document.getElementById('mo-level').textContent = data.level;
+    document.getElementById('mo-time').textContent = data.time;
+    document.getElementById('mo-repo-title').textContent = data.repo;
+    document.getElementById('mo-repo-desc').textContent = data.repoDesc;
+
+    document.getElementById('modal-panel').classList.add('open');
+
+  } else if (currentOption === 'C') {
+    // Card 3D Holográfico
+    holoCardMesh.visible = true;
+    holoCardMesh.scale.set(0.1, 0.1, 0.1);
+    holoCardMesh.rotation.y = Math.PI;
+    gsap.to(holoCardMesh.scale, { x: 1, y: 1, z: 1, duration: 0.45, ease: "back.out(1.5)" });
+    gsap.to(holoCardMesh.rotation, { y: 0, duration: 0.5, ease: "power2.out" });
+  }
+}
+
+function closeAll() {
+  document.getElementById('drawer-panel').classList.remove('open');
+  document.getElementById('modal-panel').classList.remove('open');
+  holoCardMesh.visible = false;
+  gsap.to(camera.position, { x: 0, duration: 0.4, ease: "power2.out" });
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  nodes.forEach(node => {
+    node.userData.angle += node.userData.speed;
+    const r = node.userData.radius;
+    node.position.x = Math.cos(node.userData.angle) * r;
+    node.position.z = Math.sin(node.userData.angle) * r;
+    node.position.y = Math.sin(node.userData.angle * 2) * 0.4;
+    node.rotation.x += 0.015;
+    node.rotation.y += 0.02;
+  });
+
+  renderer.render(scene, camera);
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+init();
+</script>
+</body>
+</html>

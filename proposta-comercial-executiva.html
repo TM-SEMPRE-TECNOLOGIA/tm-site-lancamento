@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposta Comercial Executiva • Ecossistema Digital Adir Gentil 2211 (PL)</title>
+
+    <!-- Tipografia Institucional & Editorial Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            /* Paleta Corporativa & Editorial (McKinsey / Bloomberg / TM Sempre Tecnologia) */
+            --bg-page: #F8FAFC;
+            --bg-surface: #FFFFFF;
+            --bg-subtle: #F1F5F9;
+            --bg-highlight: #F8FAFC;
+            
+            --text-main: #0F172A;
+            --text-secondary: #334155;
+            --text-muted: #64748B;
+            --text-subtle: #94A3B8;
+            
+            --border-light: #E2E8F0;
+            --border-strong: #CBD5E1;
+            --border-dark: #0F172A;
+            
+            --navy-corp: #0A192F;
+            --orange-tm: #D96526;
+            --gold-accent: #B45309;
+            --blue-party: #002B7F;
+            
+            --danger-text: #991B1B;
+            --danger-bg: #FEF2F2;
+            --danger-border: #FCA5A5;
+            
+            --success-text: #166534;
+            --success-bg: #F0FDF4;
+            --success-border: #86EFAC;
+            
+            --radius-none: 0px;
+            --radius-sm: 3px;
+            --radius-md: 4px;
+            
+            --transition: all 0.2s ease-in-out;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 60px;
+        }
+
+        /* CABEÇALHO CORPORATIVO FIXO */
+        .top-corporate-header {
+            background: #FFFFFF;
+            border-bottom: 1px solid var(--border-strong);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .brand-corp-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo-container {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--navy-corp);
+            border: 1px solid var(--border-strong);
+            flex-shrink: 0;
+        }
+
+        .corp-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-fallback-badge {
+            font-weight: 800;
+            color: #FF7733;
+            font-size: 14px;
+        }
+
+        .brand-corp-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .corp-name {
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--text-main);
+            letter-spacing: 0.5px;
+        }
+
+        .corp-name span.orange {
+            color: var(--orange-tm);
+        }
+
+        .corp-tagline {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .doc-metadata-block {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            padding: 0 16px;
+        }
+
+        @media (max-width: 960px) {
+            .doc-metadata-block {
+                display: none;
+            }
+        }
+
+        .doc-meta-item strong {
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .doc-tag-confidential {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid var(--danger-border);
+            padding: 1px 6px;
+            border-radius: var(--radius-sm);
+        }
+
+        .corp-actions-block {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-corp-action {
+            background: #FFFFFF;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-strong);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-corp-action:hover {
+            background: var(--bg-subtle);
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+
+        .btn-corp-wa {
+            background: #25D366;
+            color: #FFFFFF;
+            border: 1px solid #1EBE5D;
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn-corp-wa:hover {
+            background: #1EBE5D;
+            color: #FFFFFF;
+        }
+
+        /* CONTAINER PRINCIPAL */
+        .wrapper {
+            max-width: 1140px;
+            margin: 28px auto 0 auto;
+            padding: 0 20px;
+        }
+
+        /* HERO HEADER */
+        .header-hero {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-top: 3px solid var(--navy-corp);
+            border-radius: var(--radius-sm);
+            padding: 36px 40px;
+            margin-bottom: 28px;
+        }
+
+        .doc-eyebrow {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--orange-tm);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-hero h1 {
+            font-family: 'Newsreader', Georgia, serif;
+            font-size: clamp(28px, 3.4vw, 42px);
+            font-weight: 600;
+            line-height: 1.2;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+            margin-bottom: 14px;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 980px;
+            line-height: 1.65;
+            margin-bottom: 24px;
+        }
+
+        /* STRIP DE MÉTRICAS */
+        .hero-metrics-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+            padding: 16px 0;
+            background: var(--bg-highlight);
+        }
+
+        @media (max-width: 768px) {
+            .hero-metrics-strip {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+
+        .metric-cell {
+            padding: 0 20px;
+            border-right: 1px solid var(--border-light);
+        }
+
+        .metric-cell:last-child {
+            border-right: none;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .metric-data {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* PAINÉIS DE SEÇÃO */
+        .section-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            padding: 36px 40px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 680px) {
+            .section-panel {
+                padding: 24px 20px;
+            }
+        }
+
+        .editorial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border-strong);
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .header-title-block {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .section-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-muted);
+            border-right: 1px solid var(--border-light);
+            padding-right: 14px;
+            line-height: 1.1;
+        }
+
+        .section-titles h2 {
+            font-size: 21px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+            line-height: 1.25;
+            margin-bottom: 4px;
+        }
+
+        .section-kicker {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--orange-tm);
+            margin-bottom: 2px;
+            display: block;
+        }
+
+        .section-lead {
+            font-size: 14px;
+            color: var(--text-secondary);
+            max-width: 780px;
+            line-height: 1.55;
+        }
+
+        /* TABELAS INSTITUCIONAIS */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin: 16px 0;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+        }
+
+        .editorial-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+            background: #FFFFFF;
+        }
+
+        .editorial-table th {
+            background: var(--bg-subtle);
+            color: var(--text-main);
+            font-weight: 800;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-strong);
+            border-right: 1px solid var(--border-light);
+            white-space: nowrap;
+        }
+
+        .editorial-table th:last-child {
+            border-right: none;
+        }
+
+        .editorial-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            color: var(--text-secondary);
+            vertical-align: top;
+            line-height: 1.5;
+        }
+
+        .editorial-table td:last-child {
+            border-right: none;
+        }
+
+        .editorial-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .editorial-table tbody tr:hover {
+            background: var(--bg-highlight);
+        }
+
+        .col-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--text-muted);
+            white-space: nowrap;
+            width: 80px;
+        }
+
+        .col-strong {
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .col-currency {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* BOX RESUMO TOTAL */
+        .summary-total-box {
+            background: #FFFFFF;
+            border: 1px solid var(--border-strong);
+            border-left: 4px solid var(--navy-corp);
+            border-radius: var(--radius-sm);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .summary-total-info h3 {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .summary-total-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            max-width: 620px;
+        }
+
+        .summary-total-price {
+            text-align: right;
+        }
+
+        .price-tag-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .price-tag-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--navy-corp);
+        }
+
+        /* COMPONENTE DE BLOQUEIO ELEGANTE (FASE 2) */
+        .lock-presentation-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-strong);
+            border-top: 3px solid var(--gold-accent);
+            border-radius: var(--radius-sm);
+            padding: 30px 34px;
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin: 16px 0;
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFFDF8 100%);
+        }
+
+        @media (max-width: 768px) {
+            .lock-presentation-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px 20px;
+            }
+        }
+
+        .lock-graphic-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: var(--radius-sm);
+            background: #0A192F;
+            border: 2px solid #D4AF37;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(11, 23, 39, 0.12);
+        }
+
+        .lock-icon-main {
+            font-size: 30px;
+            color: #FFD500;
+        }
+
+        .lock-info-text {
+            flex: 1;
+        }
+
+        .lock-kicker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .lock-info-text h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .lock-info-text p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 18px;
+            max-width: 760px;
+        }
+
+        .lock-action-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .lock-action-row {
+                justify-content: center;
+            }
+        }
+
+        .btn-unlock-whatsapp {
+            background: #25D366;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-unlock-whatsapp:hover {
+            background: #1EBE5D;
+            color: #FFFFFF;
+        }
+
+        .btn-preview-subtle {
+            background: #FFFFFF;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-strong);
+            padding: 9px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-preview-subtle:hover {
+            background: var(--bg-subtle);
+            color: var(--text-main);
+        }
+
+        .btn-goto-fase2 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold-accent);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--border-strong);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            background: #FFFDF8;
+            transition: var(--transition);
+        }
+
+        .btn-goto-fase2:hover {
+            background: #FEF3C7;
+            border-color: #FCD34D;
+        }
+
+        /* GRADE DE PAGAMENTO */
+        .payment-terms-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 680px) {
+            .payment-terms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .payment-term-card {
+            border: 1px solid var(--border-light);
+            border-top: 3px solid var(--navy-corp);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            background: #FFFFFF;
+        }
+
+        .payment-term-card.highlight {
+            border-top-color: var(--orange-tm);
+        }
+
+        .payment-term-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .payment-term-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .payment-term-percent {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            padding: 1px 6px;
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+        }
+
+        .payment-term-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .payment-term-desc {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* RODAPÉ INSTITUCIONAL & ASSINATURA */
+        .editorial-footer {
+            background: var(--navy-corp);
+            border: 1px solid #1E293B;
+            border-radius: var(--radius-sm);
+            padding: 36px 40px;
+            color: #F8FAFC;
+            margin-top: 36px;
+        }
+
+        .footer-main-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #1E293B;
+            padding-bottom: 24px;
+            margin-bottom: 20px;
+        }
+
+        .footer-identity {
+            max-width: 620px;
+        }
+
+        .footer-role-stamp {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #FF7733;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .footer-identity h3 {
+            font-size: 18px;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 6px;
+        }
+
+        .footer-identity p {
+            font-size: 13px;
+            color: #94A3B8;
+            line-height: 1.5;
+        }
+
+        .footer-ctas {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 220px;
+        }
+
+        .btn-footer-wa {
+            background: #25D366;
+            color: #FFFFFF;
+            padding: 10px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .btn-footer-wa:hover {
+            background: #1EBE5D;
+            color: #FFFFFF;
+        }
+
+        .btn-footer-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #E2E8F0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .btn-footer-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #FFFFFF;
+        }
+
+        .footer-legal-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #64748B;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* BOTÃO FLUTUANTE */
+        .floating-wa-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #25D366;
+            color: #FFFFFF;
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            text-decoration: none;
+            z-index: 900;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: var(--transition);
+        }
+
+        .floating-wa-btn:hover {
+            background: #1EBE5D;
+            color: #FFFFFF;
+        }
+
+        /* PRINT / EXPORTAÇÃO PDF ORGANIZADA (PADRÃO EDITORIAL A4) */
+        @page {
+            size: A4 portrait;
+            margin: 12mm 14mm;
+        }
+
+        @media print {
+            .top-corporate-header, .corp-actions-block, .floating-wa-btn, .btn-footer-secondary, #btnToggleFase2, .btn-preview-subtle, .btn-goto-fase2 {
+                display: none !important;
+            }
+            body {
+                background: #FFFFFF !important;
+                color: #111827 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-size: 9.5pt;
+                line-height: 1.45;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .wrapper {
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .header-hero {
+                page-break-after: always;
+                border: 1px solid #E5E7EB !important;
+                padding: 24px !important;
+                margin-bottom: 0 !important;
+                box-shadow: none !important;
+            }
+            .section-panel {
+                border: 1px solid #E5E7EB !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                margin-bottom: 20px !important;
+                box-shadow: none !important;
+                padding: 22px !important;
+            }
+            #secaoFase2 {
+                page-break-before: always;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .editorial-table {
+                font-size: 8.8pt !important;
+            }
+            .editorial-table th, .editorial-table td {
+                padding: 7px 9px !important;
+            }
+            tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .summary-total-box {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .editorial-footer {
+                page-break-before: auto;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                border: 1px solid #E5E7EB !important;
+                padding: 18px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CABEÇALHO CORPORATIVO FIXO TM SEMPRE TECNOLOGIA -->
+    <header class="top-corporate-header" aria-label="Cabeçalho Corporativo">
+        <div class="header-inner">
+            <div class="brand-corp-block">
+                <div class="brand-logo-container">
+                    <img src="logo.png" alt="TM Sempre Tecnologia" class="corp-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <span class="brand-fallback-badge" style="display: none;">TM</span>
+                </div>
+                <div class="brand-corp-text">
+                    <span class="corp-name">TM SEMPRE <span class="orange">TECNOLOGIA</span></span>
+                    <span class="corp-tagline">Engenharia de Software, Automação &amp; Branding Digital</span>
+                </div>
+            </div>
+
+            <div class="doc-metadata-block">
+                <div class="doc-meta-item">
+                    PROPOSTA: <strong>Fundação Digital • Adir Gentil 2211</strong>
+                </div>
+                <div class="doc-meta-item">
+                    PARTIDO: <strong>Partido Liberal (PL • Tocantins)</strong>
+                </div>
+                <div class="doc-meta-item">
+                    <span class="doc-tag-confidential">Confidencial</span>
+                </div>
+            </div>
+
+            <div class="corp-actions-block">
+                <a href="#secaoFase2" class="btn-corp-action" style="color: var(--gold-accent); border-color: #FCD34D; background: #FFFBEB;">
+                    <i class="fa-solid fa-lock"></i> Fase 2: Social Media
+                </a>
+                <a href="analise-social-media.html" class="btn-corp-action" title="Visualizar Diagnóstico Técnico Gratuito">
+                    <i class="fa-solid fa-gift" style="color: var(--orange-tm);"></i> Diagnóstico Redes (Bônus Cortesia)
+                </a>
+                <a href="Proposta-Comercial-Adir-Gentil-2211.pdf" download="Proposta-Comercial-Adir-Gentil-2211.pdf" class="btn-corp-action" style="background: #0A1128; color: #FFFFFF; border-color: #0A1128;" title="Baixar Arquivo PDF Executivo Formatado">
+                    <i class="fa-solid fa-file-pdf" style="color: #F59E0B;"></i> Baixar PDF Executivo
+                </a>
+                <a href="https://wa.me/5562996046458?text=Ol%C3%A1%20Thiago%2C%20visualizei%20a%20Proposta%20Comercial%20Executiva%20para%20Adir%20Gentil%202211%20e%20gostaria%20de%20dar%20o%20pr%C3%B3ximo%20passo%21" 
+                   target="_blank" 
+                   rel="noopener noreferrer" 
+                   class="btn-corp-wa">
+                    <i class="fa-brands fa-whatsapp"></i> Aceitar via WhatsApp
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        
+        <!-- CABEÇALHO HERO EXECUTIVO -->
+        <header class="header-hero">
+            <div class="doc-eyebrow">
+                Proposta Comercial Oficial // Fase 1: Fundação Digital // Tocantins 2026
+            </div>
+
+            <h1>
+                Ecossistema Digital de Alta Performance &amp; Blindagem Eleitoral
+            </h1>
+
+            <p class="hero-subtitle">
+                Proposta técnica e comercial para implementação do portal oficial 2211, simulador de urna interativo, central de jingles, motor próprio de relacionamento por e-mail imune a bloqueios e painel executivo de situação para a pré-campanha de Adir Gentil.
+            </p>
+
+            <div class="hero-metrics-strip">
+                <div class="metric-cell">
+                    <div class="metric-label">Investimento Fundação</div>
+                    <div class="metric-data">R$ 10.000,00</div>
+                </div>
+                <div class="metric-cell">
+                    <div class="metric-label">Prazo de Entrega</div>
+                    <div class="metric-data">3 Dias Úteis</div>
+                </div>
+                <div class="metric-cell">
+                    <div class="metric-label">Condição de Pagamento</div>
+                    <div class="metric-data">R$ 6.000 + R$ 4.000</div>
+                </div>
+                <div class="metric-cell">
+                    <div class="metric-label">Módulos Entregues</div>
+                    <div class="metric-data">4 Módulos Estruturantes</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- SEÇÃO 01: ESCOPO TÉCNICO E ENTREGÁVEIS -->
+        <section class="section-panel">
+            <div class="editorial-header">
+                <div class="header-title-block">
+                    <div class="section-num">01</div>
+                    <div class="section-titles">
+                        <span class="section-kicker">Engenharia Digital &amp; Infraestrutura</span>
+                        <h2>Escopo Técnico e Entregáveis do Projeto</h2>
+                        <p class="section-lead">
+                            Especificação dos 4 módulos da Fundação Digital, desenhados para dar autonomia tecnológica total à coordenação de campanha.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="editorial-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">Módulo</th>
+                            <th style="width: 240px;">Nome do Sistema</th>
+                            <th>Especificação Técnica &amp; Recursos</th>
+                            <th style="width: 140px; text-align: right;">Valor de Tabela</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="col-id">Módulo 01</td>
+                            <td class="col-strong">Portal Oficial 2211 &amp; Simulador de Urna Animada</td>
+                            <td>Portal institucional de altíssima velocidade (Next.js / Jamstack) nas cores sóbrias do PL, com biografia, prestação de contas, propostas por cidade e <strong>simulador interativo de urna eletrônica</strong> com som oficial de confirma para fixação do número 2211.</td>
+                            <td class="col-currency">R$ 3.000,00</td>
+                        </tr>
+                        <tr>
+                            <td class="col-id">Módulo 02</td>
+                            <td class="col-strong">Central Multimídia • Jingles, Podcast &amp; Vídeos</td>
+                            <td>Player nativo integrado ao SoundCloud oficial para reprodução instantânea dos jingles da campanha sem sair da página, central de episódios do podcast no YouTube e repositório de cortes rápidos para militância compartilhar.</td>
+                            <td class="col-currency">R$ 1.500,00</td>
+                        </tr>
+                        <tr>
+                            <td class="col-id">Módulo 03</td>
+                            <td class="col-strong">Motor Próprio de Disparo de E-mails (Resend)</td>
+                            <td>Infraestrutura própria com autenticação rigorosa de DNS (SPF, DKIM, DMARC e MX). Permite comunicar informativos oficiais, convites e cartas abertas para centenas de milhares de eleitores diretamente na caixa de entrada (99% Inbox Rate).</td>
+                            <td class="col-currency">R$ 2.000,00</td>
+                        </tr>
+                        <tr>
+                            <td class="col-id">Módulo 04</td>
+                            <td class="col-strong">Dashboard Executivo de Inteligência de Campanha</td>
+                            <td>Painel de controle restrito nas cores do PL para a coordenação monitorar acessos por município do Tocantins, taxa de compartilhamento de jingles, volume de cadastros e calibragem de pixels do Meta Ads e Google Analytics 4.</td>
+                            <td class="col-currency">R$ 1.500,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RESUMO TOTAL DO PACOTE -->
+            <div class="summary-total-box">
+                <div class="summary-total-info">
+                    <h3>Investimento Fechado do Pacote Fundação: R$ 10.000,00</h3>
+                    <p>
+                        Economia de escala com entrega unificada dos 4 módulos. Sem mensalidades ocultas de software durante a fase de desenvolvimento.
+                    </p>
+                </div>
+                <div class="summary-total-price">
+                    <div class="price-tag-label">Valor Total Fechado</div>
+                    <div class="price-tag-value">R$ 10.000,00</div>
+                </div>
+            </div>
+
+            <!-- EVOLUÇÃO DAS FASES -->
+            <div style="margin-top: 24px;">
+                <h3 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+                    Régua de Evolução do Ecossistema de Campanha
+                </h3>
+                <div class="table-responsive">
+                    <table class="editorial-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 110px;">Fase</th>
+                                <th style="width: 200px;">Etapa do Projeto</th>
+                                <th>Escopo &amp; Detalhamento</th>
+                                <th style="width: 170px; text-align: right;">Investimento / Acesso</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: #FFFDF8;">
+                                <td class="col-id" style="color: var(--orange-tm);">Fase 1 (Atual)</td>
+                                <td class="col-strong">Fundação Digital 2211</td>
+                                <td>Portal 2211, Simulador de Urna, Central de Jingles, Motor Resend e Dashboard de Situação.</td>
+                                <td class="col-currency" style="color: var(--navy-corp);">R$ 10.000,00</td>
+                            </tr>
+                            <tr>
+                                <td class="col-id">Fase 2 (Próxima)</td>
+                                <td class="col-strong">Social Media &amp; Tráfego</td>
+                                <td>Esteira visual de publicações, gestão de feed harmônico, Reels e anúncios patrocinados no Meta e Google.</td>
+                                <td class="col-currency">
+                                    <span style="display: inline-block; font-size: 11.5px; font-weight: 700; color: #92400E; background: #FFFBEB; border: 1px solid #FCD34D; padding: 3px 10px; border-radius: 4px;">
+                                        <i class="fa-solid fa-lock"></i> Sob Consulta
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-id">Super Oferta</td>
+                                <td class="col-strong">Assessoria Particular VIP</td>
+                                <td>Acompanhamento pessoal presencial com Thiago, treinamento tático da equipe e consultoria política contínua.</td>
+                                <td class="col-currency">
+                                    <span style="display: inline-block; font-size: 11.5px; font-weight: 700; color: #92400E; background: #FFFBEB; border: 1px solid #FCD34D; padding: 3px 10px; border-radius: 4px;">
+                                        <i class="fa-solid fa-lock"></i> Sob Consulta
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAXA DE DOMÍNIO OFICIAL -->
+            <div style="margin-top: 18px; border: 1px solid var(--border-strong); border-left: 4px solid var(--orange-tm); border-radius: var(--radius-sm); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: #FFFFFF; flex-wrap: wrap; gap: 16px; box-shadow: var(--shadow-subtle);">
+                <div style="flex: 1; min-width: 290px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                        <i class="fa-solid fa-shield-halved" style="color: var(--orange-tm); font-size: 14px;"></i>
+                        <strong style="color: var(--navy-corp); font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.4px;">Taxa de Reserva &amp; Blindagem de Domínio Oficial (.com.br)</strong>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 12px; line-height: 1.5;">
+                        Titularidade no Registro.br, infraestrutura DNS Cloudflare com proteção anti-DDoS e certificado de segurança SSL vitalício por 1 ano.
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <span style="font-size: 11.5px; font-weight: 700; color: var(--navy-corp); text-transform: uppercase; letter-spacing: 0.5px;">
+                            Opções em Destaque:
+                        </span>
+                        <div style="display: inline-flex; align-items: center; gap: 8px; background: #F0FDF4; border: 1.5px solid #86EFAC; padding: 6px 14px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                            <i class="fa-solid fa-globe" style="color: #16A34A; font-size: 13px;"></i>
+                            <code style="font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 800; color: #14532D; background: transparent; padding: 0;">deputadoadirgentil.com.br</code>
+                            <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #15803D; background: #DCFCE7; border: 1px solid #BBF7D0; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.4px;">Principal</span>
+                        </div>
+                        <div style="display: inline-flex; align-items: center; gap: 8px; background: #EFF6FF; border: 1.5px solid #93C5FD; padding: 6px 14px; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                            <i class="fa-solid fa-globe" style="color: #2563EB; font-size: 13px;"></i>
+                            <code style="font-family: 'JetBrains Mono', monospace; font-size: 13.5px; font-weight: 800; color: #1E3A8A; background: transparent; padding: 0;">oadirgentil.com.br</code>
+                            <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; color: #1D4ED8; background: #DBEAFE; border: 1px solid #BFDBFE; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.4px;">Alternativa</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: right; background: var(--bg-highlight); border: 1px solid var(--border-strong); padding: 12px 18px; border-radius: var(--radius-sm); min-width: 140px;">
+                    <div style="font-size: 10.5px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); letter-spacing: 0.5px; margin-bottom: 2px;">Taxa Oficial Anual</div>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 800; color: var(--navy-corp);">
+                        R$ 197,00
+                    </div>
+                    <div style="font-size: 10px; color: var(--text-muted); font-weight: 600;">Registro.br / 1 ano</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 02: PROPOSTA DA FASE 2 - SOCIAL MEDIA & TRÁFEGO (SOB CONSULTA) -->
+        <section class="section-panel" id="secaoFase2">
+            <div class="editorial-header">
+                <div class="header-title-block">
+                    <div class="section-num">02</div>
+                    <div class="section-titles">
+                        <span class="section-kicker">Fase 2 // Expansão Contínua</span>
+                        <h2>Proposta de Social Media, Esteira Visual &amp; Tráfego Pago</h2>
+                        <p class="section-lead">
+                            Planejamento operacional para gestão continuada de autoridade, produção semanal de conteúdos em alta definição e alcance patrocinado geolocalizado no Tocantins.
+                        </p>
+                    </div>
+                </div>
+                <div>
+                    <span class="doc-tag-confidential" style="background: #FFFBEB; color: #92400E; border-color: #FCD34D;">
+                        <i class="fa-solid fa-lock"></i> Sob Consulta
+                    </span>
+                </div>
+            </div>
+
+            <!-- CONTAINER DE BLOQUEIO ELEGANTE COM CADEADO DOURADO (SEALED) -->
+            <div id="fase2LockBanner" class="lock-presentation-card">
+                <div class="lock-graphic-circle">
+                    <i class="fa-solid fa-lock lock-icon-main"></i>
+                </div>
+                <div class="lock-info-text">
+                    <span class="lock-kicker">Módulo de Expansão // Orçamento Sob Demanda</span>
+                    <h3>Proposta Estruturada &bull; Liberação sob Consulta</h3>
+                    <p>
+                        A esteira contínua de publicações, roteirização de Reels em alta definição, moderação de comunidade e estratégia de tráfego pago geolocalizado para o Tocantins já se encontram estruturadas pela equipe técnica. Para preservar o sigilo tático da pré-campanha e calibrar o escopo e orçamento sob medida para a coordenação de Adir Gentil, os módulos operacionais são disponibilizados exclusivamente sob consulta direta com o diretor de tecnologia.
+                    </p>
+                    <div class="lock-action-row">
+                        <a href="https://wa.me/5562996046458?text=Ol%C3%A1%20Thiago%2C%20gostaria%20de%20consultar%20a%20Proposta%20da%20Fase%202%20(Social%20Media%20%26%20Tr%C3%A1fego%20Pago)%20para%20Adir%20Gentil%202211%21" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="btn-unlock-whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i> Consultar Fase 2 no WhatsApp com Thiago
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 03: CONDIÇÕES COMERCIAIS & CRONOGRAMA -->
+        <section class="section-panel">
+            <div class="editorial-header">
+                <div class="header-title-block">
+                    <div class="section-num">03</div>
+                    <div class="section-titles">
+                        <span class="section-kicker">Condições Comerciais</span>
+                        <h2>Forma de Pagamento &amp; Cronograma de Entrega (Fase 1)</h2>
+                        <p class="section-lead">
+                            Fluxo planejado para viabilizar mobilização técnica imediata com segurança jurídica e garantia de homologação pela coordenação.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="payment-terms-grid">
+                <div class="payment-term-card highlight">
+                    <div class="payment-term-header">
+                        <span class="payment-term-title">1ª Parcela • Entrada de Mobilização</span>
+                        <span class="payment-term-percent">60%</span>
+                    </div>
+                    <div class="payment-term-value">R$ 6.000,00</div>
+                    <p class="payment-term-desc">
+                        Liberada no aceite formal da proposta para alocação imediata de servidores dedicados em nuvem, configuração de DNS, APIs de e-mail e início do desenvolvimento.
+                    </p>
+                </div>
+
+                <div class="payment-term-card">
+                    <div class="payment-term-header">
+                        <span class="payment-term-title">2ª Parcela • Saldo na Homologação</span>
+                        <span class="payment-term-percent">40%</span>
+                    </div>
+                    <div class="payment-term-value">R$ 4.000,00</div>
+                    <p class="payment-term-desc">
+                        Liberada exclusivamente após a apresentação do sistema completo no ar, testes aprovados pela coordenação de campanha e entrega de todos os acessos administrativos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- CRONOGRAMA DE 10 DIAS ÚTEIS -->
+            <div style="margin-top: 28px;">
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
+                    Cronograma de Execução (3 Dias Úteis)
+                </h3>
+                <div class="table-responsive">
+                    <table class="editorial-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 120px;">Prazo</th>
+                                <th style="width: 240px;">Fase de Execução</th>
+                                <th>Escopo dos Entregáveis</th>
+                                <th style="width: 140px;">Responsável</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="col-id">Dia 1</td>
+                                <td class="col-strong">Infraestrutura &amp; Identidade Visual</td>
+                                <td>Setup de DNS de alta disponibilidade, Cloudflare anti-DDoS, tratamento fotográfico em alta definição e estrutura do ecossistema digital.</td>
+                                <td>TM Tecnologia</td>
+                            </tr>
+                            <tr>
+                                <td class="col-id">Dia 2</td>
+                                <td class="col-strong">Desenvolvimento do Portal &amp; Urna</td>
+                                <td>Desenvolvimento do portal oficial 2211, simulador de urna interativa com foto oficial, central de áudios/jingles e páginas de propostas setoriais.</td>
+                                <td>TM Tecnologia</td>
+                            </tr>
+                            <tr style="background: #F0FDF4;">
+                                <td class="col-id" style="color: var(--success-text);">Dia 3</td>
+                                <td class="col-strong" style="color: var(--success-text);">Motor Resend, Dashboard &amp; Go-Live</td>
+                                <td>Configuração dos disparos de e-mail autenticado (Resend), ativação do dashboard de inteligência eleitoral, homologação e lançamento oficial.</td>
+                                <td>Ambas as partes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- RODAPÉ INSTITUCIONAL & ASSINATURA -->
+        <footer class="editorial-footer">
+            <div class="footer-main-row">
+                <div class="footer-identity">
+                    <div class="footer-role-stamp">
+                        Engenheiro de Software &amp; Diretor de Tecnologia: Thiago &bull; TM Sempre Tecnologia
+                    </div>
+                    <h3>Thiago • TM Sempre Tecnologia</h3>
+                    <p>
+                        Engenharia de software de alta precisão, sistemas web, automação e branding digital.<br>
+                        Contato Corporativo: thiagonascimento.barbosapro@gmail.com &bull; WhatsApp: +55 (62) 99604-6458 &bull; Goiânia, GO · Brasil.
+                    </p>
+                </div>
+
+                <div class="footer-ctas">
+                    <a href="https://wa.me/5562996046458?text=Ol%C3%A1%20Thiago%2C%20visualizei%20a%20Proposta%20Comercial%20Executiva%20para%20Adir%20Gentil%202211%20e%20gostaria%20de%20dar%20o%20pr%C3%B3ximo%20passo%21" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="btn-footer-wa">
+                        <i class="fa-brands fa-whatsapp"></i> Aceitar via WhatsApp
+                    </a>
+                    <a href="Proposta-Comercial-Adir-Gentil-2211.pdf" 
+                       download="Proposta-Comercial-Adir-Gentil-2211.pdf" 
+                       class="btn-footer-secondary"
+                       style="background: #FFFFFF; color: var(--navy-corp); text-decoration: none;">
+                        <i class="fa-solid fa-file-pdf" style="color: #D97706;"></i> Baixar PDF Executivo
+                    </a>
+                    <button class="btn-footer-secondary" onclick="copyProposalLink()">
+                        <i class="fa-solid fa-link"></i> <span id="copyBtnText">Copiar Link</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="footer-legal-line">
+                <div>
+                    Documento Comercial Confidencial &bull; Preparado exclusivamente para a coordenação de <strong>Adir Gentil 2211</strong>
+                </div>
+                <div>
+                    &copy; 2026 TM Sempre Tecnologia &bull; Todos os direitos reservados
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- BOTÃO FLUTUANTE DE WHATSAPP -->
+    <a href="https://wa.me/5562996046458?text=Ol%C3%A1%20Thiago%2C%20visualizei%20a%20Proposta%20Comercial%20Executiva%20para%20Adir%20Gentil%202211%20e%20gostaria%20de%20dar%20o%20pr%C3%B3ximo%20passo%21" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       class="floating-wa-btn" 
+       title="Falar com Thiago no WhatsApp" 
+       aria-label="Falar com Thiago no WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <script>
+        // Copiar Link da Proposta
+        function copyProposalLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                const textSpan = document.getElementById('copyBtnText');
+                const oldText = textSpan.innerText;
+                textSpan.innerText = 'Link Copiado com Sucesso!';
+                setTimeout(() => { textSpan.innerText = oldText; }, 2500);
+            }).catch(err => { console.error('Erro ao copiar link:', err); });
+        }
+    </script>
+</body>
+</html>

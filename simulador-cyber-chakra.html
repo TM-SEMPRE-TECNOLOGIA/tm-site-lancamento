@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seção 02: Thiago Nascimento — Cyber-Chakra Interactive Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --primary: #0afcdb;
+    --primary-glow: rgba(10, 252, 219, 0.45);
+    --orange: #d96526;
+    --orange-glow: rgba(217, 101, 38, 0.55);
+    --bg-dark: #030608;
+    --card-bg: rgba(6, 11, 16, 0.92);
+    --border: rgba(255, 255, 255, 0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-dark);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* Palco Cyberpunk de Alta Fidelidade */
+  .cyber-stage {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background: radial-gradient(circle at 50% 35%, rgba(10, 252, 219, 0.06) 0%, transparent 65%),
+                linear-gradient(180deg, #030608 0%, #050a0f 50%, #030608 100%);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+
+  /* Texturas Originais Extraídas */
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background: url('grid.svg') repeat;
+    opacity: 0.04;
+    pointer-events: none;
+  }
+  .scanline-overlay {
+    position: absolute;
+    inset: 0;
+    background: url('scanlines.svg') repeat;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+  .art-ground {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1400px;
+    height: 440px;
+    background: url('art-bg.webp') bottom center/cover no-repeat;
+    opacity: 0.8;
+    pointer-events: none;
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 30%, transparent 100%);
+  }
+
+  /* Efeito de Lanterna / Mouse Spotlight */
+  #mouse-spotlight {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(10, 252, 219, 0.12) 0%, rgba(217, 101, 38, 0.05) 45%, transparent 70%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
+    z-index: 2;
+  }
+
+  /* Cabeçalho da Seção */
+  .section-header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .eyebrow-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--orange);
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    letter-spacing: 1px;
+    background: linear-gradient(180deg, #ffffff 30%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .section-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 6px;
+  }
+
+  /* Palco Central do Avatar */
+  .avatar-stage-wrapper {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 1280px;
+    height: 880px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* SVG Canvas das Linhas de Conexão Laser */
+  #laser-svg-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 8;
+  }
+
+  .avatar-figure {
+    position: relative;
+    height: 100%;
+    max-height: 880px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .avatar-img {
+    height: 100%;
+    max-height: 880px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 50px rgba(0,0,0,0.95)) drop-shadow(0 0 25px rgba(10, 252, 219, 0.2));
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  /* Hotspots dos Chakras */
+  .chakra-node {
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 25;
+  }
+  .chakra-pulse {
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    opacity: 0.6;
+    animation: nodePulse 2.2s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .chakra-core {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 22px currentColor;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .chakra-node:hover .chakra-core,
+  .chakra-node.active .chakra-core {
+    transform: scale(1.7);
+  }
+
+  @keyframes nodePulse {
+    0% { transform: scale(0.8); opacity: 0.9; }
+    50% { transform: scale(1.8); opacity: 0.25; }
+    100% { transform: scale(2.6); opacity: 0; }
+  }
+
+  /* Linhas Laser SVG Estilizadas */
+  .laser-beam {
+    stroke-width: 1.5;
+    fill: none;
+    opacity: 0.45;
+    transition: all 0.35s ease;
+  }
+  .laser-beam.active {
+    stroke-width: 2.5;
+    opacity: 1;
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+
+  /* Cards Laterais Flutuantes com EXPANSÃO INLINE ACORDEÃO */
+  .skill-floating-card {
+    position: absolute;
+    width: 320px;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 20;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.7);
+    overflow: hidden;
+  }
+  .skill-floating-card:hover {
+    border-color: var(--card-accent, var(--orange));
+    box-shadow: 0 20px 48px rgba(0,0,0,0.9), 0 0 24px var(--card-glow, var(--orange-glow));
+    transform: translateY(-3px);
+  }
+  .skill-floating-card.active {
+    border-color: var(--card-accent, var(--orange));
+    box-shadow: 0 24px 60px rgba(0,0,0,0.95), 0 0 32px var(--card-glow, var(--orange-glow));
+    width: 380px;
+    z-index: 40;
+  }
+
+  .skill-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .skill-card-category {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    color: var(--card-accent, var(--orange));
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .skill-card-chakra {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #94a3b8;
+  }
+  .skill-card-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .expand-indicator {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--card-accent, var(--orange));
+    transition: transform 0.3s;
+  }
+  .skill-floating-card.active .expand-indicator {
+    transform: rotate(45deg);
+  }
+
+  .skill-card-summary {
+    font-size: 12px;
+    color: #94a3b8;
+    line-height: 1.45;
+  }
+  .skill-tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+  }
+  .skill-pill {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: #cbd5e1;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* CONTEÚDO EXPANSÍVEL DO PRÓPRIO CARD (SEM MODAL / SEM DRAWERS) */
+  .skill-expanded-body {
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+    overflow: hidden;
+  }
+  .skill-floating-card.active .skill-expanded-body {
+    max-height: 380px;
+    opacity: 1;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .expanded-desc {
+    font-size: 12px;
+    line-height: 1.55;
+    color: #cbd5e1;
+    margin-bottom: 12px;
+  }
+  .expanded-spec-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .expanded-spec-item {
+    font-size: 11px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 6px 10px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+  .expanded-spec-item strong {
+    color: var(--card-accent, #38bdf8);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* Link de Prova no GitHub dentro do Card */
+  .card-github-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10, 252, 219, 0.08);
+    border: 1px solid rgba(10, 252, 219, 0.25);
+    color: var(--primary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .card-github-link:hover {
+    background: var(--primary);
+    color: #030608;
+  }
+
+  /* Barra de Alerta no Topo */
+  .top-notice {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: rgba(10, 14, 20, 0.92);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--orange);
+    padding: 8px 22px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #fed7aa;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+  }
+</style>
+</head>
+<body>
+
+<div id="mouse-spotlight"></div>
+
+<div class="top-notice">
+  <span>⚡ <strong>THIAGO NASCIMENTO</strong> // CYBER-CHAKRA CLONE 100% FIEL</span>
+  <span style="color:#64748b">|</span>
+  <span style="color:#38bdf8">Cards com Expansão Direta + Linhas de Luz Reativas</span>
+</div>
+
+<section class="cyber-stage" id="cyber-stage">
+  <div class="grid-overlay"></div>
+  <div class="scanline-overlay"></div>
+  <div class="art-ground"></div>
+
+  <div class="section-header">
+    <div class="eyebrow-tag">
+      <span style="width:6px; height:6px; background:var(--orange); border-radius:50%; box-shadow:0 0 8px var(--orange);"></span>
+      SEÇÃO 02 — ENGENHARIA & STACK // O MOTOR DE CONSTRUÇÃO
+    </div>
+    <h2 class="section-title">CYBER-CHAKRA ARCHITECTURE</h2>
+    <p class="section-subtitle">O Rosto de Thiago Nascimento com a Anatomia Cyberware de 7 Chakras</p>
+  </div>
+
+  <div class="avatar-stage-wrapper" id="stage-wrapper">
+    <!-- SVG Canvas de Raios Laser Conectores -->
+    <svg id="laser-svg-canvas"></svg>
+
+    <!-- Imagem Central Oficial com Rosto de Thiago Nascimento -->
+    <div class="avatar-figure" id="avatar-figure">
+      <img src="thiago_cyber_chakra_transparent.png" alt="Thiago Nascimento Cyber-Chakra" class="avatar-img" id="avatar-img">
+    </div>
+
+    <!-- Hotspots e Cards serão gerados pelo script -->
+  </div>
+</section>
+
+<script>
+// Dados oficiais calibrados com coordenadas exatas da imagem de Thiago
+const SKILLS_DATA = [
+  {
+    id: "creative-development",
+    name: "Creative Development",
+    category: "CREATIVE // 3D",
+    chakra: "Sahasrara (Coroa)",
+    tags: ["Three.js", "WebGL", "GLSL Shaders", "GSAP ScrollTrigger"],
+    color: "#c57cff",
+    chakraY: 40.5, // alinhado na garganta/base cervical da imagem gerada
+    side: "right",
+    cardY: 16,
+    cardX: 72,
+    summary: "3D WebGL, shaders de distorção líquida e narrativa cinemática interativa a 60 FPS.",
+    description: "A etapa onde ideias de design se tornam experiências tridimensionais navegáveis sem sacrificar a velocidade de carregamento em mobile.",
+    details: [
+      { label: "Domínio Principal", value: "Cenas WebGL, shaders customizados GLSL e física de inércia" },
+      { label: "Ferramentas", value: "Three.js, GSAP 3.12, Canvas 2D frame scrubbing, Web Audio API" },
+      { label: "Prova no Site", value: "Carrossel cilíndrico Jesper Landberg e transição galáctica contínua" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/tm-site-lancamento"
+  },
+  {
+    id: "accessibility-seo",
+    name: "SEO & Generative Engine (GEO)",
+    category: "SEARCH // LLMs",
+    chakra: "Ajna (Terceiro Olho)",
+    tags: ["JSON-LD", "GEO", "OpenGraph", "Core Web Vitals"],
+    color: "#5197f7",
+    chakraY: 47.0,
+    side: "left",
+    cardY: 20,
+    cardX: 2,
+    summary: "Otimização técnica para busca orgânica do Google e robôs de IA (Perplexity/ChatGPT).",
+    description: "Estruturação semântica de ponta, tags Schema.org profundas e geração de llms.txt para indexação precisa por agentes de IA.",
+    details: [
+      { label: "Domínio Principal", value: "Dados estruturados, Schema.org e performance Lighthouse 100" },
+      { label: "Ferramentas", value: "Lighthouse, Schema Markup Validator, OpenGraph Card Engine" },
+      { label: "Impacto Prático", value: "Indexação imediata de entidades no ecossistema Google e Perplexity" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/tm-seo-geo-engine"
+  },
+  {
+    id: "interface-design",
+    name: "Interface Design & UX",
+    category: "DESIGN // TOKENS",
+    chakra: "Vishuddha (Garganta)",
+    tags: ["Design Systems", "Figma", "Micro-interações", "Dark Mode OLED"],
+    color: "#14b8a6",
+    chakraY: 56.5,
+    side: "right",
+    cardY: 34,
+    cardX: 72,
+    summary: "Identidade visual sólida, contraste editorial (Bloomberg/FT) e hierarquia precisa.",
+    description: "Eliminação total de 'cardzinhos genéricos'. Construção de cockpits monolíticos, tipografia de alto impacto e estética industrial premium.",
+    details: [
+      { label: "Domínio Principal", value: "Layouts densos, paletas calibradas HSL, tipografia JetBrains Mono & Orbitron" },
+      { label: "Ferramentas", value: "Figma, CSS Variables, Tokens Primitivos & Semânticos" },
+      { label: "Prova em Produção", value: "Console Monolítico da Central TM e Cockpit Caderno de Leads" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/central-tm"
+  },
+  {
+    id: "design-systems",
+    name: "Fullstack Architecture",
+    category: "ARCHITECTURE // REACT",
+    chakra: "Anahata (Coração)",
+    tags: ["Next.js 15", "React Server Components", "TypeScript", "Tailwind CSS"],
+    color: "#68e468",
+    chakraY: 69.0,
+    side: "left",
+    cardY: 42,
+    cardX: 2,
+    summary: "Aplicações corporativas escaláveis com SSR em edge e rotas otimizadas.",
+    description: "Engenharia de software moderna com TypeScript estrito, arquitetura de componentes desacoplados e renderização ultra-rápida.",
+    details: [
+      { label: "Domínio Principal", value: "React 19 / Next.js 15 App Router, Server Actions e Edge Runtime" },
+      { label: "Ferramentas", value: "TypeScript, Tailwind CSS, Zustand, TanStack Query" },
+      { label: "Prova em Produção", value: "Dashboard Eleitoral Adir Gentil 2211 com 139 municípios vetoriais" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/dashboard-adir-2211"
+  },
+  {
+    id: "frontend-architecture",
+    name: "Python & Data Engineering",
+    category: "DATA // BACKEND",
+    chakra: "Manipura (Plexo Solar)",
+    tags: ["FastAPI", "Python", "Pandas", "Pipelines ETL"],
+    color: "#ffe040",
+    chakraY: 80.5,
+    side: "right",
+    cardY: 52,
+    cardX: 72,
+    summary: "Automação de dados complexos, apuração estatística e microsserviços ágeis.",
+    description: "Construção de pipelines de dados que transformam tarefas de dias em execuções automáticas de poucos minutos (+85% de ganho).",
+    details: [
+      { label: "Domínio Principal", value: "APIs assíncronas, manipulação de dados em massa e scripts de telemetria" },
+      { label: "Ferramentas", value: "Python 3.12, FastAPI, Pandas, OpenPyXL, SQLite/PostgreSQL" },
+      { label: "Ganho Comprovado", value: "+85% de redução de tempo em processamento e relatórios" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/tmlink-core"
+  },
+  {
+    id: "interactivity-motion",
+    name: "Agentic AI & Automação",
+    category: "AI // AGENTS",
+    chakra: "Svadhisthana (Sacro)",
+    tags: ["Multi-Agents", "Gemini 3.8", "Claude Sonnet", "Engenharia de Prompts"],
+    color: "#f3651b",
+    chakraY: 88.0,
+    side: "left",
+    cardY: 64,
+    cardX: 2,
+    summary: "Orquestração de agentes autônomos e fluxos operacionais inteligentes.",
+    description: "Desenvolvimento e adaptação de skills cognitivas, ferramentas MCP e pipelines automatizados de desenvolvimento guiado por IA.",
+    details: [
+      { label: "Domínio Principal", value: "Pipelines multi-agente, automação de testes E2E e geração procedural" },
+      { label: "Ferramentas", value: "Antigravity Superpowers, Model Context Protocol (MCP), Python SDK" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/caderno-leads-crm"
+  },
+  {
+    id: "web-foundation",
+    name: "Infra, Cloud & Resiliência",
+    category: "DEVOPS // CLOUD",
+    chakra: "Muladhara (Raiz)",
+    tags: ["Docker", "Vercel", "Cloudflare", "HTTP Range Streaming"],
+    color: "#d61d23",
+    chakraY: 93.5,
+    side: "right",
+    cardY: 70,
+    cardX: 72,
+    summary: "A base sólida que garante disponibilidade contínua e latência zero em produção.",
+    description: "Servidores configurados com suporte a streaming de vídeo HTTP Range, deploys atômicos com rollback instantâneo e CDN global.",
+    details: [
+      { label: "Domínio Principal", value: "Arquitetura serverless, roteamento HTTP Range, segurança e zero-downtime" },
+      { label: "Ferramentas", value: "Vercel CLI, Cloudflare Edge, Git Flow, Nginx/Python Range servers" }
+    ],
+    repo: "TM-SEMPRE-TECNOLOGIA/infra-core"
+  }
+];
+
+function buildStage() {
+  const wrapper = document.getElementById('stage-wrapper');
+  const svg = document.getElementById('laser-svg-canvas');
+
+  SKILLS_DATA.forEach((s) => {
+    // 1. Criar Nó do Chakra
+    const node = document.createElement('div');
+    node.className = 'chakra-node';
+    node.id = `node-${s.id}`;
+    node.style.color = s.color;
+    node.style.top = `${s.chakraY}%`;
+    node.style.left = '50%';
+    node.innerHTML = `
+      <div class="chakra-pulse"></div>
+      <div class="chakra-core"></div>
+    `;
+    node.onclick = () => toggleCard(s.id);
+    wrapper.appendChild(node);
+
+    // 2. Criar Linha Laser SVG
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.id = `laser-${s.id}`;
+    path.setAttribute('class', 'laser-beam');
+    path.setAttribute('stroke', s.color);
+    svg.appendChild(path);
+
+    // 3. Criar Card Lateral com Expansão Inline
+    const card = document.createElement('div');
+    card.className = 'skill-floating-card';
+    card.id = `card-${s.id}`;
+    card.style.setProperty('--card-accent', s.color);
+    card.style.setProperty('--card-glow', `${s.color}66`);
+    card.style.top = `${s.cardY}%`;
+    card.style.left = `${s.cardX}%`;
+
+    let tagsHtml = s.tags.map(t => `<span class="skill-pill">${t}</span>`).join('');
+    let specsHtml = s.details.map(d => `
+      <div class="expanded-spec-item">
+        <strong>${d.label}</strong>
+        ${d.value}
+      </div>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="skill-card-top">
+        <span class="skill-card-category">${s.category}</span>
+        <span class="skill-card-chakra">${s.chakra}</span>
+      </div>
+      <div class="skill-card-title">
+        <span>${s.name}</span>
+        <span class="expand-indicator">+</span>
+      </div>
+      <div class="skill-card-summary">${s.summary}</div>
+      <div class="skill-tags-row">${tagsHtml}</div>
+      
+      <!-- Corpo Expansível Direto no Card (Sem Modal) -->
+      <div class="skill-expanded-body">
+        <p class="expanded-desc">${s.description}</p>
+        <div class="expanded-spec-list">${specsHtml}</div>
+        <a href="https://github.com/${s.repo}" target="_blank" class="card-github-link">
+          <span>Repositório: ${s.repo}</span>
+          <span>↗</span>
+        </a>
+      </div>
+    `;
+    card.onclick = (e) => {
+      if (e.target.closest('a')) return;
+      toggleCard(s.id);
+    };
+    wrapper.appendChild(card);
+  });
+
+  updateLaserLines();
+}
+
+function updateLaserLines() {
+  const wrapperRect = document.getElementById('stage-wrapper').getBoundingClientRect();
+
+  SKILLS_DATA.forEach(s => {
+    const nodeEl = document.getElementById(`node-${s.id}`);
+    const cardEl = document.getElementById(`card-${s.id}`);
+    const laserEl = document.getElementById(`laser-${s.id}`);
+
+    if (!nodeEl || !cardEl || !laserEl) return;
+
+    const nodeRect = nodeEl.getBoundingClientRect();
+    const cardRect = cardEl.getBoundingClientRect();
+
+    // Coordenadas relativas ao SVG wrapper
+    const x1 = nodeRect.left + nodeRect.width / 2 - wrapperRect.left;
+    const y1 = nodeRect.top + nodeRect.height / 2 - wrapperRect.top;
+
+    // Conecta no lado mais próximo do card
+    const x2 = s.side === 'right' ? (cardRect.left - wrapperRect.left) : (cardRect.right - wrapperRect.left);
+    const y2 = cardRect.top + 32 - wrapperRect.top;
+
+    // Curva cúbica elegante estilo placa de circuito/sci-fi
+    const midX = (x1 + x2) / 2;
+    const d = `M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`;
+    laserEl.setAttribute('d', d);
+  });
+}
+
+function toggleCard(id) {
+  const card = document.getElementById(`card-${id}`);
+  const node = document.getElementById(`node-${id}`);
+  const laser = document.getElementById(`laser-${id}`);
+  const isAlreadyActive = card.classList.contains('active');
+
+  // Fecha outros cards
+  document.querySelectorAll('.skill-floating-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.chakra-node').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.laser-beam').forEach(l => l.classList.remove('active'));
+
+  if (!isAlreadyActive) {
+    card.classList.add('active');
+    node.classList.add('active');
+    laser.classList.add('active');
+  }
+
+  setTimeout(updateLaserLines, 100);
+}
+
+// Efeito de Lanterna do Mouse (Spotlight) e Parallax Suave
+window.addEventListener('mousemove', (e) => {
+  const spotlight = document.getElementById('mouse-spotlight');
+  gsap.to(spotlight, {
+    x: e.clientX,
+    y: e.clientY + window.scrollY,
+    duration: 0.25,
+    ease: "power2.out"
+  });
+
+  // Parallax sutil no avatar
+  const avatarImg = document.getElementById('avatar-img');
+  const deltaX = (e.clientX - window.innerWidth / 2) * 0.012;
+  const deltaY = (e.clientY - window.innerHeight / 2) * 0.012;
+  gsap.to(avatarImg, {
+    x: deltaX,
+    y: deltaY,
+    duration: 0.5,
+    ease: "power2.out"
+  });
+});
+
+window.addEventListener('resize', updateLaserLines);
+window.addEventListener('DOMContentLoaded', buildStage);
+</script>
+</body>
+</html>

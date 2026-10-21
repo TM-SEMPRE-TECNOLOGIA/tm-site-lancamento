@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "skills": {
+    "a11y-audit": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/a11y-audit/SKILL.md",
+      "computedHash": "a5bf771e12ae3a719cf6d5615486950f1bcd756398315570a892179a3ca377d5"
+    },
+    "ai-image-generation": {
+      "source": "halt-catch-fire/skills",
+      "sourceType": "github",
+      "skillPath": "tools/image/ai-image-generation/SKILL.md",
+      "computedHash": "0cb296ffe8d9277dff2e4fbd9888fa943a4f6acee4ad218559e60e45c8a06526"
+    },
+    "color-audit": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/color-audit/SKILL.md",
+      "computedHash": "4c5f0e41f108408a60229cac2ab7bcd68b7e64dbc5b0e943bdd99de53ed1b41e"
+    },
+    "component-audit": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/component-audit/SKILL.md",
+      "computedHash": "06aa1f8ec004af545e4a2f9b7e1b6af52511abe2a55d374ab0eafc2e1b431477"
+    },
+    "design-audit": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/design-audit/SKILL.md",
+      "computedHash": "169d6b7d0f7e940e64ca86c28e9d895997d2d8781d1025d473c4167e4b625456"
+    },
+    "design-checklist": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/design-checklist/SKILL.md",
+      "computedHash": "b98342f179d0b2ed5199c0adf703f311f539abace0d6b73d1a221ff79889e78f"
+    },
+    "design-compare": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/design-compare/SKILL.md",
+      "computedHash": "d13392aa065c564d749ad4e8c0ed343fea0e36c04c7fd95e954536b1efd53b10"
+    },
+    "design-score": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/design-score/SKILL.md",
+      "computedHash": "02fd6fccaf409ea1f6621c0cd59221aef1b9d1cae76daf1efcf3d63da22f4614"
+    },
+    "design-tokens": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/design-tokens/SKILL.md",
+      "computedHash": "09992ea2700fd46dcca5f9af7dfe15bf31fb374a7be79485f3c42f0d112f8e5d"
+    },
+    "flow-audit": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/flow-audit/SKILL.md",
+      "computedHash": "493955c9c2c84c780eae8e5987a070fd85b6935b20655af33c46e3ec6bd1930f"
+    },
+    "landing-page-design": {
+      "source": "halt-catch-fire/skills",
+      "sourceType": "github",
+      "skillPath": "guides/design/landing-page-design/SKILL.md",
+      "computedHash": "00c0bb9b3bf40a9865f51471c26724e140de40b8850a213378ab04d8e89679c9"
+    },
+    "layout-audit": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/layout-audit/SKILL.md",
+      "computedHash": "40e23c5eab68936bce73127e096abe8f4eac13119ce9fb4de77c315d98bbb6aa"
+    },
+    "refactor-plan": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/refactor-plan/SKILL.md",
+      "computedHash": "d3bde5d51ef931f3db26a1d05ed55b31b0d071f0397eb65b1a9ebcbe85e16c94"
+    },
+    "style-direction": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/style-direction/SKILL.md",
+      "computedHash": "7cf5bb0aca62be1bc0ef8f05d090e3aa8017611ecf834bce1029d56be03f998a"
+    },
+    "theme-builder": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/theme-builder/SKILL.md",
+      "computedHash": "7ad0731dc4f8405e184fd9f88fff68519fc0a8a4e56aa7f3a6994fea8c30477f"
+    },
+    "type-audit": {
+      "source": "Aboudjem/ui-ux-suite",
+      "sourceType": "github",
+      "skillPath": "skills/type-audit/SKILL.md",
+      "computedHash": "8f11e6889f497b0eef32432fd52a38ecf86cb5900648f2044f4648a6ae856330"
+    }
+  }
+}

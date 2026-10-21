@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aetheris • Experiência Imersiva de Captura de Alta Conversão</title>
+  <meta name="description" content="Landing page de captura de próxima geração com efeito de expansão de vídeo em scroll (Scroll-to-Expand Video Hero). Multiplique sua taxa de conversão." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon-32x32.png" />
+
+  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            display: ['"Outfit"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              200: '#bae0fd',
+              300: '#7cc7fb',
+              400: '#38aef7',
+              500: '#0e94e7',
+              600: '#0276c5',
+              700: '#035ea0',
+              800: '#074f83',
+              900: '#0c426e',
+              950: '#082a49',
+            },
+            accent: {
+              cyan: '#06b6d4',
+              purple: '#8b5cf6',
+              emerald: '#10b981',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+            'shimmer': 'shimmer 2.5s infinite',
+            'glow-pulse': 'glowPulse 3s ease-in-out infinite alternate',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            },
+            shimmer: {
+              '100%': { transform: 'translateX(100%)' },
+            },
+            glowPulse: {
+              '0%': { boxShadow: '0 0 25px rgba(56, 189, 248, 0.25)' },
+              '100%': { boxShadow: '0 0 65px rgba(139, 92, 246, 0.4)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* Estilos Customizados de Alta Precisão */
+    body {
+      background-color: #030712;
+      color: #f3f4f6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+      selection-background-color: #38bdf8;
+      selection-color: #030712;
+    }
+
+    ::selection {
+      background: #38bdf8;
+      color: #030712;
+    }
+
+    /* Background noise grid */
+    .bg-grid-pattern {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+
+    /* Glassmorphism premium */
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .glass-card-glow {
+      position: relative;
+    }
+    .glass-card-glow::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.4), rgba(139, 92, 246, 0.1), rgba(255, 255, 255, 0.05));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    /* Custom Input Glowing Focus */
+    .input-glow:focus-within {
+      border-color: #38bdf8;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #030712;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #38bdf8;
+    }
+  </style>
+</head>
+<body class="antialiased bg-slate-950 text-slate-100 min-h-screen relative">
+
+  <!-- IMAGEM DE FUNDO GLOBAL & AMBIENTE -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <img src="https://me7aitdbxq.ufs.sh/f/2wsMIGDMQRdYMNjMlBUYHaeYpxduXPVNwf8mnFA61L7rkcoS" 
+         alt="Cosmic Space Background" 
+         class="w-full h-full object-cover object-center filter brightness-[0.70] contrast-[1.15] scale-105" />
+    <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-[1px]"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-transparent to-slate-950"></div>
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-sky-500/20 rounded-full blur-[140px]"></div>
+    <div class="absolute top-[40%] -left-40 w-[600px] h-[600px] bg-purple-600/15 rounded-full blur-[160px]"></div>
+    <div class="absolute bottom-20 -right-40 w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-[150px]"></div>
+    <div class="absolute inset-0 bg-grid-pattern opacity-30"></div>
+  </div>
+
+  <!-- BOTÃO FLUTUANTE DISCRETO PARA PERSONALIZAR OS TEXTOS DA FRENTE -->
+  <div class="fixed top-5 right-5 z-40">
+    <button onclick="openTextEditorModal()" class="px-3.5 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-sky-300 hover:text-white border border-sky-500/30 backdrop-blur-md shadow-lg shadow-sky-500/10 text-xs font-semibold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 group">
+      <i data-lucide="edit-3" class="w-3.5 h-3.5 text-sky-400 group-hover:rotate-12 transition-transform"></i>
+      <span>Editar Textos da Frente</span>
+    </button>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- SEÇÃO SCROLL-TO-EXPAND VIDEO HERO (EFEITO SOLICITADO) -->
+  <!-- ========================================================= -->
+  <!-- 
+    O track tem altura de 260vh para dar curso suficiente e suave de rolagem.
+    O contêiner interno permanece sticky no topo (100dvh).
+  -->
+  <section id="hero-scroll-track" class="relative w-full" style="height: 260vh;">
+    
+    <!-- Contêiner Fixo / Pinned da Animação -->
+    <div id="hero-sticky-container" class="sticky top-0 w-full h-[100dvh] overflow-hidden flex flex-col items-center justify-center select-none">
+
+      <!-- IMAGEM DE FUNDO CINEMÁTICA DO HERO (fica atrás do card antes de expandir) -->
+      <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+        <img src="https://me7aitdbxq.ufs.sh/f/2wsMIGDMQRdYMNjMlBUYHaeYpxduXPVNwf8mnFA61L7rkcoS" 
+             alt="Cosmic Background Hero" 
+             class="w-full h-full object-cover object-center filter brightness-[0.80] contrast-[1.1] scale-100" />
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/20 to-slate-950/90"></div>
+      </div>
+
+      <!-- TÍTULOS DIVIDIDOS (SPLITTING HEADINGS) -->
+      <!-- Conforme o snippet original: "Immersive" e "Video Experience" com transform translateX dinâmico -->
+      <div id="title-wrapper" class="flex items-center justify-center text-center gap-2 md:gap-4 w-full relative z-10 transition-none flex-col mix-blend-normal pointer-events-none px-4">
+        <h2 id="title-left" class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-display tracking-tight text-blue-200 transition-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]" style="transform: translateX(0vw);">
+          IMMERSIVE
+        </h2>
+        <h2 id="title-right" class="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black font-display tracking-tight text-center text-blue-200 transition-none drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]" style="transform: translateX(0vw);">
+          VIDEO EXPERIENCE
+        </h2>
+      </div>
+
+      <!-- CARD DO VÍDEO QUE EXPADE (SCROLL-EXPAND MEDIA) -->
+      <!-- 
+        Dimensões iniciais baseadas no snippet do usuário:
+        width: 300px, height: 400px, max-width: 95vw, max-height: 85vh, rounded-2xl
+        Conforme rola: expande para 100vw e 100vh, border-radius vai a 0px.
+      -->
+      <div id="expand-media-card" 
+           class="absolute z-0 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-none rounded-2xl will-change-transform overflow-hidden shadow-2xl" 
+           style="width: 300px; height: 400px; max-width: 100vw; max-height: 100vh; box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 60px, rgba(56, 189, 248, 0.25) 0px 0px 40px;">
+        
+        <div class="relative w-full h-full pointer-events-none">
+          <!-- VÍDEO OFICIAL DO SNIPPET FORNECIDO PELO USUÁRIO -->
+          <video id="main-video" 
+                 src="https://me7aitdbxq.ufs.sh/f/2wsMIGDMQRdYuZ5R8ahEEZ4aQK56LizRdfBSqeDMsmUIrJN1" 
+                 poster="https://cdn.21st.dev/assets/localized/5bb1be92440e920def3eb36ad5a610d609240616cd8b11c0effe6b92bcafe06e.jpg" 
+                 autoplay loop muted playsinline preload="auto" 
+                 class="w-full h-full object-cover transition-all duration-300" 
+                 disablepictureinpicture disableremoteplayback></video>
+          
+          <div class="absolute inset-0 z-10" style="pointer-events: none;"></div>
+          
+          <!-- Camada de Overlay escura e gradiente dinâmico -->
+          <div id="video-dark-overlay" class="absolute inset-0 bg-black/40 transition-opacity duration-200" style="opacity: 0.5;"></div>
+          <div id="video-gradient-vignette" class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-slate-950/60 opacity-0 transition-opacity duration-300"></div>
+        </div>
+
+        <!-- LABELS INICIAIS DO SNIPPET (Cosmic Journey & Scroll to Expand) -->
+        <div id="card-labels" class="flex flex-col items-center text-center absolute bottom-5 inset-x-0 z-10 transition-all duration-200 px-4">
+          <p id="card-badge-title" class="text-xl sm:text-2xl font-display font-semibold text-blue-200 tracking-wide drop-shadow-md" style="transform: translateX(0vw);">Cosmic Journey</p>
+          <div class="flex items-center justify-center gap-2 mt-1 text-blue-200/90 font-medium text-xs sm:text-sm tracking-normal">
+            <span id="card-badge-subtitle">Scroll to Expand Demo</span>
+            <i data-lucide="chevrons-down" class="w-4 h-4 animate-bounce text-sky-300"></i>
+          </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- CONTEÚDO REVELADO QUANDO O VÍDEO EXPADE TOTALMENTE (100%) -->
+        <!-- ========================================================= -->
+        <div id="fully-expanded-content" class="absolute inset-0 z-30 flex flex-col items-center justify-center px-4 sm:px-8 text-center opacity-0 pointer-events-none transition-all duration-300">
+          
+          <div class="max-w-4xl mx-auto flex flex-col items-center">
+            <!-- Selo de Destaque -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs sm:text-sm font-semibold tracking-wide backdrop-blur-xl mb-4 shadow-lg shadow-sky-500/10">
+              <i data-lucide="sparkles" class="w-4 h-4 text-sky-300 animate-spin" style="animation-duration: 6s;"></i>
+              <span>LANÇAMENTO EXCLUSIVO • TECNOLOGIA AETHERIS</span>
+            </div>
+
+            <!-- Headline de Alto Impacto -->
+            <h1 class="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-5 drop-shadow-2xl">
+              Transforme Visitantes Passivos em <br class="hidden sm:inline" />
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-indigo-300 to-purple-400">
+                Clientes Apaixonados
+              </span>
+            </h1>
+
+            <p class="max-w-2xl text-base sm:text-xl text-slate-200 mb-8 font-normal leading-relaxed drop-shadow-md">
+              A primeira arquitetura visual orientada a retenção hipnótica. Prenda a atenção do seu lead nos primeiros 3 segundos e converta até <strong>3.8x mais</strong> com scroll cinemático.
+            </p>
+
+            <!-- Ações Rápidas no Hero Expandido -->
+            <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+              <a href="#capture-section" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-base shadow-xl shadow-sky-500/30 hover:shadow-sky-500/50 hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 group">
+                <span>Quero Minha Vaga VIP Antecipada</span>
+                <i data-lucide="arrow-down" class="w-5 h-5 group-hover:translate-y-0.5 transition-transform"></i>
+              </a>
+
+              <button onclick="scrollToFeatures()" class="w-full sm:w-auto px-6 py-4 rounded-2xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white font-semibold text-base border border-slate-700/60 backdrop-blur-md transition-all duration-200 flex items-center justify-center gap-2">
+                <i data-lucide="play-circle" class="w-5 h-5 text-sky-400"></i>
+                <span>Ver Como Funciona</span>
+              </button>
+            </div>
+
+            <!-- Prova Social no Hero -->
+            <div class="mt-8 flex items-center gap-4 text-xs sm:text-sm text-slate-300">
+              <div class="flex -space-x-2">
+                <img class="w-8 h-8 rounded-full border-2 border-slate-950 object-cover" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar 1" />
+                <img class="w-8 h-8 rounded-full border-2 border-slate-950 object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Avatar 2" />
+                <img class="w-8 h-8 rounded-full border-2 border-slate-950 object-cover" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Avatar 3" />
+                <div class="w-8 h-8 rounded-full border-2 border-slate-950 bg-sky-600 text-white font-bold text-[10px] flex items-center justify-center">
+                  +3k
+                </div>
+              </div>
+              <span>Mais de <strong>3.420 líderes</strong> já garantiram a pré-venda</span>
+            </div>
+
+          </div>
+
+          <!-- Indicador de continuação do scroll -->
+          <div class="absolute bottom-6 inset-x-0 flex flex-col items-center gap-1 text-slate-400 text-xs font-medium animate-bounce">
+            <span>Continue rolando para acessar o formulário</span>
+            <i data-lucide="arrow-down" class="w-4 h-4 text-sky-400"></i>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Barra de Progresso Fina no Topo do Efeito -->
+      <div class="absolute bottom-0 left-0 w-full h-1 bg-slate-800/60 z-40">
+        <div id="scroll-progress-bar" class="h-full bg-gradient-to-r from-sky-400 to-indigo-500 w-0 transition-all duration-75"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- BARRA DE MÉTRICAS & PROVA SOCIAL IMEDIATA -->
+  <!-- ========================================================= -->
+  <section class="relative z-20 -mt-10 py-12 px-4 sm:px-8 border-y border-slate-800/80 bg-slate-950/90 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center">
+      
+      <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60 hover:border-sky-500/30 transition-colors">
+        <div class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-cyan-300 mb-1">
+          94.8%
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400 font-medium">Taxa Média de Retenção</p>
+        <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-center gap-1 mt-1">
+          <i data-lucide="trending-up" class="w-3 h-3"></i> +38% que páginas padrão
+        </span>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60 hover:border-indigo-500/30 transition-colors">
+        <div class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-300 mb-1">
+          3.8x
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400 font-medium">Aumento em Cadastros</p>
+        <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-center gap-1 mt-1">
+          <i data-lucide="zap" class="w-3 h-3"></i> Otimização instantânea
+        </span>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60 hover:border-cyan-500/30 transition-colors">
+        <div class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400 mb-1">
+          0.6s
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400 font-medium">Carregamento Inicial</p>
+        <span class="text-[10px] text-sky-400 font-semibold flex items-center justify-center gap-1 mt-1">
+          <i data-lucide="shield-check" class="w-3 h-3"></i> Score 100 PageSpeed
+        </span>
+      </div>
+
+      <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/60 hover:border-purple-500/30 transition-colors">
+        <div class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-300 mb-1">
+          +150k
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400 font-medium">Leads Gerados no Efeito</p>
+        <span class="text-[10px] text-emerald-400 font-semibold flex items-center justify-center gap-1 mt-1">
+          <i data-lucide="check-circle-2" class="w-3 h-3"></i> Testado em escala
+        </span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- SEÇÃO DE CAPTURA PRINCIPAL (O FORMULÁRIO VIP DE CONVERSÃO) -->
+  <!-- ========================================================= -->
+  <section id="capture-section" class="relative z-20 py-20 px-4 sm:px-8">
+    <div class="max-w-6xl mx-auto">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <!-- COLUNA ESQUERDA: Cópia de Autoridade e Vantagens -->
+        <div class="lg:col-span-7 flex flex-col justify-center">
+          
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider mb-4 w-fit">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            Acesso Antecipado Aberto
+          </div>
+
+          <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white mb-6 leading-tight">
+            Tenha em Suas Mãos a Landing Page que as 
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-indigo-300 to-purple-400">
+              Maiores Startups do Mundo
+            </span> Usam.
+          </h2>
+
+          <p class="text-base sm:text-lg text-slate-300 mb-8 leading-relaxed">
+            Esqueça as páginas de captura monótonas com taxas de conversão de 5%. Ao combinar <strong>storytelling visual</strong>, expansão dinâmica de mídia e micro-interações de ponta, você fisga o lead na emoção e fecha o cadastro na lógica.
+          </p>
+
+          <!-- Lista de Entregáveis e Benefícios -->
+          <div class="space-y-4 mb-8">
+            
+            <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-sky-500/30 transition-all">
+              <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="check" class="w-4 h-4 font-bold"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm sm:text-base">Código Pronto & Plug-and-Play</h4>
+                <p class="text-xs sm:text-sm text-slate-400">HTML puro, Next.js ou React — adicione seu vídeo e comece a rodar tráfego em menos de 10 minutos.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/30 transition-all">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="smartphone" class="w-4 h-4 font-bold"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm sm:text-base">100% Responsivo no Touch & Mobile</h4>
+                <p class="text-xs sm:text-sm text-slate-400">Fidelidade absoluta no iPhone, Android e dentro do navegador do Instagram e TikTok Ads.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5 p-3.5 rounded-xl bg-slate-900/60 border border-slate-800/80 hover:border-purple-500/30 transition-all">
+              <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <i data-lucide="send" class="w-4 h-4 font-bold"></i>
+              </div>
+              <div>
+                <h4 class="font-semibold text-white text-sm sm:text-base">Disparo Automático no WhatsApp & CRM</h4>
+                <p class="text-xs sm:text-sm text-slate-400">Cada cadastro pode abrir uma conversa personalizada no WhatsApp ou enviar dados para seu Webhook/Make/Zapier.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Cronômetro Regressivo de Urgência -->
+          <div class="p-4 rounded-2xl bg-gradient-to-r from-slate-900/90 to-slate-900/40 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                <i data-lucide="clock" class="w-5 h-5 animate-pulse"></i>
+              </div>
+              <div>
+                <p class="text-xs uppercase tracking-wider text-amber-400 font-bold">Condição Especial de Lançamento</p>
+                <p class="text-xs text-slate-400">O lote gratuito encerra em breve:</p>
+              </div>
+            </div>
+
+            <!-- Timer Blocks -->
+            <div class="flex items-center gap-2 font-mono text-sm sm:text-base">
+              <div class="bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 text-white font-bold">
+                <span id="timer-hours">03</span><span class="text-[10px] text-slate-500 ml-1">h</span>
+              </div>
+              <span class="text-slate-500 font-bold">:</span>
+              <div class="bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 text-white font-bold">
+                <span id="timer-minutes">42</span><span class="text-[10px] text-slate-500 ml-1">m</span>
+              </div>
+              <span class="text-slate-500 font-bold">:</span>
+              <div class="bg-slate-950 px-2.5 py-1.5 rounded-lg border border-slate-800 text-sky-400 font-bold">
+                <span id="timer-seconds">58</span><span class="text-[10px] text-slate-500 ml-1">s</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- COLUNA DIREITA: CARD DO FORMULÁRIO HIGH-CONVERT -->
+        <div class="lg:col-span-5">
+          <div class="glass-card glass-card-glow rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-2xl">
+            
+            <!-- Shimmer decorativo -->
+            <div class="absolute -top-24 -right-24 w-48 h-48 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative z-10">
+              
+              <div class="flex items-center justify-between mb-6">
+                <div>
+                  <span class="text-xs font-semibold text-sky-400 tracking-wider uppercase">Cadastro Gratuito</span>
+                  <h3 class="font-display text-2xl font-bold text-white">Receba o Acesso VIP</h3>
+                </div>
+                <div class="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+                  <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+              </div>
+
+              <!-- FORMULÁRIO DE CAPTURA -->
+              <form id="lead-capture-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                
+                <!-- Campo Nome -->
+                <div>
+                  <label for="lead-name" class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <i data-lucide="user" class="w-3.5 h-3.5 text-sky-400"></i>
+                    Seu Nome Completo
+                  </label>
+                  <div class="relative input-glow rounded-xl transition-all">
+                    <input type="text" id="lead-name" required placeholder="Ex: Roberto Silva" 
+                           class="w-full px-4 py-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-sky-500 transition-all" />
+                  </div>
+                </div>
+
+                <!-- Campo WhatsApp com Máscara Dinâmica -->
+                <div>
+                  <label for="lead-whatsapp" class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <i data-lucide="phone" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    WhatsApp Comercial com DDD
+                  </label>
+                  <div class="relative input-glow rounded-xl transition-all">
+                    <input type="tel" id="lead-whatsapp" required placeholder="(11) 99999-9999" maxlength="15" oninput="maskWhatsApp(this)"
+                           class="w-full px-4 py-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-emerald-500 transition-all" />
+                  </div>
+                  <span class="text-[10px] text-slate-400 mt-1 block">Enviaremos o link de acesso diretamente no seu WhatsApp.</span>
+                </div>
+
+                <!-- Campo E-mail -->
+                <div>
+                  <label for="lead-email" class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <i data-lucide="mail" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    Melhor E-mail Profissional
+                  </label>
+                  <div class="relative input-glow rounded-xl transition-all">
+                    <input type="email" id="lead-email" required placeholder="roberto@suaempresa.com.br" 
+                           class="w-full px-4 py-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white placeholder-slate-500 text-sm focus:outline-none focus:border-indigo-500 transition-all" />
+                  </div>
+                </div>
+
+                <!-- Campo Segmento / Nicho -->
+                <div>
+                  <label for="lead-segment" class="block text-xs font-medium text-slate-300 mb-1.5 flex items-center gap-1.5">
+                    <i data-lucide="target" class="w-3.5 h-3.5 text-purple-400"></i>
+                    Qual o seu modelo de atuação?
+                  </label>
+                  <div class="relative rounded-xl">
+                    <select id="lead-segment" required 
+                            class="w-full px-4 py-3.5 rounded-xl bg-slate-900/90 border border-slate-700/80 text-white text-sm focus:outline-none focus:border-purple-500 transition-all cursor-pointer appearance-none">
+                      <option value="" disabled selected class="text-slate-500">Selecione seu objetivo...</option>
+                      <option value="infoprodutor">Infoprodutor / Lançador de Cursos</option>
+                      <option value="agencia">Agência de Tráfego & Web Design</option>
+                      <option value="saas_b2b">SaaS, Software ou Negócios B2B</option>
+                      <option value="comercio_local">Negócio Local / Clínica / Consultoria</option>
+                      <option value="outro">Outro Modelo</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                      <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Botão de Envio de Alto Impacto -->
+                <div class="pt-2">
+                  <button type="submit" id="submit-btn" 
+                          class="relative w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-extrabold text-base tracking-wide shadow-xl shadow-sky-500/30 hover:shadow-sky-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 overflow-hidden group">
+                    
+                    <!-- Efeito de Shimmer no Botão -->
+                    <span class="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 group-hover:animate-shimmer"></span>
+
+                    <span id="btn-content" class="relative z-10 flex items-center justify-center gap-2">
+                      <span>QUERO MEU ACESSO ANTECIPADO VIP</span>
+                      <i data-lucide="zap" class="w-5 h-5 text-amber-300"></i>
+                    </span>
+
+                    <span id="btn-loading" class="hidden relative z-10 items-center justify-center gap-2">
+                      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Processando Acesso...</span>
+                    </span>
+                  </button>
+                </div>
+
+                <!-- Garantia e Segurança -->
+                <div class="flex items-center justify-center gap-4 pt-2 text-[11px] text-slate-400">
+                  <span class="flex items-center gap-1">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    100% Seguro & Sem Spam
+                  </span>
+                  <span>•</span>
+                  <span class="flex items-center gap-1">
+                    <i data-lucide="shield" class="w-3.5 h-3.5 text-sky-400"></i>
+                    Privacidade Garantida
+                  </span>
+                </div>
+
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- SEÇÃO DE CONTROLES DO EFEITO (DEMO CONTROLLER INTERATIVO) -->
+  <!-- ========================================================= -->
+  <section id="features-section" class="relative z-20 py-16 px-4 sm:px-8 border-t border-slate-900 bg-slate-950/60">
+    <div class="max-w-6xl mx-auto">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12">
+        <span class="text-xs font-semibold text-sky-400 tracking-wider uppercase">Painel de Demonstração</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white mt-1 mb-4">
+          Como o Efeito Scroll-to-Expand Opera
+        </h2>
+        <p class="text-slate-400 text-sm sm:text-base">
+          Teste os gatilhos e experimente a velocidade do motor visual em tempo real.
+        </p>
+      </div>
+
+      <!-- Barra de Controle Rápido -->
+      <div class="flex flex-wrap items-center justify-center gap-3 mb-12 p-2 rounded-2xl bg-slate-900/80 border border-slate-800 max-w-2xl mx-auto backdrop-blur-md">
+        <button onclick="rewindEffect()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-all">
+          <i data-lucide="rotate-ccw" class="w-4 h-4 text-sky-400"></i>
+          <span>Rebobinar (Topo)</span>
+        </button>
+
+        <button onclick="expandFullEffect()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs sm:text-sm font-medium flex items-center gap-1.5 transition-all">
+          <i data-lucide="maximize-2" class="w-4 h-4 text-emerald-400"></i>
+          <span>Expandir 100%</span>
+        </button>
+
+        <button onclick="scrollToCapture()" class="px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-all">
+          <i data-lucide="arrow-down-circle" class="w-4 h-4 text-sky-400"></i>
+          <span>Ir ao Formulário</span>
+        </button>
+      </div>
+
+      <!-- Grid de 3 Pilares Técnicos -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-sky-500/40 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i data-lucide="eye" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white mb-2">01. Retenção Sem Distrações</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            Ao invés de carregar um layout poluído com 50 botões, o olhar do usuário é guiado magneticamente para o centro do vídeo antes de qualquer decisão.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-indigo-500/40 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i data-lucide="gauge" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white mb-2">02. 60 FPS Subpixel Lerp</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            Interpolação contínua com <code class="text-sky-300 text-xs">requestAnimationFrame</code>. Sem travamentos, engasgos ou layout shifts durante a rolagem.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-purple-500/40 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <i data-lucide="layers" class="w-6 h-6"></i>
+          </div>
+          <h3 class="font-display text-lg font-bold text-white mb-2">03. Arquitetura Modular</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            Troque o vídeo cósmico por qualquer material: vídeo institucional do seu produto, depoimento cinematográfico ou teaser de evento.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- SEÇÃO DE FAQ (PERGUNTAS FREQUENTES INTERATIVAS) -->
+  <!-- ========================================================= -->
+  <section class="relative z-20 py-20 px-4 sm:px-8 border-t border-slate-900 bg-slate-950">
+    <div class="max-w-4xl mx-auto">
+      
+      <div class="text-center mb-12">
+        <span class="text-xs font-semibold text-sky-400 tracking-wider uppercase">Tire Suas Dúvidas</span>
+        <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white mt-1">Perguntas Frequentes</h2>
+      </div>
+
+      <div class="space-y-4" id="faq-container">
+        
+        <!-- FAQ 1 -->
+        <div class="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden transition-colors">
+          <button onclick="toggleFaq(1)" class="w-full px-6 py-5 text-left flex items-center justify-between gap-4 font-semibold text-white hover:text-sky-300 transition-colors">
+            <span>Como o efeito se comporta em telas móveis e conexões lentas?</span>
+            <i id="faq-icon-1" data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-200 flex-shrink-0"></i>
+          </button>
+          <div id="faq-ans-1" class="px-6 pb-5 text-sm text-slate-400 leading-relaxed hidden">
+            O componente conta com um poster otimizado em alta definição carregado imediatamente. Em smartphones, as dimensões se adaptam dinamicamente à largura do viewport com aceleração de hardware (GPU), mantendo fluidez perfeita mesmo no 4G.
+          </div>
+        </div>
+
+        <!-- FAQ 2 -->
+        <div class="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden transition-colors">
+          <button onclick="toggleFaq(2)" class="w-full px-6 py-5 text-left flex items-center justify-between gap-4 font-semibold text-white hover:text-sky-300 transition-colors">
+            <span>Posso usar meu próprio vídeo ou imagem no lugar do demo?</span>
+            <i id="faq-icon-2" data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-200 flex-shrink-0"></i>
+          </button>
+          <div id="faq-ans-2" class="px-6 pb-5 text-sm text-slate-400 leading-relaxed hidden">
+            Sim! Basta alterar o atributo <code class="text-sky-300 text-xs">src="..."</code> da tag <code class="text-sky-300 text-xs">&lt;video&gt;</code> ou substituir por uma tag <code class="text-sky-300 text-xs">&lt;img&gt;</code> com imagem estática de alta resolução. O efeito de expansão aceita qualquer formato de mídia.
+          </div>
+        </div>
+
+        <!-- FAQ 3 -->
+        <div class="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden transition-colors">
+          <button onclick="toggleFaq(3)" class="w-full px-6 py-5 text-left flex items-center justify-between gap-4 font-semibold text-white hover:text-sky-300 transition-colors">
+            <span>Para onde são enviados os dados do formulário de captura?</span>
+            <i id="faq-icon-3" data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-200 flex-shrink-0"></i>
+          </button>
+          <div id="faq-ans-3" class="px-6 pb-5 text-sm text-slate-400 leading-relaxed hidden">
+            O formulário é pré-configurado para validar todos os campos, formatar o telefone no padrão nacional e acionar um modal comemorativo instantâneo, permitindo o redirecionamento direto para o seu WhatsApp comercial com a mensagem pronta, ou envio via Webhook para CRMs como ActiveCampaign, HubSpot ou RD Station.
+          </div>
+        </div>
+
+        <!-- FAQ 4 -->
+        <div class="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden transition-colors">
+          <button onclick="toggleFaq(4)" class="w-full px-6 py-5 text-left flex items-center justify-between gap-4 font-semibold text-white hover:text-sky-300 transition-colors">
+            <span>Consigo integrar em Next.js, WordPress ou páginas estáticas?</span>
+            <i id="faq-icon-4" data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-200 flex-shrink-0"></i>
+          </button>
+          <div id="faq-ans-4" class="px-6 pb-5 text-sm text-slate-400 leading-relaxed hidden">
+            Com certeza. O código utiliza HTML5 padrão e JavaScript moderno sem dependências pesadas, sendo facilmente incorporado em qualquer ecossistema frontend ou em páginas do Elementor / WordPress via HTML block.
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================================= -->
+  <!-- FOOTER PREMIUM -->
+  <!-- ========================================================= -->
+  <footer class="relative z-20 py-12 px-4 sm:px-8 border-t border-slate-900 bg-slate-950 text-slate-500 text-xs">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+      
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+        </div>
+        <span class="font-display text-sm font-bold text-slate-300">AETHERIS • IMMERSIVE EXPERIENCE</span>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <a href="#hero-scroll-track" class="hover:text-slate-300 transition-colors">Voltar ao Topo</a>
+        <a href="#capture-section" class="hover:text-slate-300 transition-colors">Formulário VIP</a>
+        <a href="#features-section" class="hover:text-slate-300 transition-colors">Tecnologia</a>
+      </div>
+
+      <div>
+        © 2026 Aetheris Engine. Todos os direitos reservados.
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ========================================================= -->
+  <!-- MODAL DE SUCESSO DO CADASTRO (CONFIRMAÇÃO VIP) -->
+  <!-- ========================================================= -->
+  <div id="success-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-card glass-card-glow max-w-md w-full rounded-3xl p-6 sm:p-8 text-center relative overflow-hidden transform scale-95 transition-all duration-300" id="modal-card">
+      
+      <!-- Círculo de Sucesso -->
+      <div class="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto mb-4 animate-bounce">
+        <i data-lucide="check-circle" class="w-8 h-8"></i>
+      </div>
+
+      <span class="text-xs font-semibold text-emerald-400 tracking-wider uppercase">Vaga Confirmada</span>
+      <h3 class="font-display text-2xl font-bold text-white mt-1 mb-2">
+        Parabéns, <span id="lead-display-name">Roberto</span>!
+      </h3>
+      
+      <p class="text-xs sm:text-sm text-slate-300 mb-6 leading-relaxed">
+        Seu cadastro antecipado foi registrado com sucesso. Você garantiu condições exclusivas de lançamento.
+      </p>
+
+      <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-left text-xs text-slate-400 mb-6 space-y-1">
+        <div class="flex justify-between">
+          <span>Código de Acesso VIP:</span>
+          <strong class="text-sky-400 font-mono" id="access-code">#AETH-7892</strong>
+        </div>
+        <div class="flex justify-between">
+          <span>WhatsApp Cadastrado:</span>
+          <strong class="text-slate-200" id="whatsapp-display"></strong>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <a id="whatsapp-direct-link" href="#" target="_blank" class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-2">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Acessar via WhatsApp Agora</span>
+        </a>
+
+        <button onclick="closeSuccessModal()" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all">
+          Fechar Janela
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MODAL DE EDIÇÃO DOS TEXTOS DA FRENTE (HERO CUSTOMIZER) -->
+  <!-- ========================================================= -->
+  <div id="text-editor-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+    <div class="glass-card glass-card-glow max-w-lg w-full rounded-3xl p-6 sm:p-8 relative overflow-hidden transform scale-95 transition-all duration-300" id="text-editor-card">
+      
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center">
+            <i data-lucide="type" class="w-4 h-4"></i>
+          </div>
+          <h3 class="font-display text-xl font-bold text-white">Editar Textos da Frente</h3>
+        </div>
+        <button onclick="closeTextEditorModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-300 mb-4">
+        Altere o texto principal (<strong>IMMERSIVE</strong>) ou qualquer elemento de texto da tela inicial em tempo real.
+      </p>
+
+      <!-- Chips de Presets Rápidos -->
+      <div class="mb-5">
+        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-2">Sugestões em 1 Clique:</span>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="applyPreset('IMMERSIVE', 'VIDEO EXPERIENCE', 'Cosmic Journey', 'Scroll to Expand Demo')" 
+                  class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 hover:border-sky-500/40 text-xs text-slate-300 hover:text-sky-300 transition-all">
+            ✨ Immersive (Original)
+          </button>
+          <button type="button" onclick="applyPreset('EXPERIÊNCIA', 'DIGITAL', 'Alta Tecnologia', 'Role para Expandir')" 
+                  class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 hover:border-sky-500/40 text-xs text-slate-300 hover:text-sky-300 transition-all">
+            🚀 Experiência Digital
+          </button>
+          <button type="button" onclick="applyPreset('ALTA CONVERSÃO', 'SEM LIMITES', 'Lançamento Pro', 'Descubra o Efeito')" 
+                  class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 hover:border-sky-500/40 text-xs text-slate-300 hover:text-sky-300 transition-all">
+            ⚡ Alta Conversão
+          </button>
+          <button type="button" onclick="applyPreset('LANÇAMENTO', 'EXCLUSIVO', 'Acesso VIP', 'Role para Ver')" 
+                  class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-sky-500/20 border border-slate-700 hover:border-sky-500/40 text-xs text-slate-300 hover:text-sky-300 transition-all">
+            🎯 Lançamento VIP
+          </button>
+        </div>
+      </div>
+
+      <!-- Formulário de Customização -->
+      <div class="space-y-3.5 text-left mb-6">
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Texto Superior (Esquerda / Linha 1):</label>
+          <input type="text" id="input-title-left" value="IMMERSIVE" oninput="liveUpdateTexts()" 
+                 class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-sky-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Texto Inferior (Direita / Linha 2):</label>
+          <input type="text" id="input-title-right" value="VIDEO EXPERIENCE" oninput="liveUpdateTexts()" 
+                 class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-white text-sm focus:outline-none focus:border-sky-500" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Tag no Card de Vídeo:</label>
+            <input type="text" id="input-card-title" value="Cosmic Journey" oninput="liveUpdateTexts()" 
+                   class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-sky-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Subtítulo no Card:</label>
+            <input type="text" id="input-card-sub" value="Scroll to Expand Demo" oninput="liveUpdateTexts()" 
+                   class="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-sky-500" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="saveAndCloseTextEditor()" class="flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-sky-500/20 transition-all">
+          Concluir & Fechar
+        </button>
+        <button onclick="resetDefaultTexts()" class="px-4 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-all">
+          Restaurar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- BARRA STICKY INFERIOR PARA MOBILE -->
+  <!-- ========================================================= -->
+  <div id="mobile-sticky-cta" class="fixed bottom-0 left-0 w-full p-3 bg-slate-950/95 border-t border-slate-800 backdrop-blur-lg z-40 sm:hidden transform translate-y-full transition-transform duration-300 flex items-center justify-between gap-3">
+    <div>
+      <p class="text-xs font-bold text-white leading-tight">Acesso Antecipado VIP</p>
+      <span class="text-[10px] text-emerald-400 font-semibold">14 vagas restantes</span>
+    </div>
+    <a href="#capture-section" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-xs font-bold shadow-lg shadow-sky-500/20 active:scale-95 transition-all">
+      Garantir Vaga
+    </a>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- MOTOR JAVASCRIPT DO EFEITO SCROLL-TO-EXPAND & CONVERSÃO -->
+  <!-- ========================================================= -->
+  <script>
+    // Inicializar ícones do Lucide
+    lucide.createIcons();
+
+    // Elementos do DOM
+    const heroTrack = document.getElementById('hero-scroll-track');
+    const heroContainer = document.getElementById('hero-sticky-container');
+    const mediaCard = document.getElementById('expand-media-card');
+    const mainVideo = document.getElementById('main-video');
+    const titleLeft = document.getElementById('title-left');
+    const titleRight = document.getElementById('title-right');
+    const titleWrapper = document.getElementById('title-wrapper');
+    const cardLabels = document.getElementById('card-labels');
+    const expandedHeroContent = document.getElementById('fully-expanded-content');
+    const videoDarkOverlay = document.getElementById('video-dark-overlay');
+    const videoGradientVignette = document.getElementById('video-gradient-vignette');
+    const scrollProgressBar = document.getElementById('scroll-progress-bar');
+    const mobileStickyCta = document.getElementById('mobile-sticky-cta');
+
+    // Estado da animação com Lerp (Interpolação Suave)
+    let currentProgress = 0;
+    let targetProgress = 0;
+    let isTicking = false;
+
+    // Dimensões iniciais do snippet
+    // Início: 300px x 400px, rounded-2xl (24px)
+    // Fim: 100vw x 100vh, rounded-none (0px)
+    function calculateScrollProgress() {
+      const rect = heroTrack.getBoundingClientRect();
+      const trackHeight = heroTrack.offsetHeight;
+      const windowHeight = window.innerHeight;
+      
+      // Quanto do track já foi rolado
+      const scrolled = -rect.top;
+      const totalScrollable = trackHeight - windowHeight;
+
+      if (totalScrollable <= 0) return 0;
+
+      let progress = scrolled / totalScrollable;
+      return Math.max(0, Math.min(1, progress));
+    }
+
+    // Loop de renderização fluida com requestAnimationFrame
+    function updateHeroExpansion() {
+      // Lerp para suavidade cinematográfica
+      currentProgress += (targetProgress - currentProgress) * 0.14;
+
+      const p = currentProgress;
+      const pClamped = Math.max(0, Math.min(1, p));
+
+      // 1. Dimensões do Card de Vídeo
+      // Início: Largura inicial 300px (ou 90vw em telas pequenas)
+      // Fim: 100vw x 100vh
+      const startWidth = Math.min(300, window.innerWidth * 0.90);
+      const startHeight = Math.min(400, window.innerHeight * 0.65);
+      
+      const targetWidth = window.innerWidth;
+      const targetHeight = window.innerHeight;
+
+      const currentWidth = startWidth + (targetWidth - startWidth) * pClamped;
+      const currentHeight = startHeight + (targetHeight - startHeight) * pClamped;
+      const currentRadius = 24 * (1 - pClamped);
+
+      mediaCard.style.width = `${currentWidth}px`;
+      mediaCard.style.height = `${currentHeight}px`;
+      mediaCard.style.borderRadius = `${currentRadius}px`;
+
+      // 2. Títulos que se separam lateralmente (conforme o snippet translateX)
+      // Left title: 0vw -> -70vw
+      // Right title: 0vw -> 70vw
+      // Fade out conforme expande
+      const titleOffset = pClamped * 75; // em vw
+      titleLeft.style.transform = `translateX(-${titleOffset}vw)`;
+      titleRight.style.transform = `translateX(${titleOffset}vw)`;
+
+      const titleOpacity = Math.max(0, 1 - pClamped * 1.8);
+      titleWrapper.style.opacity = titleOpacity.toFixed(3);
+
+      // 3. Labels do Card (Cosmic Journey / Scroll to Expand Demo)
+      // Devem sumir rapidamente quando a rolagem começa
+      const labelOpacity = Math.max(0, 1 - pClamped * 3.5);
+      cardLabels.style.opacity = labelOpacity.toFixed(3);
+
+      // 4. Conteúdo Expandido (Aparece com magnitude acima de 75%)
+      if (pClamped > 0.72) {
+        const revealProgress = (pClamped - 0.72) / 0.28;
+        expandedHeroContent.style.opacity = revealProgress.toFixed(3);
+        expandedHeroContent.style.pointerEvents = pClamped > 0.88 ? 'auto' : 'none';
+        videoGradientVignette.style.opacity = (revealProgress * 0.9).toFixed(3);
+      } else {
+        expandedHeroContent.style.opacity = '0';
+        expandedHeroContent.style.pointerEvents = 'none';
+        videoGradientVignette.style.opacity = '0';
+      }
+
+      // 5. Barra de progresso da seção
+      scrollProgressBar.style.width = `${pClamped * 100}%`;
+
+      // 6. CTA Mobile Sticky
+      if (window.scrollY > 400 && window.scrollY < (document.body.offsetHeight - 900)) {
+        mobileStickyCta.classList.remove('translate-y-full');
+      } else {
+        mobileStickyCta.classList.add('translate-y-full');
+      }
+
+      // Continuar animação enquanto houver diferença significativa
+      if (Math.abs(targetProgress - currentProgress) > 0.0005) {
+        requestAnimationFrame(updateHeroExpansion);
+      } else {
+        isTicking = false;
+      }
+    }
+
+    function onScroll() {
+      targetProgress = calculateScrollProgress();
+      if (!isTicking) {
+        isTicking = true;
+        requestAnimationFrame(updateHeroExpansion);
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      targetProgress = calculateScrollProgress();
+      currentProgress = targetProgress;
+      updateHeroExpansion();
+    });
+
+    // Chamada inicial
+    document.addEventListener('DOMContentLoaded', () => {
+      targetProgress = calculateScrollProgress();
+      currentProgress = targetProgress;
+      updateHeroExpansion();
+
+      // Iniciar contagem regressiva
+      startUrgencyTimer();
+    });
+
+    // Controles Rápidos da Demonstração
+    function rewindEffect() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function expandFullEffect() {
+      const trackHeight = heroTrack.offsetHeight;
+      const windowHeight = window.innerHeight;
+      window.scrollTo({ top: trackHeight - windowHeight, behavior: 'smooth' });
+    }
+
+    function scrollToCapture() {
+      document.getElementById('capture-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function scrollToFeatures() {
+      document.getElementById('features-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Máscara Automática de WhatsApp Brasileiro
+    function maskWhatsApp(input) {
+      let v = input.value.replace(/\D/g, '');
+      if (v.length > 11) v = v.substring(0, 11);
+      
+      if (v.length > 10) {
+        input.value = `(${v.substring(0, 2)}) ${v.substring(2, 7)}-${v.substring(7)}`;
+      } else if (v.length > 6) {
+        input.value = `(${v.substring(0, 2)}) ${v.substring(2, 6)}-${v.substring(6)}`;
+      } else if (v.length > 2) {
+        input.value = `(${v.substring(0, 2)}) ${v.substring(2)}`;
+      } else if (v.length > 0) {
+        input.value = `(${v}`;
+      } else {
+        input.value = '';
+      }
+    }
+
+    // Envio do Formulário de Captura
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('lead-name').value.trim();
+      const whatsapp = document.getElementById('lead-whatsapp').value.trim();
+      const email = document.getElementById('lead-email').value.trim();
+      const segment = document.getElementById('lead-segment').value;
+
+      const btnContent = document.getElementById('btn-content');
+      const btnLoading = document.getElementById('btn-loading');
+      const submitBtn = document.getElementById('submit-btn');
+
+      // Estado de loading
+      btnContent.classList.add('hidden');
+      btnLoading.classList.remove('hidden');
+      btnLoading.classList.add('flex');
+      submitBtn.disabled = true;
+
+      // Simulação de registro / API
+      setTimeout(() => {
+        // Disparo de Confetes
+        confetti({
+          particleCount: 120,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#38bdf8', '#818cf8', '#34d399', '#f472b6']
+        });
+
+        // Preenche dados no modal
+        document.getElementById('lead-display-name').textContent = name.split(' ')[0] || name;
+        document.getElementById('whatsapp-display').textContent = whatsapp;
+        
+        // Link direto formatado para o WhatsApp
+        const cleanPhone = whatsapp.replace(/\D/g, '');
+        const message = encodeURIComponent(`Olá! Me chamo ${name}, me cadastrei na página da Aetheris no segmento de ${segment} e gostaria de receber meu acesso antecipado VIP.`);
+        document.getElementById('whatsapp-direct-link').href = `https://wa.me/55${cleanPhone}?text=${message}`;
+
+        // Exibir Modal
+        const modal = document.getElementById('success-modal');
+        const modalCard = document.getElementById('modal-card');
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modalCard.classList.remove('scale-95');
+        modalCard.classList.add('scale-100');
+
+        // Restaurar botão
+        btnContent.classList.remove('hidden');
+        btnLoading.classList.add('hidden');
+        btnLoading.classList.remove('flex');
+        submitBtn.disabled = false;
+      }, 900);
+    }
+
+    function closeSuccessModal() {
+      const modal = document.getElementById('success-modal');
+      const modalCard = document.getElementById('modal-card');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      modalCard.classList.remove('scale-100');
+      modalCard.classList.add('scale-95');
+    }
+
+    // Accordion de FAQ
+    function toggleFaq(id) {
+      const ans = document.getElementById(`faq-ans-${id}`);
+      const icon = document.getElementById(`faq-icon-${id}`);
+
+      if (ans.classList.contains('hidden')) {
+        ans.classList.remove('hidden');
+        icon.classList.add('rotate-180', 'text-sky-400');
+      } else {
+        ans.classList.add('hidden');
+        icon.classList.remove('rotate-180', 'text-sky-400');
+      }
+    }
+
+    // Cronômetro Regressivo de Escassez
+    function startUrgencyTimer() {
+      let totalSeconds = 3 * 3600 + 42 * 60 + 58;
+      
+      const hoursEl = document.getElementById('timer-hours');
+      const minutesEl = document.getElementById('timer-minutes');
+      const secondsEl = document.getElementById('timer-seconds');
+
+      setInterval(() => {
+        if (totalSeconds <= 0) totalSeconds = 4 * 3600;
+        totalSeconds--;
+
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+
+        hoursEl.textContent = String(h).padStart(2, '0');
+        minutesEl.textContent = String(m).padStart(2, '0');
+        secondsEl.textContent = String(s).padStart(2, '0');
+      }, 1000);
+    }
+
+    // =========================================================
+    // FUNÇÕES DE PERSONALIZAÇÃO DOS TEXTOS DA FRENTE (HERO)
+    // =========================================================
+    function openTextEditorModal() {
+      const modal = document.getElementById('text-editor-modal');
+      const card = document.getElementById('text-editor-card');
+      
+      // Sincroniza inputs com os textos atuais
+      document.getElementById('input-title-left').value = document.getElementById('title-left').textContent.trim();
+      document.getElementById('input-title-right').value = document.getElementById('title-right').textContent.trim();
+      document.getElementById('input-card-title').value = document.getElementById('card-badge-title').textContent.trim();
+      document.getElementById('input-card-sub').value = document.getElementById('card-badge-subtitle').textContent.trim();
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      card.classList.remove('scale-95');
+      card.classList.add('scale-100');
+    }
+
+    function closeTextEditorModal() {
+      const modal = document.getElementById('text-editor-modal');
+      const card = document.getElementById('text-editor-card');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      card.classList.remove('scale-100');
+      card.classList.add('scale-95');
+    }
+
+    function liveUpdateTexts() {
+      const leftVal = document.getElementById('input-title-left').value.trim();
+      const rightVal = document.getElementById('input-title-right').value.trim();
+      const cardVal = document.getElementById('input-card-title').value.trim();
+      const subVal = document.getElementById('input-card-sub').value.trim();
+
+      if (leftVal) document.getElementById('title-left').textContent = leftVal;
+      if (rightVal) document.getElementById('title-right').textContent = rightVal;
+      if (cardVal) document.getElementById('card-badge-title').textContent = cardVal;
+      if (subVal) document.getElementById('card-badge-subtitle').textContent = subVal;
+    }
+
+    function applyPreset(left, right, badge, sub) {
+      document.getElementById('input-title-left').value = left;
+      document.getElementById('input-title-right').value = right;
+      document.getElementById('input-card-title').value = badge;
+      document.getElementById('input-card-sub').value = sub;
+      liveUpdateTexts();
+    }
+
+    function saveAndCloseTextEditor() {
+      liveUpdateTexts();
+      closeTextEditorModal();
+    }
+
+    function resetDefaultTexts() {
+      applyPreset('IMMERSIVE', 'VIDEO EXPERIENCE', 'Cosmic Journey', 'Scroll to Expand Demo');
+    }
+  </script>
+</body>
+</html>
